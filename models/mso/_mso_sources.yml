@@ -1,0 +1,94 @@
+version: 2
+
+sources:
+  - name: industries_mso
+    description: "Manufacturing MSO (Material Selection Optimization) records from Fivetran Industries connector"
+    database: HOL_DATABASE
+    schema: INDUSTRIES_MANUFACTURING
+    tables:
+      - name: MSO_RECORDS
+        description: "Manufacturing material selection and optimization data including material properties, designer info, CAD systems, and optimization metrics"
+        columns:
+          # Identifiers
+          - name: RECORD_ID
+            description: "Unique identifier for each MSO record"
+          - name: MATERIAL_ID
+            description: "Unique identifier for the material"
+          - name: MATERIAL_NAME
+            description: "Name of the material"
+          - name: PRODUCT_ID
+            description: "Unique identifier for the product"
+          - name: PRODUCT_NAME
+            description: "Name of the product"
+          - name: PRODUCT_DESCRIPTION
+            description: "Description of the product"
+          - name: DESIGNER_ID
+            description: "Unique identifier for the designer"
+          - name: DESIGNER_NAME
+            description: "Name of the designer"
+          - name: CAD_SYSTEM
+            description: "CAD system used (SolidWorks, Autodesk Inventor, Siemens NX)"
+          - name: CAD_FILE_NAME
+            description: "Name of the CAD file"
+          
+          # Material Properties
+          - name: DENSITY
+            description: "Material density"
+          - name: YOUNGS_MODULUS
+            description: "Young's modulus (stiffness measure)"
+          - name: POISSONS_RATIO
+            description: "Poisson's ratio (material deformation property)"
+          
+          # Cost & Performance Metrics
+          - name: MATERIAL_COST
+            description: "Cost of the material"
+          - name: MATERIAL_WEIGHT
+            description: "Weight of the material"
+          - name: PRODUCT_PERFORMANCE
+            description: "Product performance score"
+          - name: MATERIAL_WASTE
+            description: "Amount of material waste"
+          
+          # Dates
+          - name: MATERIAL_SELECTION_DATE
+            description: "Date when material was selected"
+          - name: MATERIAL_OPTIMIZATION_DATE
+            description: "Date when material was optimized"
+          
+          # Designer Info
+          - name: DESIGNER_EXPERIENCE
+            description: "Years of designer experience"
+          - name: DESIGNER_SKILL_LEVEL
+            description: "Designer skill level (Beginner, Intermediate, Advanced)"
+          
+          # Scores & Recommendations
+          - name: MATERIAL_SELECTION_SCORE
+            description: "Score for material selection (0-1)"
+          - name: MATERIAL_OPTIMIZATION_SCORE
+            description: "Score for material optimization (0-1)"
+          - name: MATERIAL_SELECTION_RECOMMENDATION
+            description: "Recommendation for material selection (Recommended, Not Recommended)"
+          - name: MATERIAL_OPTIMIZATION_RECOMMENDATION
+            description: "Recommendation for material optimization (Recommended, Not Recommended)"
+          
+          # Optimization Metrics
+          - name: COST_SAVINGS
+            description: "Cost savings from material optimization"
+          - name: WEIGHT_REDUCTION
+            description: "Weight reduction from material optimization"
+          - name: PERFORMANCE_IMPROVEMENT
+            description: "Performance improvement from material optimization"
+          - name: WASTE_REDUCTION
+            description: "Waste reduction from material optimization"
+          
+          # Product Lifecycle
+          - name: PRODUCT_LIFECYCLE_STAGE
+            description: "Stage in product lifecycle (Design, Development, Testing, Production)"
+          - name: PRODUCT_LIFECYCLE_STATUS
+            description: "Status of product (Active, Inactive, On Hold)"
+          
+          # Fivetran Metadata
+          - name: _FIVETRAN_DELETED
+            description: "Fivetran soft delete flag"
+          - name: _FIVETRAN_SYNCED
+            description: "Fivetran last sync timestamp"

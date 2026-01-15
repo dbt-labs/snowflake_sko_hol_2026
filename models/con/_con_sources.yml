@@ -1,0 +1,113 @@
+# Source Configuration for Construction Industry Data
+# Database: HOL_DATABASE
+# Schema: INDUSTRIES_CONSTRUCTION
+
+version: 2
+
+sources:
+  - name: industries_construction
+    description: "Fivetran connector syncing construction project management data from the Industries connector"
+    database: HOL_DATABASE
+    schema: INDUSTRIES_CONSTRUCTION
+    
+    tables:
+      - name: CON_RECORDS
+        description: "Construction project task records with schedule, cost, risk, weather, and resource tracking"
+        
+        columns:
+          - name: RECORD_ID
+            description: "Unique identifier for each construction record"
+            tests:
+              - unique
+              - not_null
+              
+          - name: PROJECT_ID
+            description: "Unique identifier for the construction project"
+            tests:
+              - not_null
+              
+          - name: TASK_ID
+            description: "Unique identifier for the construction task"
+            tests:
+              - not_null
+              
+          - name: PROJECT_NAME
+            description: "Name of the construction project (e.g., Manufacturing Plant, Data Center Facility)"
+            
+          - name: TASK_NAME
+            description: "Name of the construction task (e.g., Site Preparation, Foundation Excavation, Steel Frame Erection)"
+            
+          - name: SCHEDULED_START_DATE
+            description: "Originally planned start date for the task"
+            
+          - name: SCHEDULED_END_DATE
+            description: "Originally planned completion date for the task"
+            
+          - name: ACTUAL_START_DATE
+            description: "Actual date when task work began"
+            
+          - name: ACTUAL_END_DATE
+            description: "Actual date when task was completed (null if not yet complete)"
+            
+          - name: TASK_STATUS
+            description: "Current status of the task (Completed, In Progress, Delayed, On Hold, Not Started, Under Review)"
+            
+          - name: PERCENT_COMPLETE
+            description: "Percentage of task completion (0-100)"
+            
+          - name: CRITICAL_PATH_FLAG
+            description: "Boolean flag indicating if task is on the project critical path"
+            
+          - name: RESOURCE_ID
+            description: "Unique identifier for the resource assigned to the task"
+            
+          - name: RESOURCE_TYPE
+            description: "Type of resource (Labor, Material, Equipment, Subcontractor, Specialty Trade)"
+            
+          - name: RESOURCE_AVAILABILITY
+            description: "Resource availability rate (0-1 scale)"
+            
+          - name: RESOURCE_COST_PER_HOUR
+            description: "Hourly cost rate for the resource in dollars"
+            
+          - name: WEATHER_CONDITION
+            description: "Weather condition during task execution (Clear, Partly Cloudy, Light Rain, Heavy Rain, Thunderstorms, Snow, Fog, Cold, Hot, Humid, Windy, Overcast)"
+            
+          - name: TEMPERATURE_FAHRENHEIT
+            description: "Temperature in Fahrenheit during task"
+            
+          - name: PRECIPITATION_PROBABILITY
+            description: "Probability of precipitation as percentage (0-100)"
+            
+          - name: WIND_SPEED_MPH
+            description: "Wind speed in miles per hour"
+            
+          - name: SUPPLIER_ID
+            description: "Unique identifier for the material supplier"
+            
+          - name: MATERIAL_DELIVERY_DATE
+            description: "Date materials are scheduled to be delivered"
+            
+          - name: MATERIAL_DELIVERY_STATUS
+            description: "Status of material delivery (Delivered, Pending, Delayed, Cancelled, In Transit, On Time)"
+            
+          - name: EQUIPMENT_ID
+            description: "Unique identifier for equipment used in the task"
+            
+          - name: EQUIPMENT_STATUS
+            description: "Status of equipment (In Use, Available, Idle, Repair, Maintenance, Breakdown, Reserved, Setup, Transport, Inspection)"
+            
+          - name: EQUIPMENT_UTILIZATION_RATE
+            description: "Equipment utilization rate (0-1 scale)"
+            
+          - name: SCHEDULE_PERFORMANCE_INDEX
+            description: "EVM Schedule Performance Index (SPI) - ratio of earned value to planned value. >1.0 = ahead of schedule, <1.0 = behind schedule"
+            
+          - name: COST_PERFORMANCE_INDEX
+            description: "EVM Cost Performance Index (CPI) - ratio of earned value to actual cost. >1.0 = under budget, <1.0 = over budget"
+            
+          - name: RISK_SCORE
+            description: "Risk assessment score for the task (0-100, higher = more risk)"
+            
+          - name: DATA_TIMESTAMP
+            description: "Timestamp when the record was last updated"

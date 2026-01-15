@@ -1,0 +1,280 @@
+version: 2
+
+models:
+  - name: vw_mso_kpi
+    description: "Executive KPI dashboard for Manufacturing MSO optimization program showing key performance metrics, cost savings, and recommendation success rates"
+    config:
+      tags: ['analytics', 'kpi', 'executive', 'mso']
+    columns:
+      - name: total_records
+        description: "Total number of MSO records"
+      - name: unique_materials
+        description: "Count of unique materials analyzed"
+      - name: unique_products
+        description: "Count of unique products optimized"
+      - name: unique_designers
+        description: "Count of unique designers in the program"
+      - name: avg_material_cost
+        description: "Average cost per material"
+      - name: total_material_cost
+        description: "Total material costs across all records"
+      - name: avg_cost_savings
+        description: "Average cost savings per material optimization"
+      - name: total_cost_savings
+        description: "Total cost savings achieved through optimization"
+      - name: avg_weight_reduction
+        description: "Average weight reduction achieved"
+      - name: avg_performance_improvement
+        description: "Average performance improvement score"
+      - name: avg_waste_reduction
+        description: "Average waste reduction achieved"
+      - name: avg_material_weight
+        description: "Average material weight"
+      - name: avg_material_waste
+        description: "Average material waste"
+      - name: avg_product_performance
+        description: "Average product performance score"
+      - name: material_selection_recommended_pct
+        description: "Percentage of materials with recommended selection"
+      - name: material_optimization_recommended_pct
+        description: "Percentage of materials with recommended optimization"
+      - name: avg_material_selection_score
+        description: "Average material selection score (0-1)"
+      - name: avg_material_optimization_score
+        description: "Average material optimization score (0-1)"
+      - name: roi_percentage
+        description: "Return on investment: (Total Cost Savings / Total Material Cost) × 100"
+      - name: last_sync_time
+        description: "Last time Fivetran synced this data"
+      - name: days_since_last_optimization
+        description: "Days since the most recent material optimization"
+
+  - name: vw_mso_by_cad_system
+    description: "Material optimization performance analysis segmented by CAD platform (SolidWorks, Autodesk Inventor, Siemens NX) to identify which tools yield best results"
+    config:
+      tags: ['analytics', 'segmentation', 'mso']
+    columns:
+      - name: cad_system
+        description: "CAD system used (SolidWorks, Autodesk Inventor, Siemens NX)"
+      - name: record_count
+        description: "Number of records using this CAD system"
+      - name: unique_designers
+        description: "Number of unique designers using this CAD system"
+      - name: unique_products
+        description: "Number of unique products designed with this CAD system"
+      - name: avg_material_cost
+        description: "Average material cost for this CAD system"
+      - name: avg_cost_savings
+        description: "Average cost savings achieved with this CAD system"
+      - name: total_cost_savings
+        description: "Total cost savings achieved with this CAD system"
+      - name: avg_weight_reduction
+        description: "Average weight reduction with this CAD system"
+      - name: avg_performance_improvement
+        description: "Average performance improvement with this CAD system"
+      - name: avg_waste_reduction
+        description: "Average waste reduction with this CAD system"
+      - name: avg_material_weight
+        description: "Average material weight for this CAD system"
+      - name: avg_material_waste
+        description: "Average material waste for this CAD system"
+      - name: avg_product_performance
+        description: "Average product performance score for this CAD system"
+      - name: avg_selection_score
+        description: "Average material selection score for this CAD system"
+      - name: avg_optimization_score
+        description: "Average material optimization score for this CAD system"
+      - name: selection_recommended_pct
+        description: "Percentage of materials with recommended selection"
+      - name: optimization_recommended_pct
+        description: "Percentage of materials with recommended optimization"
+      - name: avg_designer_experience
+        description: "Average years of designer experience using this CAD system"
+      - name: active_products
+        description: "Number of active products using this CAD system"
+      - name: on_hold_products
+        description: "Number of on-hold products using this CAD system"
+      - name: inactive_products
+        description: "Number of inactive products using this CAD system"
+      - name: roi_percentage
+        description: "ROI for this CAD system"
+
+  - name: vw_mso_optimization_trends
+    description: "Monthly time-series analysis tracking material optimization progress, showing trending cost savings, weight reductions, and recommendation patterns over time"
+    config:
+      tags: ['analytics', 'trends', 'mso']
+    columns:
+      - name: optimization_month
+        description: "Month when materials were optimized (truncated to first day of month)"
+      - name: records_optimized
+        description: "Number of materials optimized in this month"
+      - name: unique_materials
+        description: "Number of unique materials optimized"
+      - name: unique_products
+        description: "Number of unique products optimized"
+      - name: avg_material_cost
+        description: "Average material cost for the month"
+      - name: avg_cost_savings
+        description: "Average cost savings for the month"
+      - name: total_cost_savings
+        description: "Total cost savings for the month"
+      - name: avg_weight_reduction
+        description: "Average weight reduction for the month"
+      - name: avg_performance_improvement
+        description: "Average performance improvement for the month"
+      - name: avg_waste_reduction
+        description: "Average waste reduction for the month"
+      - name: avg_selection_score
+        description: "Average material selection score for the month"
+      - name: avg_optimization_score
+        description: "Average material optimization score for the month"
+      - name: selection_recommended_pct
+        description: "Percentage of materials with recommended selection"
+      - name: optimization_recommended_pct
+        description: "Percentage of materials with recommended optimization"
+      - name: solidworks_count
+        description: "Number of records using SolidWorks"
+      - name: inventor_count
+        description: "Number of records using Autodesk Inventor"
+      - name: siemens_nx_count
+        description: "Number of records using Siemens NX"
+      - name: design_stage_count
+        description: "Number of products in Design stage"
+      - name: development_stage_count
+        description: "Number of products in Development stage"
+      - name: testing_stage_count
+        description: "Number of products in Testing stage"
+      - name: production_stage_count
+        description: "Number of products in Production stage"
+      - name: roi_percentage
+        description: "ROI for the month"
+
+  - name: vw_mso_designer_performance
+    description: "Designer effectiveness analysis segmented by skill level (Beginner, Intermediate, Advanced) showing optimization success rates, cost savings, and quality scores to identify training opportunities and best practices"
+    config:
+      tags: ['analytics', 'designer', 'mso']
+    columns:
+      - name: designer_skill_level
+        description: "Designer skill level (Beginner, Intermediate, Advanced)"
+      - name: record_count
+        description: "Number of records for this skill level"
+      - name: unique_designers
+        description: "Number of unique designers at this skill level"
+      - name: unique_products
+        description: "Number of unique products designed by this skill level"
+      - name: avg_experience_years
+        description: "Average years of experience for designers at this level"
+      - name: min_experience_years
+        description: "Minimum years of experience at this level"
+      - name: max_experience_years
+        description: "Maximum years of experience at this level"
+      - name: avg_material_cost
+        description: "Average material cost for this skill level"
+      - name: avg_cost_savings
+        description: "Average cost savings achieved by this skill level"
+      - name: total_cost_savings
+        description: "Total cost savings achieved by this skill level"
+      - name: avg_weight_reduction
+        description: "Average weight reduction achieved"
+      - name: avg_performance_improvement
+        description: "Average performance improvement achieved"
+      - name: avg_waste_reduction
+        description: "Average waste reduction achieved"
+      - name: avg_selection_score
+        description: "Average material selection score"
+      - name: avg_optimization_score
+        description: "Average material optimization score"
+      - name: avg_product_performance
+        description: "Average product performance score"
+      - name: selection_recommended_pct
+        description: "Percentage of materials with recommended selection"
+      - name: optimization_recommended_pct
+        description: "Percentage of materials with recommended optimization"
+      - name: both_recommended_pct
+        description: "Percentage where both selection and optimization are recommended (highest quality)"
+      - name: solidworks_usage
+        description: "Number of times SolidWorks was used"
+      - name: inventor_usage
+        description: "Number of times Autodesk Inventor was used"
+      - name: siemens_nx_usage
+        description: "Number of times Siemens NX was used"
+      - name: active_products
+        description: "Number of active products"
+      - name: active_product_pct
+        description: "Percentage of active products"
+      - name: avg_material_weight
+        description: "Average material weight"
+      - name: avg_material_waste
+        description: "Average material waste"
+      - name: avg_waste_percentage
+        description: "Average waste as percentage of material weight"
+      - name: roi_percentage
+        description: "ROI for this skill level"
+
+  - name: vw_mso_data_quality
+    description: "Data quality monitoring dashboard tracking completeness, validity, consistency, and freshness of MSO data to ensure reliability for decision-making"
+    config:
+      tags: ['analytics', 'data_quality', 'monitoring', 'mso']
+    columns:
+      - name: total_records
+        description: "Total number of active records"
+      - name: unique_record_ids
+        description: "Number of unique record IDs (should match total_records)"
+      - name: material_id_completeness_pct
+        description: "Percentage of records with non-null material_id"
+      - name: product_id_completeness_pct
+        description: "Percentage of records with non-null product_id"
+      - name: designer_id_completeness_pct
+        description: "Percentage of records with non-null designer_id"
+      - name: material_cost_completeness_pct
+        description: "Percentage of records with non-null material_cost"
+      - name: cost_savings_completeness_pct
+        description: "Percentage of records with non-null cost_savings"
+      - name: weight_reduction_completeness_pct
+        description: "Percentage of records with non-null weight_reduction"
+      - name: performance_improvement_completeness_pct
+        description: "Percentage of records with non-null performance_improvement"
+      - name: density_completeness_pct
+        description: "Percentage of records with non-null density"
+      - name: youngs_modulus_completeness_pct
+        description: "Percentage of records with non-null youngs_modulus"
+      - name: poissons_ratio_completeness_pct
+        description: "Percentage of records with non-null poissons_ratio"
+      - name: selection_date_completeness_pct
+        description: "Percentage of records with non-null material_selection_date"
+      - name: optimization_date_completeness_pct
+        description: "Percentage of records with non-null material_optimization_date"
+      - name: cad_system_completeness_pct
+        description: "Percentage of records with non-null cad_system"
+      - name: lifecycle_stage_completeness_pct
+        description: "Percentage of records with non-null product_lifecycle_stage"
+      - name: skill_level_completeness_pct
+        description: "Percentage of records with non-null designer_skill_level"
+      - name: negative_cost_count
+        description: "Number of records with negative material_cost (data quality issue)"
+      - name: negative_weight_count
+        description: "Number of records with negative material_weight (data quality issue)"
+      - name: negative_savings_count
+        description: "Number of records with negative cost_savings (data quality issue)"
+      - name: invalid_selection_score_count
+        description: "Number of records with selection score outside 0-1 range"
+      - name: invalid_optimization_score_count
+        description: "Number of records with optimization score outside 0-1 range"
+      - name: duplicate_record_ids
+        description: "Number of duplicate record IDs (should be 0)"
+      - name: optimization_before_selection_count
+        description: "Number of records where optimization date is before selection date (logical error)"
+      - name: inconsistent_selection_recommendation_count
+        description: "Number of records where selection is 'Recommended' but score < 0.5"
+      - name: inconsistent_optimization_recommendation_count
+        description: "Number of records where optimization is 'Recommended' but score < 0.5"
+      - name: last_sync_time
+        description: "Most recent Fivetran sync timestamp"
+      - name: hours_since_last_sync
+        description: "Hours since last Fivetran sync"
+      - name: earliest_selection_date
+        description: "Earliest material selection date in dataset"
+      - name: latest_optimization_date
+        description: "Most recent material optimization date in dataset"
+      - name: overall_data_quality_score
+        description: "Overall data quality score (0-100) based on key completeness metrics"

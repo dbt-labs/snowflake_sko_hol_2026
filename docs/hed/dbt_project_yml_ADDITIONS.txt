@@ -1,0 +1,132 @@
+# =============================================================================
+# COPY-PASTE READY: dbt_project.yml Updates for HED Industry
+# =============================================================================
+
+# -------------------------
+# 1. ADD TO MODELS SECTION
+# -------------------------
+# Find the "models:" section in your dbt_project.yml and add this:
+
+   # HED Higher Education Models (NEW)
+   hed:
+     +tags: ['hed', 'education']
+     +schema: industries_education
+     +materialized: view
+
+
+# -------------------------
+# 2. ADD TO VARS SECTION
+# -------------------------
+# Find the "vars:" section in your dbt_project.yml and add this:
+
+ # Source configuration for HED Higher Education (NEW)
+ hed_source_database: 'HOL_DATABASE'
+ hed_source_schema: 'INDUSTRIES_HIGHER_EDUCATION'
+ hed_source_table: 'HED_RECORDS'
+
+
+# =============================================================================
+# COMPLETE EXAMPLE SHOWING BOTH CDS AND HED
+# =============================================================================
+
+models:
+  dbt_industries_views:
+    # CDS Healthcare Models
+    cds:
+      +tags: ['cds', 'healthcare']
+      +schema: industries_healthcare
+      +materialized: view
+    
+    # HED Higher Education Models (NEW)
+    hed:
+      +tags: ['hed', 'education']
+      +schema: industries_education
+      +materialized: view
+
+vars:
+  # Source configuration for CDS Healthcare
+  cds_source_database: 'HOL_DATABASE'
+  cds_source_schema: 'INDUSTRIES_HEALTHCARE'
+  cds_source_table: 'CDS_RECORDS'
+  
+  # Source configuration for HED Higher Education (NEW)
+  hed_source_database: 'HOL_DATABASE'
+  hed_source_schema: 'INDUSTRIES_HIGHER_EDUCATION'
+  hed_source_table: 'HED_RECORDS'
+
+
+# =============================================================================
+# WHAT THESE SETTINGS DO
+# =============================================================================
+
+# +tags: ['hed', 'education']
+#   → Allows selective execution: dbt run --select tag:hed
+#   → Enables filtering: dbt run --select tag:education
+
+# +schema: industries_education
+#   → Creates views in HOL_DATABASE.INDUSTRIES_EDUCATION schema
+#   → Keeps HED views separate from CDS (healthcare) views
+
+# +materialized: view
+#   → Creates standard views (not tables or incremental)
+#   → Query-on-demand, no additional storage cost
+#   → Change to 'table' if you need better query performance
+
+# hed_source_database: 'HOL_DATABASE'
+# hed_source_schema: 'INDUSTRIES_HIGHER_EDUCATION'  
+# hed_source_table: 'HED_RECORDS'
+#   → These variables are used in _hed__sources.yml
+#   → Allows easy environment-specific configuration
+#   → Can override per environment: --vars "hed_source_schema: DEV_SCHEMA"
+
+
+# =============================================================================
+# VALIDATION COMMANDS
+# =============================================================================
+
+# After adding these lines, run these commands to validate:
+
+# 1. List HED models
+dbt ls --select hed
+
+# 2. Compile HED models (check syntax)
+dbt compile --select hed
+
+# 3. Run HED models (create views)
+dbt run --select hed
+
+# 4. Generate documentation
+dbt docs generate
+dbt docs serve
+
+
+# =============================================================================
+# EXPECTED OUTPUT FROM 'dbt ls --select hed'
+# =============================================================================
+
+# dbt_industries_views.vw_hed_student_success_kpi
+# dbt_industries_views.vw_hed_retention_risk_analysis
+# dbt_industries_views.vw_hed_program_performance
+# dbt_industries_views.vw_hed_engagement_analytics
+# dbt_industries_views.vw_hed_data_quality
+
+
+# =============================================================================
+# TROUBLESHOOTING
+# =============================================================================
+
+# Error: "Could not find profile named 'snowflake_industries'"
+#   → Make sure profiles.yml has a profile matching the "profile:" setting
+#   → Default profile name in this project is 'snowflake_industries'
+
+# Error: "Compilation Error in model... depends on a source that was not found"
+#   → Make sure _hed__sources.yml is in the models/hed/ folder
+#   → Check that source variables in vars: section match your database
+
+# Error: "Database Error... does not exist or not authorized"
+#   → Verify your Snowflake credentials in profiles.yml
+#   → Check that you have SELECT permissions on INDUSTRIES_HIGHER_EDUCATION schema
+
+# Views created in wrong schema
+#   → Check the +schema setting in the hed: section
+#   → Review generate_schema_name macro if you have one

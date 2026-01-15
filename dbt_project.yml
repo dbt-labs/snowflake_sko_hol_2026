@@ -1,0 +1,122 @@
+name: 'dbt_industries_views'
+version: '1.0.0'
+config-version: 2
+
+# This dbt project supports multiple industry verticals with selective execution
+# Each industry has its own folder under models/ for independent deployment
+
+profile: 'industries_snowflake'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+  - "logs"
+
+# Global configurations
+models:
+  dbt_industries_views:
+    +materialized: view
+    +persist_docs:
+      relation: true
+      columns: true
+    
+    # CDS Healthcare Industry Models
+    cds:
+      +tags: ['cds', 'healthcare']
+      +schema: industries_healthcare
+      +materialized: view
+    
+    # MSO Manufacturing Industry Models
+    mso:
+      +tags: ['mso', 'manufacturing']
+      +schema: industries_manufacturing
+      +materialized: view
+    
+    # CON Construction Industry Models (NEW)
+    con:
+      +tags: ['con', 'construction']
+      +schema: industries_construction
+      +materialized: view
+
+    # CPG Consumer Packaged Goods Industry Models (NEW)
+    cpg:
+      +tags: ['cpg', 'consumer_packaged_goods']
+      +schema: industries_consumer_packaged_goods
+      +materialized: view
+
+    # FTS Energy/Utilities Field Service Models (NEW)
+    fts:
+      +tags: ['fts', 'energy']
+      +schema: industries_energy
+      +materialized: view
+
+    # FPR Financial Services Industry Models (NEW)
+    fpr:
+      +tags: ['fpr', 'financial_services', 'industries']
+      +schema: industries_financial_services
+      +materialized: view
+
+    # HED Higher Education Models (NEW)
+    hed:
+      +tags: ['hed', 'education']
+      +schema: industries_higher_education
+      +materialized: view
+    
+    # Future Industry Models (examples)
+    # agr:
+    #   +tags: ['agr', 'agriculture']
+    #   +schema: industries_agriculture
+    #   +materialized: view
+    
+    # met:
+    #   +tags: ['met', 'meteorology']
+    #   +schema: industries_meteorology
+    #   +materialized: view
+
+vars:
+  # Source configuration for CDS Healthcare
+  cds_source_database: 'HOL_DATABASE'
+  cds_source_schema: 'INDUSTRIES_HEALTHCARE'
+  cds_source_table: 'CDS_RECORDS'
+  
+  # Source configuration for MSO Manufacturing
+  mso_source_database: 'HOL_DATABASE'
+  mso_source_schema: 'INDUSTRIES_MANUFACTURING'
+  mso_source_table: 'MSO_RECORDS'
+  
+  # Source configuration for CON Construction (NEW)
+  con_source_database: 'HOL_DATABASE'
+  con_source_schema: 'INDUSTRIES_CONSTRUCTION'
+  con_source_table: 'CON_RECORDS'
+
+  # Source configuration for CPG Consumer Packaged Goods (NEW)
+  cpg_source_database: 'HOL_DATABASE'
+  cpg_source_schema: 'INDUSTRIES_CONSUMER_PACKAGED_GOODS'
+  cpg_source_table: 'CPG_RECORDS'
+
+  # Source configuration for FTS Energy (NEW)
+  fts_source_database: 'HOL_DATABASE'
+  fts_source_schema: 'INDUSTRIES_ENERGY'
+  fts_source_table: 'FTS_RECORDS'
+
+  # Source configuration for FPR Financial Services (NEW)
+  fpr_source_database: 'HOL_DATABASE'
+  fpr_source_schema: 'INDUSTRIES_FINANCIAL_SERVICES'
+  fpr_source_table: 'FPR_RECORDS'
+
+  # Source configuration for HED Higher Education (NEW)
+  hed_source_database: 'HOL_DATABASE'
+  hed_source_schema: 'INDUSTRIES_HIGHER_EDUCATION'
+  hed_source_table: 'HED_RECORDS'
+  
+  # Future industry variables can be added here
+  # agr_source_database: 'HOL_DATABASE'
+  # agr_source_schema: 'INDUSTRIES_AGRICULTURE'
+  # agr_source_table: 'AGR_RECORDS'

@@ -1,0 +1,155 @@
+version: 2
+
+models:
+  - name: vw_fts_maintenance_efficiency_kpi
+    description: >
+      Executive KPI dashboard tracking field service maintenance operations effectiveness.
+      Provides completion rates, cost analysis, downtime metrics, equipment reliability,
+      and AI summarization efficiency gains across all maintenance types.
+    config:
+      tags: ['fts', 'energy', 'analytics', 'maintenance', 'kpi']
+    columns:
+      - name: total_maintenance_activities
+        description: Total number of maintenance activities performed
+      - name: unique_equipment_serviced
+        description: Number of unique equipment units serviced
+      - name: active_technicians
+        description: Number of technicians performing maintenance
+      - name: completion_rate_pct
+        description: Percentage of maintenance activities completed successfully
+      - name: total_maintenance_cost
+        description: Total cost across all maintenance activities
+      - name: avg_maintenance_cost
+        description: Average cost per maintenance activity
+      - name: total_downtime_hours
+        description: Total equipment downtime across all activities
+      - name: avg_failure_rate
+        description: Average equipment failure rate (0-1 scale)
+      - name: best_maintenance_type
+        description: Maintenance type with highest completion rate and efficiency
+      - name: overall_efficiency_score
+        description: Overall operational efficiency score (0-100)
+      - name: primary_recommendation
+        description: Key recommendation for improving maintenance operations
+
+  - name: vw_fts_equipment_reliability_analysis
+    description: >
+      Equipment-level reliability tracking and predictive maintenance prioritization.
+      Analyzes failure rates, maintenance history, costs, and downtime to identify
+      high-risk equipment and optimize maintenance schedules.
+    config:
+      tags: ['fts', 'energy', 'analytics', 'reliability', 'equipment']
+    columns:
+      - name: equipment_id
+        description: Unique equipment identifier
+      - name: risk_level
+        description: Equipment risk classification (Critical/High/Medium/Low Risk)
+      - name: avg_failure_rate
+        description: Average failure rate for this equipment
+      - name: total_maintenance_events
+        description: Total maintenance activities for this equipment
+      - name: total_maintenance_cost
+        description: Cumulative maintenance costs
+      - name: total_downtime_hours
+        description: Total downtime caused by this equipment
+      - name: proactive_pct
+        description: Percentage of preventive + predictive maintenance
+      - name: equipment_health_score
+        description: Overall equipment health score (0-100)
+      - name: maintenance_priority
+        description: Maintenance priority ranking (1-5, 5=highest)
+      - name: recommended_action
+        description: Specific maintenance recommendation for this equipment
+
+  - name: vw_fts_maintenance_type_performance
+    description: >
+      Comparative analysis of maintenance strategy effectiveness. Evaluates Preventive,
+      Predictive, Corrective, Condition-Based, and Reliability-Centered maintenance
+      approaches to optimize strategy mix.
+    config:
+      tags: ['fts', 'energy', 'analytics', 'maintenance', 'strategy']
+    columns:
+      - name: maintenance_type
+        description: Type of maintenance strategy
+      - name: total_activities
+        description: Number of activities using this maintenance type
+      - name: completion_rate_pct
+        description: Percentage of activities completed successfully
+      - name: avg_cost
+        description: Average cost per activity for this type
+      - name: avg_downtime
+        description: Average downtime hours for this type
+      - name: avg_failure_rate
+        description: Average equipment failure rate after this maintenance
+      - name: effectiveness_score
+        description: Overall effectiveness score for this maintenance type (0-100)
+      - name: effectiveness_rating
+        description: Effectiveness classification (Highly Effective/Effective/etc.)
+      - name: roi_indicator
+        description: Return on investment indicator (effectiveness / cost)
+      - name: recommendation
+        description: Strategic recommendation for this maintenance type
+
+  - name: vw_fts_technician_productivity
+    description: >
+      Technician performance and workload analysis. Tracks completion rates, cost
+      efficiency, time savings, and expertise to optimize workforce utilization
+      and identify training needs.
+    config:
+      tags: ['fts', 'energy', 'analytics', 'technician', 'productivity']
+    columns:
+      - name: technician_id
+        description: Unique technician identifier
+      - name: total_assignments
+        description: Total maintenance assignments for this technician
+      - name: workload_vs_avg
+        description: Workload relative to average technician (1.0 = average)
+      - name: workload_status
+        description: Workload classification (Overloaded/Balanced/Underutilized)
+      - name: completion_rate_pct
+        description: Percentage of assignments completed successfully
+      - name: avg_cost_per_job
+        description: Average cost per maintenance job
+      - name: avg_downtime_per_job
+        description: Average equipment downtime per job
+      - name: proactive_work_pct
+        description: Percentage of preventive + predictive work
+      - name: primary_expertise
+        description: Maintenance type this technician performs most often
+      - name: productivity_score
+        description: Overall productivity score (0-100)
+      - name: performance_tier
+        description: Performance classification (Top/Strong/Average/Needs Development)
+      - name: recommendation
+        description: Development recommendation for this technician
+
+  - name: vw_fts_data_quality
+    description: >
+      Comprehensive data quality monitoring for field service maintenance logs.
+      Tracks completeness, validation issues, duplicates, and consistency to ensure
+      reliable analytics foundation.
+    config:
+      tags: ['fts', 'energy', 'data_quality', 'monitoring']
+    columns:
+      - name: total_records
+        description: Total number of maintenance records
+      - name: overall_completeness_score
+        description: Completeness score for critical fields (0-100)
+      - name: duplicate_record_ids
+        description: Number of duplicate record IDs detected
+      - name: total_validation_issues
+        description: Total count of value validation issues
+      - name: earliest_log_date
+        description: Date of earliest maintenance log
+      - name: latest_log_date
+        description: Date of most recent maintenance log
+      - name: days_since_latest_log
+        description: Days elapsed since most recent log
+      - name: data_freshness_status
+        description: Freshness classification (Current/Recent/Aging/Stale)
+      - name: overall_data_quality_score
+        description: Overall data quality score (0-100)
+      - name: data_quality_status
+        description: Quality classification (Excellent/Good/Fair/Poor)
+      - name: recommended_action
+        description: Priority action to improve data quality

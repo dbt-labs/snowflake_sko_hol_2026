@@ -1,0 +1,118 @@
+version: 2
+
+sources:
+  - name: cpg
+    description: >
+      Consumer Packaged Goods (CPG) data from Fivetran Industries connector.
+      Contains order transactions, pricing optimization results, inventory metrics,
+      and customer segmentation data.
+    database: HOL_DATABASE
+    schema: INDUSTRIES_CONSUMER_PACKAGED_GOODS
+    tables:
+      - name: cpg_records
+        description: >
+          Primary table containing CPG order records with pricing, inventory,
+          and customer intelligence data. Synced via Fivetran.
+        columns:
+          - name: record_id
+            description: Unique identifier for each record
+            tests:
+              - unique
+              - not_null
+          
+          - name: order_id
+            description: Order identifier
+          
+          - name: customer_id
+            description: Customer identifier for segmentation and LTV tracking
+          
+          - name: product_id
+            description: Product identifier for inventory and pricing analysis
+          
+          - name: order_date
+            description: Date the order was placed
+            tests:
+              - not_null
+          
+          - name: order_total
+            description: Total order value in USD
+          
+          - name: product_price
+            description: Unit price of the product at time of order
+          
+          - name: inventory_level
+            description: Current inventory level for the product
+          
+          - name: customer_segment
+            description: Customer value segment (High-Value, Medium-Value, Low-Value)
+            tests:
+              - accepted_values:
+                  arguments:
+                    values: ['High-Value', 'Medium-Value', 'Low-Value']
+          
+          - name: order_status
+            description: Current status of the order
+            tests:
+              - accepted_values:
+                  arguments:
+                    values: ['Pending', 'Shipped', 'Delivered', 'Cancelled']
+          
+          - name: product_category
+            description: Primary product category for segmentation
+          
+          - name: product_subcategory
+            description: Product subcategory for detailed analysis
+          
+          - name: customer_ltv
+            description: Customer lifetime value in USD
+          
+          - name: order_frequency
+            description: Number of orders placed by customer (historical)
+          
+          - name: average_order_value
+            description: Average order value for this customer
+          
+          - name: product_rating
+            description: Average product rating (1-5 scale)
+          
+          - name: product_review_count
+            description: Number of reviews for this product
+          
+          - name: price_optimization_flag
+            description: Boolean indicating if price optimization was active
+          
+          - name: price_elasticity
+            description: Measure of demand sensitivity to price changes (0-1)
+          
+          - name: demand_forecast
+            description: Forecasted demand units for this product
+          
+          - name: inventory_turnover
+            description: Inventory turnover ratio
+          
+          - name: stockout_rate
+            description: Percentage of time product is out of stock
+          
+          - name: overstock_rate
+            description: Percentage of excess inventory
+          
+          - name: revenue_growth_rate
+            description: Revenue growth rate for this product/category
+          
+          - name: customer_satisfaction_rate
+            description: Customer satisfaction score (0-1)
+          
+          - name: price_optimization_date
+            description: Date of last price optimization
+          
+          - name: price_optimization_result
+            description: Result of price optimization (Success, Failure)
+          
+          - name: price_optimization_recommendation
+            description: Recommended price action (Increase Price, Decrease Price, No Change)
+          
+          - name: _fivetran_deleted
+            description: Fivetran soft delete flag
+          
+          - name: _fivetran_synced
+            description: Timestamp of last Fivetran sync

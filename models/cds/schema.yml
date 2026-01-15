@@ -1,0 +1,304 @@
+version: 2
+
+models:
+  - name: vw_cds_patient_outcomes_kpi
+    description: |
+      Executive-level KPI dashboard for CDS healthcare performance metrics.
+      Provides a single-row summary of key performance indicators including patient outcomes,
+      treatment success rates, cost metrics, and risk indicators.
+      
+      **Use Cases:**
+      - Executive dashboards and reporting
+      - Monthly/quarterly performance reviews
+      - Healthcare quality monitoring
+      - Cost analysis and optimization
+      
+      **Refresh:** Real-time view on source data
+      **Materialization:** View
+    
+    columns:
+      - name: dataset
+        description: "Dataset identifier"
+      
+      - name: report_generated_at
+        description: "Timestamp when the report was generated"
+      
+      - name: last_sync_time
+        description: "Last Fivetran sync timestamp"
+      
+      - name: hours_since_last_sync
+        description: "Hours elapsed since last data sync"
+      
+      - name: total_patients
+        description: "Total unique patients in dataset"
+      
+      - name: total_records
+        description: "Total healthcare records"
+      
+      - name: avg_patient_outcome_score
+        description: "Average patient outcome score (0.0-1.0 scale)"
+      
+      - name: treatment_success_rate
+        description: "Percentage of treatments with successful outcomes"
+      
+      - name: satisfaction_rate
+        description: "Percentage of satisfied patients"
+      
+      - name: adherence_rate
+        description: "Percentage of medication-adherent patients"
+      
+      - name: avg_cost_of_care
+        description: "Average cost per patient"
+      
+      - name: total_cost_savings
+        description: "Total cost savings generated"
+      
+      - name: avg_readmission_risk
+        description: "Average readmission risk score (0.0-1.0 scale)"
+      
+      - name: high_risk_percentage
+        description: "Percentage of patients with high readmission risk (>0.7)"
+
+  - name: vw_cds_treatment_effectiveness
+    description: |
+      Analysis of treatment outcomes by diagnosis and treatment plan.
+      Breaks down success rates, patient outcomes, cost effectiveness, and adherence
+      across different diagnosis types and treatment approaches.
+      
+      **Use Cases:**
+      - Clinical effectiveness analysis
+      - Treatment protocol optimization
+      - Cost-per-outcome analysis
+      - Resource allocation decisions
+      
+      **Refresh:** Real-time view on source data
+      **Materialization:** View
+    
+    columns:
+      - name: diagnosis
+        description: "Primary diagnosis category"
+      
+      - name: treatment_plan
+        description: "Type of treatment plan (Monitoring, Medication, Surgery, Therapy, Lifestyle Changes)"
+      
+      - name: patient_count
+        description: "Number of unique patients"
+      
+      - name: avg_outcome_score
+        description: "Average patient outcome score for this diagnosis/treatment combination"
+      
+      - name: success_rate
+        description: "Percentage of successful treatment outcomes"
+      
+      - name: satisfaction_rate
+        description: "Percentage of satisfied patients"
+      
+      - name: adherence_rate
+        description: "Medication adherence rate"
+      
+      - name: cost_per_successful_outcome
+        description: "Average cost per successful treatment outcome"
+      
+      - name: avg_length_of_stay
+        description: "Average hospital length of stay in days"
+      
+      - name: success_rate_rank
+        description: "Rank by success rate (1 = highest success rate)"
+      
+      - name: cost_effectiveness_rank
+        description: "Rank by cost effectiveness (1 = most cost effective)"
+
+  - name: vw_cds_clinical_trial_performance
+    description: |
+      Clinical trial enrollment, outcomes, and effectiveness monitoring.
+      Tracks trial status, patient enrollment, outcome metrics, safety indicators,
+      and cost analysis across all active and historical clinical trials.
+      
+      **Use Cases:**
+      - Research program management
+      - Trial enrollment tracking
+      - Safety monitoring
+      - Publication planning
+      
+      **Refresh:** Real-time view on source data
+      **Materialization:** View
+    
+    columns:
+      - name: trial_name
+        description: "Clinical trial name identifier"
+      
+      - name: clinical_trial_id
+        description: "Unique clinical trial identifier"
+      
+      - name: trial_status
+        description: "Current trial status (Active, Recruiting, Completed, etc.)"
+      
+      - name: enrolled_patients
+        description: "Number of patients enrolled in trial"
+      
+      - name: avg_patient_outcome_score
+        description: "Average patient outcome score across trial participants"
+      
+      - name: success_rate
+        description: "Percentage of successful treatment outcomes"
+      
+      - name: satisfaction_rate
+        description: "Patient satisfaction rate"
+      
+      - name: severe_side_effects
+        description: "Count of severe or life-threatening side effects"
+      
+      - name: severe_side_effects_rate
+        description: "Percentage of patients with severe side effects"
+      
+      - name: total_trial_cost
+        description: "Total cost across all trial participants"
+      
+      - name: cost_per_successful_outcome
+        description: "Average cost per successful outcome"
+      
+      - name: related_publications
+        description: "Number of related medical publications"
+      
+      - name: efficiency_score
+        description: "Composite efficiency score based on success, satisfaction, and adherence"
+
+  - name: vw_cds_data_quality
+    description: |
+      Comprehensive data quality monitoring for CDS healthcare data.
+      Tracks completeness, validity, freshness, duplicates, and calculates
+      overall quality scores to ensure data reliability.
+      
+      **Use Cases:**
+      - Data quality monitoring
+      - ETL validation
+      - Data governance reporting
+      - Issue identification and remediation
+      
+      **Refresh:** Real-time view on source data
+      **Materialization:** View
+    
+    columns:
+      - name: report_name
+        description: "Data quality report identifier"
+      
+      - name: report_generated_at
+        description: "Timestamp when report was generated"
+      
+      - name: total_records
+        description: "Total number of records in dataset"
+      
+      - name: unique_patients
+        description: "Count of unique patient identifiers"
+      
+      - name: duplicate_record_ids
+        description: "Number of duplicate record IDs detected"
+      
+      - name: patient_id_null_pct
+        description: "Percentage of null patient IDs"
+      
+      - name: diagnosis_null_pct
+        description: "Percentage of null diagnoses"
+      
+      - name: treatment_outcome_null_pct
+        description: "Percentage of null treatment outcomes"
+      
+      - name: invalid_outcome_scores
+        description: "Count of outcome scores outside valid range (0.0-1.0)"
+      
+      - name: negative_care_costs
+        description: "Count of negative cost values (invalid)"
+      
+      - name: hours_since_last_sync
+        description: "Hours elapsed since last Fivetran sync"
+      
+      - name: completeness_score
+        description: "Overall completeness score (0-100, weighted by field importance)"
+      
+      - name: validity_score
+        description: "Overall validity score (0-100, based on value constraints)"
+      
+      - name: freshness_score
+        description: "Data freshness score (0-100, decreases with sync age)"
+      
+      - name: overall_quality_score
+        description: "Average of completeness, validity, and freshness scores"
+      
+      - name: quality_rating
+        description: "Quality assessment (Excellent, Good, Fair, Needs Attention)"
+
+  - name: vw_cds_high_risk_patients
+    description: |
+      Alert view identifying patients requiring immediate clinical attention.
+      Filters for high-risk conditions including readmission risk, poor outcomes,
+      critical vitals, medication issues, and quality of care concerns.
+      
+      **Use Cases:**
+      - Clinical team alerts
+      - Care coordination
+      - Proactive intervention
+      - Quality improvement initiatives
+      
+      **Refresh:** Real-time view on source data
+      **Materialization:** View
+    
+    columns:
+      - name: record_id
+        description: "Unique record identifier"
+      
+      - name: patient_id
+        description: "Patient identifier"
+      
+      - name: priority_level
+        description: "Alert priority (Critical, High, Medium, Low)"
+      
+      - name: risk_score
+        description: "Calculated risk score (0-10 scale, higher = more critical)"
+      
+      - name: active_risk_flags
+        description: "Number of active risk indicators for this patient"
+      
+      - name: diagnosis
+        description: "Primary diagnosis"
+      
+      - name: treatment_plan
+        description: "Current treatment plan"
+      
+      - name: treatment_outcome
+        description: "Treatment outcome status"
+      
+      - name: vital_signs
+        description: "Current vital signs status"
+      
+      - name: medication_adherence
+        description: "Medication adherence level"
+      
+      - name: patient_outcome_score
+        description: "Patient outcome score (0.0-1.0)"
+      
+      - name: readmission_risk
+        description: "Readmission risk score (0.0-1.0)"
+      
+      - name: high_readmission_risk
+        description: "Flag for readmission risk >0.7"
+      
+      - name: low_outcome_score
+        description: "Flag for outcome score <0.3"
+      
+      - name: critical_vitals
+        description: "Flag for critical or life-threatening vital signs"
+      
+      - name: severe_side_effects
+        description: "Flag for severe medication side effects"
+      
+      - name: non_adherent_unsuccessful
+        description: "Flag for non-adherent patients with unsuccessful treatment"
+      
+      - name: alert_message
+        description: "Generated alert message describing risk factors"
+      
+      - name: recommended_actions
+        description: "Array of recommended clinical actions"
+      
+      - name: last_updated
+        description: "Last Fivetran sync timestamp"

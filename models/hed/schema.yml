@@ -1,0 +1,236 @@
+version: 2
+
+models:
+  - name: vw_hed_student_success_kpi
+    description: "Executive-level KPI dashboard summarizing key student success metrics across enrollment, academic performance, engagement, financial aid, and interventions. Single-row summary view for dashboards and executive reporting."
+    columns:
+      - name: total_students
+        description: "Total count of unique students"
+      - name: at_risk_students
+        description: "Number of students flagged as at-risk for retention"
+      - name: at_risk_percentage
+        description: "Percentage of students at retention risk"
+      - name: avg_gpa
+        description: "Average GPA across all students"
+      - name: avg_completion_rate_pct
+        description: "Average course completion rate as percentage"
+      - name: avg_assignment_score
+        description: "Average assignment score across all students"
+      - name: credit_hour_success_rate
+        description: "Percentage of attempted credit hours successfully earned"
+      - name: avg_engagement_score
+        description: "Average student engagement score (0-100)"
+      - name: avg_course_views
+        description: "Average number of course material views per student"
+      - name: avg_assignments_submitted
+        description: "Average number of assignments submitted per student"
+      - name: avg_discussion_posts
+        description: "Average number of discussion posts per student"
+      - name: total_plagiarism_incidents
+        description: "Total academic integrity violations across all students"
+      - name: students_with_incidents_pct
+        description: "Percentage of students with at least one plagiarism incident"
+      - name: avg_writing_quality_score
+        description: "Average writing quality assessment score"
+      - name: total_financial_aid
+        description: "Total financial aid distributed to all students"
+      - name: avg_financial_aid_per_student
+        description: "Average financial aid amount per student"
+      - name: students_receiving_aid
+        description: "Number of students receiving financial aid"
+      - name: financial_aid_coverage_pct
+        description: "Percentage of students receiving financial aid"
+      - name: total_interventions
+        description: "Total academic interventions/support sessions"
+      - name: avg_interventions_per_student
+        description: "Average number of interventions per student"
+      - name: students_with_interventions
+        description: "Number of students who have received interventions"
+      - name: last_data_refresh
+        description: "Timestamp of most recent data update"
+      - name: report_generated_at
+        description: "Timestamp when this view was queried"
+
+  - name: vw_hed_retention_risk_analysis
+    description: "Detailed student-level retention risk analysis identifying at-risk students with risk factors, risk levels, and recommended interventions. Filters to show only at-risk students, ordered by severity."
+    columns:
+      - name: student_id
+        description: "Unique student identifier"
+      - name: major_code
+        description: "Student's academic major"
+      - name: advisor_id
+        description: "Assigned academic advisor"
+      - name: academic_standing
+        description: "Current academic status"
+      - name: at_risk_flag
+        description: "Boolean indicating retention risk (always TRUE in this view)"
+      - name: current_gpa
+        description: "Current cumulative GPA"
+      - name: gpa_risk_level
+        description: "Risk categorization based on GPA (Critical/High/Moderate/Low)"
+      - name: course_completion_rate
+        description: "Percentage of courses completed"
+      - name: completion_risk_level
+        description: "Risk categorization based on completion rate"
+      - name: engagement_score
+        description: "Composite engagement metric (0-100)"
+      - name: engagement_risk_level
+        description: "Risk categorization based on engagement"
+      - name: days_since_last_login
+        description: "Days elapsed since last LMS login"
+      - name: login_recency_risk_level
+        description: "Risk categorization based on login recency"
+      - name: financial_aid_amount
+        description: "Total financial aid received"
+      - name: financial_aid_category
+        description: "Financial aid classification (No Aid/Partial Aid/Full Support)"
+      - name: intervention_count
+        description: "Number of academic interventions received"
+      - name: intervention_category
+        description: "Intervention frequency classification"
+      - name: plagiarism_incidents
+        description: "Number of academic integrity violations"
+      - name: writing_quality_score
+        description: "Writing assessment score"
+      - name: overall_risk_assessment
+        description: "Composite risk level with severity classification"
+      - name: recommended_action
+        description: "Specific recommended interventions based on risk profile"
+
+  - name: vw_hed_program_performance
+    description: "Academic program performance analysis aggregated by major, comparing enrollment, academic outcomes, retention rates, engagement, and overall program health. Includes rankings and quartile classifications."
+    columns:
+      - name: major_code
+        description: "Academic major code"
+      - name: total_students
+        description: "Number of students enrolled in this major"
+      - name: advisors_assigned
+        description: "Number of advisors supporting this major"
+      - name: avg_students_per_advisor
+        description: "Average student-to-advisor ratio"
+      - name: avg_gpa
+        description: "Average GPA for students in this major"
+      - name: avg_completion_rate_pct
+        description: "Average course completion rate"
+      - name: avg_assignment_score
+        description: "Average assignment performance"
+      - name: credit_success_rate
+        description: "Percentage of attempted credits successfully earned"
+      - name: at_risk_students
+        description: "Number of at-risk students in this major"
+      - name: at_risk_percentage
+        description: "Percentage of students at retention risk"
+      - name: high_achievers
+        description: "Number of students on Dean's List, Honor Roll, or similar"
+      - name: students_on_probation
+        description: "Number of students on academic probation or warning"
+      - name: probation_rate
+        description: "Percentage of students on probation"
+      - name: avg_engagement_score
+        description: "Average engagement score for the major"
+      - name: avg_course_views
+        description: "Average course material views"
+      - name: total_plagiarism_incidents
+        description: "Total academic integrity violations"
+      - name: avg_writing_quality_score
+        description: "Average writing quality score"
+      - name: total_interventions
+        description: "Total academic interventions"
+      - name: avg_interventions_per_student
+        description: "Average interventions per student"
+      - name: total_financial_aid
+        description: "Total financial aid for this major"
+      - name: avg_financial_aid_per_student
+        description: "Average financial aid per student"
+      - name: financial_aid_coverage_pct
+        description: "Percentage of students receiving aid"
+      - name: program_health_score
+        description: "Composite score (0-100) combining GPA, completion, engagement, and retention"
+      - name: overall_health_rank
+        description: "Rank of this major's overall health score"
+      - name: performance_quartile
+        description: "Performance quartile (1=top, 4=bottom)"
+      - name: performance_category
+        description: "Qualitative performance classification"
+
+  - name: vw_hed_engagement_analytics
+    description: "Student-level engagement analysis examining LMS login patterns, course interactions, assignment behavior, and discussion participation. Identifies engagement concerns and recommends actions, ordered by urgency."
+    columns:
+      - name: student_id
+        description: "Unique student identifier"
+      - name: major_code
+        description: "Student's academic major"
+      - name: academic_standing
+        description: "Current academic status"
+      - name: at_risk_flag
+        description: "Retention risk indicator"
+      - name: last_login_date
+        description: "Most recent LMS login timestamp"
+      - name: days_since_last_login
+        description: "Days elapsed since last login"
+      - name: days_active_since_enrollment
+        description: "Days between enrollment and last login"
+      - name: login_recency_category
+        description: "Categorical description of login recency"
+      - name: total_course_views
+        description: "Total course material views"
+      - name: course_views_category
+        description: "Categorical classification of course viewing behavior"
+      - name: assignment_submissions
+        description: "Number of assignments submitted"
+      - name: avg_assignment_score
+        description: "Average assignment score"
+      - name: assignment_activity_category
+        description: "Categorical classification of assignment activity"
+      - name: assignment_performance_category
+        description: "Categorical classification of assignment performance"
+      - name: discussion_posts
+        description: "Number of discussion forum posts"
+      - name: discussion_participation_category
+        description: "Categorical classification of discussion participation"
+      - name: engagement_score
+        description: "Composite engagement metric (0-100)"
+      - name: engagement_level
+        description: "Qualitative engagement level classification"
+      - name: engagement_balance_score
+        description: "Normalized score measuring diversity of engagement across dimensions"
+      - name: current_gpa
+        description: "Current GPA"
+      - name: course_completion_rate
+        description: "Course completion percentage"
+      - name: intervention_count
+        description: "Number of interventions received"
+      - name: engagement_performance_quadrant
+        description: "Classification combining engagement and academic performance"
+      - name: engagement_concern_level
+        description: "Urgency classification for engagement-related concerns"
+      - name: recommended_engagement_action
+        description: "Specific recommended actions to improve or maintain engagement"
+
+  - name: vw_hed_data_quality
+    description: "Data quality monitoring dashboard providing completeness, validity, uniqueness, freshness, and anomaly detection metrics. Single-row summary with composite quality score and status."
+    columns:
+      - name: quality_check_timestamp
+        description: "Timestamp when quality checks were executed"
+      - name: report_section
+        description: "Report section identifier"
+      - name: completeness_score
+        description: "Overall data completeness score (0-100)"
+      - name: validity_score
+        description: "Overall data validity score (0-100)"
+      - name: uniqueness_score
+        description: "Student record uniqueness score (0-100)"
+      - name: freshness_score
+        description: "Data freshness score based on update recency (0-100)"
+      - name: composite_quality_score
+        description: "Composite quality score averaging all dimensions (0-100)"
+      - name: overall_quality_status
+        description: "Qualitative quality assessment (Excellent/Good/Acceptable/Needs Improvement)"
+      - name: total_records
+        description: "Total number of records in source table"
+      - name: unique_students
+        description: "Number of unique students"
+      - name: most_recent_data_update
+        description: "Timestamp of most recent data update"
+      - name: hours_since_last_update
+        description: "Hours elapsed since most recent update"

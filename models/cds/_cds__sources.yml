@@ -1,0 +1,117 @@
+version: 2
+
+sources:
+  - name: industries_healthcare
+    description: "Healthcare data from PostgreSQL industries database synced via Fivetran"
+    database: "{{ var('cds_source_database') }}"
+    schema: "{{ var('cds_source_schema') }}"
+    
+    tables:
+      - name: cds_records
+        description: "Clinical Decision Support (CDS) records including patient data, clinical trials, treatments, and outcomes"
+        identifier: "{{ var('cds_source_table') }}"
+
+        columns:
+          - name: record_id
+            description: "Unique identifier for each healthcare record"
+            tests:
+              - unique
+              - not_null
+          
+          - name: patient_id
+            description: "Unique patient identifier"
+            tests:
+              - not_null
+          
+          - name: diagnosis
+            description: "Primary diagnosis (e.g., Stroke, Diabetes, Cancer, Heart Disease)"
+          
+          - name: medical_conditions
+            description: "Current medical conditions"
+          
+          - name: allergies
+            description: "Patient allergy severity level (None, Mild, Moderate, Severe, Life-Threatening)"
+          
+          - name: vital_signs
+            description: "Current vital signs status (Stable, Unstable, Critical, Life-Threatening)"
+          
+          - name: genetic_data
+            description: "Genetic information (Genetic Disease, Genetic Disorder, Genetic Mutation, None)"
+          
+          - name: medical_history
+            description: "Patient medical history conditions"
+          
+          - name: family_medical_history
+            description: "Family medical history"
+          
+          - name: current_medications
+            description: "Currently prescribed medications"
+          
+          - name: medication_recommendation
+            description: "Recommended medications"
+          
+          - name: medication_adherence
+            description: "Patient medication adherence level (Adherent, Partially Adherent, Non-Adherent)"
+          
+          - name: medication_side_effects
+            description: "Severity of medication side effects (None, Mild, Moderate, Severe, Life-Threatening)"
+          
+          - name: medication_cost
+            description: "Cost of medications"
+          
+          - name: treatment_plan
+            description: "Current treatment plan (Monitoring, Medication, Surgery, Therapy, Lifestyle Changes)"
+          
+          - name: treatment_recommendation
+            description: "Recommended treatment approach"
+          
+          - name: treatment_outcome
+            description: "Treatment result (Successful, Partial Success, Ongoing, Unsuccessful)"
+          
+          - name: patient_outcome_score
+            description: "Overall patient outcome score (0.0 to 1.0 scale)"
+          
+          - name: patient_satisfaction
+            description: "Patient satisfaction level (Satisfied, Neutral, Unsatisfied)"
+          
+          - name: lab_results
+            description: "Laboratory test results status (Normal, Abnormal, Borderline, Critical, Life-Threatening)"
+          
+          - name: clinical_trial_id
+            description: "Clinical trial identifier"
+          
+          - name: trial_name
+            description: "Name of the clinical trial"
+          
+          - name: trial_status
+            description: "Clinical trial status (Active, Recruiting, Enrolling, Completed, Terminated, Inactive, Follow-up)"
+          
+          - name: medical_publication_id
+            description: "Related medical publication identifier"
+          
+          - name: publication_title
+            description: "Title of the medical publication"
+          
+          - name: publication_date
+            description: "Date of publication"
+          
+          - name: cost_of_care
+            description: "Total cost of patient care"
+          
+          - name: total_cost_savings
+            description: "Total cost savings achieved"
+          
+          - name: length_of_stay
+            description: "Hospital length of stay in days"
+          
+          - name: readmission_risk
+            description: "Risk of patient readmission (0.0 to 1.0 scale)"
+          
+          - name: medical_error_rate
+            description: "Medical error rate (0.0 to 1.0 scale)"
+          
+          - name: _fivetran_deleted
+            description: "Fivetran soft delete flag"
+          
+          - name: _fivetran_synced
+            description: "Timestamp of last Fivetran sync"

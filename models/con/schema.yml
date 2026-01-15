@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: vw_con_kpi
+    description: |
+      Executive KPI dashboard for construction projects providing summary metrics across all projects.
+      
+      **Key Metrics:**
+      - Task completion rates and status distribution
+      - Earned Value Management (EVM) performance indices (SPI, CPI)
+      - Risk profile and critical path analysis
+      - Resource economics and utilization
+      - Material delivery performance
+    config:
+      materialized: view
+      tags: ['analytics', 'kpi', 'executive', 'construction']
+
+  - name: vw_con_by_project
+    description: |
+      Project-level performance analysis with comprehensive metrics for each construction project.
+      Includes project health score (0-100) calculated from cost, schedule, risk, and completion metrics.
+    config:
+      materialized: view
+      tags: ['analytics', 'segmentation', 'construction']
+
+  - name: vw_con_weather_impact
+    description: |
+      Weather impact analysis correlating weather conditions with project delays and performance.
+      Includes weather severity score (0-100) based on delays, schedule variance, and equipment issues.
+    config:
+      materialized: view
+      tags: ['analytics', 'weather', 'construction', 'operations']
+
+  - name: vw_con_data_quality
+    description: |
+      Comprehensive data quality monitoring for construction records.
+      Tracks null percentages, logical consistency, business logic validation, and data freshness.
+      Includes overall quality score (0-100).
+    config:
+      materialized: view
+      tags: ['data_quality', 'monitoring', 'construction']
+
+  - name: vw_con_critical_alerts
+    description: |
+      Critical alerts identifying high-priority tasks requiring immediate attention.
+      Filters to tasks with alert_priority_score >= 10 and not completed.
+      Includes recommended actions for each alert.
+    config:
+      materialized: view
+      tags: ['alerts', 'operations', 'construction', 'monitoring']
