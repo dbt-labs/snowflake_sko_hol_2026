@@ -32,36 +32,43 @@ models:
       +tags: ['cds', 'healthcare']
       +schema: industries_healthcare
       +materialized: view
+      +enabled: false
+
     
     # MSO Manufacturing Industry Models
     mso:
       +tags: ['mso', 'manufacturing']
       +schema: industries_manufacturing
       +materialized: view
+      +enabled: false
     
     # CON Construction Industry Models (NEW)
     con:
       +tags: ['con', 'construction']
       +schema: industries_construction
       +materialized: view
+      +enabled: false
 
     # CPG Consumer Packaged Goods Industry Models (NEW)
     cpg:
       +tags: ['cpg', 'consumer_packaged_goods']
       +schema: industries_consumer_packaged_goods
       +materialized: view
+      +enabled: false
 
     # FTS Energy/Utilities Field Service Models (NEW)
     fts:
       +tags: ['fts', 'energy']
       +schema: industries_energy
       +materialized: view
+      +enabled: false
 
     # FPR Financial Services Industry Models (NEW)
     fpr:
       +tags: ['fpr', 'financial_services', 'industries']
       +schema: industries_financial_services
       +materialized: view
+      +enabled: false
 
     # HED Higher Education Models (NEW)
     hed:
@@ -112,8 +119,8 @@ vars:
   fpr_source_table: 'FPR_RECORDS'
 
   # Source configuration for HED Higher Education (NEW)
-  hed_source_database: 'HOL_DATABASE'
-  hed_source_schema: 'INDUSTRIES_HIGHER_EDUCATION'
+  hed_source_database: 'RAW'
+  hed_source_schema: 'higher_education_higher_education'
   hed_source_table: 'HED_RECORDS'
   
   # Future industry variables can be added here
