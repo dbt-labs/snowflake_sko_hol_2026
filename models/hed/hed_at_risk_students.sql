@@ -1,4 +1,3 @@
--- models/semantic/semantic_program_performance.sql
 {{ config(materialized="semantic_view",
     enabled=true,
     docs={'node_color': 'green'} 
