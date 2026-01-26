@@ -1,5 +1,6 @@
 {{ config(materialized="semantic_view",
     enabled=true,
+	static_analysis="off",
     docs={'node_color': 'green'} 
     )
 }}
