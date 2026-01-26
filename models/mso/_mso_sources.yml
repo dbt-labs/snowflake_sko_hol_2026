@@ -3,8 +3,9 @@ version: 2
 sources:
   - name: industries_mso
     description: "Manufacturing MSO (Material Selection Optimization) records from Fivetran Industries connector"
-    database: HOL_DATABASE
-    schema: INDUSTRIES_MANUFACTURING
+    database: "{{ var('mso_source_database', 'HOL_DATABASE') }}"
+    schema: "{{ var('mso_source_schema', 'INDUSTRIES_MANUFACTURING') }}"
+
     tables:
       - name: MSO_RECORDS
         description: "Manufacturing material selection and optimization data including material properties, designer info, CAD systems, and optimization metrics"

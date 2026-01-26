@@ -6,8 +6,9 @@ sources:
       Field Technician Service (FTS) data for energy/utilities maintenance operations.
       Contains maintenance logs, equipment reliability metrics, technician activities,
       and operational efficiency data from Fivetran Industries connector.
-    database: HOL_DATABASE
-    schema: INDUSTRIES_ENERGY
+    database: "{{ var('fts_source_database', 'HOL_DATABASE') }}"
+    schema: "{{ var('fts_source_schema', '    schema: INDUSTRIES_ENERGY') }}"
+
     tables:
       - name: fts_records
         description: >

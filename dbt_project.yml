@@ -89,32 +89,32 @@ models:
 
 vars:
   # Source configuration for CDS Healthcare
-  cds_source_database: 'HOL_DATABASE'
+  cds_source_database: 'RAW'
   cds_source_schema: 'INDUSTRIES_HEALTHCARE'
   cds_source_table: 'CDS_RECORDS'
   
   # Source configuration for MSO Manufacturing
-  mso_source_database: 'HOL_DATABASE'
+  mso_source_database: 'RAW'
   mso_source_schema: 'INDUSTRIES_MANUFACTURING'
   mso_source_table: 'MSO_RECORDS'
   
   # Source configuration for CON Construction (NEW)
-  con_source_database: 'HOL_DATABASE'
+  con_source_database: 'RAW'
   con_source_schema: 'INDUSTRIES_CONSTRUCTION'
   con_source_table: 'CON_RECORDS'
 
   # Source configuration for CPG Consumer Packaged Goods (NEW)
-  cpg_source_database: 'HOL_DATABASE'
+  cpg_source_database: 'RAW'
   cpg_source_schema: 'INDUSTRIES_CONSUMER_PACKAGED_GOODS'
   cpg_source_table: 'CPG_RECORDS'
 
   # Source configuration for FTS Energy (NEW)
-  fts_source_database: 'HOL_DATABASE'
+  fts_source_database: 'RAW'
   fts_source_schema: 'INDUSTRIES_ENERGY'
   fts_source_table: 'FTS_RECORDS'
 
   # Source configuration for FPR Financial Services (NEW)
-  fpr_source_database: 'HOL_DATABASE'
+  fpr_source_database: 'RAW'
   fpr_source_schema: 'INDUSTRIES_FINANCIAL_SERVICES'
   fpr_source_table: 'FPR_RECORDS'
 
@@ -124,6 +124,6 @@ vars:
   hed_source_table: 'HED_RECORDS'
   
   # Future industry variables can be added here
-  # agr_source_database: 'HOL_DATABASE'
+  # agr_source_database: 'RAW'
   # agr_source_schema: 'INDUSTRIES_AGRICULTURE'
   # agr_source_table: 'AGR_RECORDS'
