@@ -7,8 +7,8 @@ version: 2
 sources:
   - name: industries_construction
     description: "Fivetran connector syncing construction project management data from the Industries connector"
-    database: HOL_DATABASE
-    schema: INDUSTRIES_CONSTRUCTION
+    database: "{{ var('con_source_database', 'HOL_DATABASE') }}"
+    schema: "{{ var('con_source_schema', 'INDUSTRIES_CONSTRUCTION') }}"
     
     tables:
       - name: CON_RECORDS

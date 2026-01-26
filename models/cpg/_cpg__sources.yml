@@ -6,8 +6,8 @@ sources:
       Consumer Packaged Goods (CPG) data from Fivetran Industries connector.
       Contains order transactions, pricing optimization results, inventory metrics,
       and customer segmentation data.
-    database: HOL_DATABASE
-    schema: INDUSTRIES_CONSUMER_PACKAGED_GOODS
+    database: "{{ var('cpg_source_database', 'HOL_DATABASE') }}"
+    schema: "{{ var('cpg_source_schema', '    schema: INDUSTRIES_CONSUMER_PACKAGED_GOODS') }}"
     tables:
       - name: cpg_records
         description: >
