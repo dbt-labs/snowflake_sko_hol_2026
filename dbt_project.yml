@@ -18,6 +18,7 @@ clean-targets:
   - "target"
   - "dbt_packages"
   - "logs"
+  - "docs"
 
 # Global configurations
 models:
