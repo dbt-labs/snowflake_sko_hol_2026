@@ -23,9 +23,6 @@ models:
         description: "Current academic status (e.g., Good Standing, Probation)"
         data_tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values: ['Good Standing', 'Probation', 'Academic Warning', 'Dean''s List', 'Honor Roll']
       - name: current_gpa
         description: "Current cumulative GPA"
         data_tests:

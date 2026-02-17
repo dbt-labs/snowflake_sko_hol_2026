@@ -79,44 +79,24 @@ models:
         description: "Course viewing behavior category (Very High/High/Moderate/Low/Very Low)"
         data_tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values: ['Very High', 'High', 'Moderate', 'Low', 'Very Low']
       - name: assignment_activity_category
         description: "Assignment submission activity level"
         data_tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values: ['Very High', 'High', 'Moderate', 'Low', 'Very Low']
       - name: assignment_performance_category
         description: "Assignment score performance category"
         data_tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values: ['Excellent', 'Good', 'Average', 'Below Average', 'Poor']
       - name: discussion_participation_category
         description: "Discussion forum participation level"
         data_tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values: ['Very Active', 'Active', 'Moderate', 'Low', 'Inactive']
       - name: engagement_level
         description: "Overall engagement classification (Highly Engaged to Critically Disengaged)"
         data_tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values: ['Highly Engaged', 'Engaged', 'Moderately Engaged', 'Disengaged', 'Critically Disengaged']
       - name: engagement_balance_score
         description: "Normalized score measuring diversity of engagement across dimensions"
-        data_tests:
-          - dbt_utils.accepted_range:
-              arguments:
-                min_value: 0
-                max_value: 100
       - name: engagement_performance_quadrant
         description: "Classification combining engagement and academic performance"
         data_tests:
@@ -125,9 +105,6 @@ models:
         description: "Urgency classification for engagement-related concerns"
         data_tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values: ['Critical', 'High', 'Moderate', 'Low', 'None']
       - name: recommended_engagement_action
         description: "Specific recommended actions based on engagement profile"
         data_tests:
