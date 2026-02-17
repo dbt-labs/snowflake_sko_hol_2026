@@ -27,49 +27,6 @@ models:
     +persist_docs:
       relation: true
       columns: true
-    
-    # CDS Healthcare Industry Models
-    cds:
-      +tags: ['cds', 'healthcare']
-      +schema: industries_healthcare
-      +materialized: view
-      +enabled: false
-
-    
-    # MSO Manufacturing Industry Models
-    mso:
-      +tags: ['mso', 'manufacturing']
-      +schema: industries_manufacturing
-      +materialized: view
-      +enabled: false
-    
-    # CON Construction Industry Models (NEW)
-    con:
-      +tags: ['con', 'construction']
-      +schema: industries_construction
-      +materialized: view
-      +enabled: false
-
-    # CPG Consumer Packaged Goods Industry Models (NEW)
-    cpg:
-      +tags: ['cpg', 'consumer_packaged_goods']
-      +schema: industries_consumer_packaged_goods
-      +materialized: view
-      +enabled: false
-
-    # FTS Energy/Utilities Field Service Models (NEW)
-    fts:
-      +tags: ['fts', 'energy']
-      +schema: industries_energy
-      +materialized: view
-      +enabled: false
-
-    # FPR Financial Services Industry Models (NEW)
-    fpr:
-      +tags: ['fpr', 'financial_services', 'industries']
-      +schema: industries_financial_services
-      +materialized: view
-      +enabled: false
 
     # HED Higher Education Models (NEW)
     hed:
@@ -89,42 +46,8 @@ models:
     #   +materialized: view
 
 vars:
-  # Source configuration for CDS Healthcare
-  cds_source_database: 'RAW'
-  cds_source_schema: 'INDUSTRIES_HEALTHCARE'
-  cds_source_table: 'CDS_RECORDS'
-  
-  # Source configuration for MSO Manufacturing
-  mso_source_database: 'RAW'
-  mso_source_schema: 'INDUSTRIES_MANUFACTURING'
-  mso_source_table: 'MSO_RECORDS'
-  
-  # Source configuration for CON Construction (NEW)
-  con_source_database: 'RAW'
-  con_source_schema: 'INDUSTRIES_CONSTRUCTION'
-  con_source_table: 'CON_RECORDS'
-
-  # Source configuration for CPG Consumer Packaged Goods (NEW)
-  cpg_source_database: 'RAW'
-  cpg_source_schema: 'INDUSTRIES_CONSUMER_PACKAGED_GOODS'
-  cpg_source_table: 'CPG_RECORDS'
-
-  # Source configuration for FTS Energy (NEW)
-  fts_source_database: 'RAW'
-  fts_source_schema: 'INDUSTRIES_ENERGY'
-  fts_source_table: 'FTS_RECORDS'
-
-  # Source configuration for FPR Financial Services (NEW)
-  fpr_source_database: 'RAW'
-  fpr_source_schema: 'INDUSTRIES_FINANCIAL_SERVICES'
-  fpr_source_table: 'FPR_RECORDS'
-
   # Source configuration for HED Higher Education (NEW)
   hed_source_database: 'RAW'
-  hed_source_schema: 'higher_education_higher_education'
+  hed_source_schema: 'INDUSTRIES_HIGHER_EDUCATION'
   hed_source_table: 'HED_RECORDS'
   
-  # Future industry variables can be added here
-  # agr_source_database: 'RAW'
-  # agr_source_schema: 'INDUSTRIES_AGRICULTURE'
-  # agr_source_table: 'AGR_RECORDS'
