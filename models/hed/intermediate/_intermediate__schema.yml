@@ -6,45 +6,115 @@ models:
     columns:
       - name: student_id
         description: "Unique student identifier"
+        data_tests:
+          - not_null
+          - unique
       - name: gpa_risk_level
         description: "Risk categorization based on GPA (Critical/High/Moderate/Low)"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Critical', 'High', 'Moderate', 'Low']
       - name: completion_risk_level
         description: "Risk categorization based on course completion rate"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Critical', 'High', 'Moderate', 'Low']
       - name: engagement_risk_level
         description: "Risk categorization based on engagement score"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Critical', 'High', 'Moderate', 'Low']
       - name: login_recency_risk_level
         description: "Risk categorization based on days since last login"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Critical', 'High', 'Moderate', 'Low']
       - name: financial_aid_category
         description: "Financial aid classification (No Aid/Partial Aid/Full Support)"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['No Aid', 'Partial Aid', 'Full Support']
       - name: intervention_category
         description: "Intervention frequency classification"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['No Intervention', 'Low Intervention', 'Moderate Intervention', 'High Intervention']
       - name: overall_risk_assessment
         description: "Composite risk level combining all dimensions"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Critical - Immediate Intervention', 'High - Priority Attention', 'Moderate - Monitor Closely', 'Low - Standard Support']
       - name: recommended_action
         description: "Recommended interventions based on risk profile"
+        data_tests:
+          - not_null
 
   - name: int_hed__engagement_categories
     description: "Intermediate model providing centralized engagement categorization logic. Calculates login recency, course views, assignment activity, discussion participation, and engagement levels used by downstream engagement analytics models."
     columns:
       - name: student_id
         description: "Unique student identifier"
+        data_tests:
+          - not_null
+          - unique
       - name: login_recency_category
         description: "Categorical description of login recency (Today, Within 24 Hours, etc.)"
+        data_tests:
+          - not_null
       - name: course_views_category
         description: "Course viewing behavior category (Very High/High/Moderate/Low/Very Low)"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Very High', 'High', 'Moderate', 'Low', 'Very Low']
       - name: assignment_activity_category
         description: "Assignment submission activity level"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Very High', 'High', 'Moderate', 'Low', 'Very Low']
       - name: assignment_performance_category
         description: "Assignment score performance category"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Excellent', 'Good', 'Average', 'Below Average', 'Poor']
       - name: discussion_participation_category
         description: "Discussion forum participation level"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Very Active', 'Active', 'Moderate', 'Low', 'Inactive']
       - name: engagement_level
         description: "Overall engagement classification (Highly Engaged to Critically Disengaged)"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Highly Engaged', 'Engaged', 'Moderately Engaged', 'Disengaged', 'Critically Disengaged']
       - name: engagement_balance_score
         description: "Normalized score measuring diversity of engagement across dimensions"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
       - name: engagement_performance_quadrant
         description: "Classification combining engagement and academic performance"
+        data_tests:
+          - not_null
       - name: engagement_concern_level
         description: "Urgency classification for engagement-related concerns"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Critical', 'High', 'Moderate', 'Low', 'None']
       - name: recommended_engagement_action
         description: "Specific recommended actions based on engagement profile"
+        data_tests:
+          - not_null

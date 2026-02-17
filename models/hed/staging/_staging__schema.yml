@@ -6,44 +6,108 @@ models:
     columns:
       - name: record_id
         description: "Primary key for each record"
+        data_tests:
+          - unique
+          - not_null
       - name: student_id
         description: "Unique student identifier"
+        data_tests:
+          - not_null
       - name: advisor_id
         description: "Academic advisor assigned to student"
       - name: major_code
         description: "Student's declared major code"
+        data_tests:
+          - not_null
       - name: academic_standing
         description: "Current academic status (e.g., Good Standing, Probation)"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ['Good Standing', 'Probation', 'Academic Warning', 'Dean''s List', 'Honor Roll']
       - name: current_gpa
         description: "Current cumulative GPA"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 4
       - name: credit_hours_attempted
         description: "Total credit hours attempted"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
       - name: credit_hours_earned
         description: "Total credit hours earned"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
       - name: course_completion_rate
         description: "Percentage of courses completed (0-1 scale)"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
       - name: avg_assignment_score
         description: "Average score across all assignments"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
       - name: engagement_score
         description: "Composite engagement metric (0-100)"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
       - name: total_course_views
         description: "Total number of course material views"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
       - name: assignment_submissions
         description: "Number of assignments submitted"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
       - name: discussion_posts
         description: "Number of discussion forum posts"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
       - name: plagiarism_incidents
         description: "Number of academic integrity violations"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
       - name: writing_quality_score
         description: "Writing assessment score (0-100)"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
       - name: financial_aid_amount
         description: "Total financial aid received"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
       - name: at_risk_flag
         description: "Boolean flag indicating retention risk"
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
       - name: intervention_count
         description: "Number of academic interventions"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
       - name: enrollment_date
         description: "Date student enrolled"
+        data_tests:
+          - not_null
       - name: last_login_date
         description: "Most recent LMS login timestamp"
       - name: last_updated
@@ -54,3 +118,7 @@ models:
         description: "Calculated: Days between enrollment and last login"
       - name: credit_success_rate_pct
         description: "Calculated: Percentage of attempted credits earned"
+        data_tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
