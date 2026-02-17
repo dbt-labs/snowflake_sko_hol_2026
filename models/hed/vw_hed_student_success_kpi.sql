@@ -21,7 +21,7 @@
 
 with source_data as (
   select *
-  from {{ source('hed', 'hed_records') }}
+  from {{ ref('stg_hed__students') }}
 ),
 
 kpi_summary as (

@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: stg_hed__students
+    description: "Staging model for HED student records. Single source of truth that centralizes the source reference, standardizes column naming, and provides base calculations used across all downstream models."
+    columns:
+      - name: record_id
+        description: "Primary key for each record"
+      - name: student_id
+        description: "Unique student identifier"
+      - name: advisor_id
+        description: "Academic advisor assigned to student"
+      - name: major_code
+        description: "Student's declared major code"
+      - name: academic_standing
+        description: "Current academic status (e.g., Good Standing, Probation)"
+      - name: current_gpa
+        description: "Current cumulative GPA"
+      - name: credit_hours_attempted
+        description: "Total credit hours attempted"
+      - name: credit_hours_earned
+        description: "Total credit hours earned"
+      - name: course_completion_rate
+        description: "Percentage of courses completed (0-1 scale)"
+      - name: avg_assignment_score
+        description: "Average score across all assignments"
+      - name: engagement_score
+        description: "Composite engagement metric (0-100)"
+      - name: total_course_views
+        description: "Total number of course material views"
+      - name: assignment_submissions
+        description: "Number of assignments submitted"
+      - name: discussion_posts
+        description: "Number of discussion forum posts"
+      - name: plagiarism_incidents
+        description: "Number of academic integrity violations"
+      - name: writing_quality_score
+        description: "Writing assessment score (0-100)"
+      - name: financial_aid_amount
+        description: "Total financial aid received"
+      - name: at_risk_flag
+        description: "Boolean flag indicating retention risk"
+      - name: intervention_count
+        description: "Number of academic interventions"
+      - name: enrollment_date
+        description: "Date student enrolled"
+      - name: last_login_date
+        description: "Most recent LMS login timestamp"
+      - name: last_updated
+        description: "Timestamp of last record update"
+      - name: days_since_last_login
+        description: "Calculated: Days since last LMS login"
+      - name: days_active_since_enrollment
+        description: "Calculated: Days between enrollment and last login"
+      - name: credit_success_rate_pct
+        description: "Calculated: Percentage of attempted credits earned"

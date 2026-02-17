@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: int_hed__risk_levels
+    description: "Intermediate model providing centralized risk categorization logic. Calculates GPA risk, completion risk, engagement risk, login recency risk, and overall risk assessment used by downstream retention analysis models."
+    columns:
+      - name: student_id
+        description: "Unique student identifier"
+      - name: gpa_risk_level
+        description: "Risk categorization based on GPA (Critical/High/Moderate/Low)"
+      - name: completion_risk_level
+        description: "Risk categorization based on course completion rate"
+      - name: engagement_risk_level
+        description: "Risk categorization based on engagement score"
+      - name: login_recency_risk_level
+        description: "Risk categorization based on days since last login"
+      - name: financial_aid_category
+        description: "Financial aid classification (No Aid/Partial Aid/Full Support)"
+      - name: intervention_category
+        description: "Intervention frequency classification"
+      - name: overall_risk_assessment
+        description: "Composite risk level combining all dimensions"
+      - name: recommended_action
+        description: "Recommended interventions based on risk profile"
+
+  - name: int_hed__engagement_categories
+    description: "Intermediate model providing centralized engagement categorization logic. Calculates login recency, course views, assignment activity, discussion participation, and engagement levels used by downstream engagement analytics models."
+    columns:
+      - name: student_id
+        description: "Unique student identifier"
+      - name: login_recency_category
+        description: "Categorical description of login recency (Today, Within 24 Hours, etc.)"
+      - name: course_views_category
+        description: "Course viewing behavior category (Very High/High/Moderate/Low/Very Low)"
+      - name: assignment_activity_category
+        description: "Assignment submission activity level"
+      - name: assignment_performance_category
+        description: "Assignment score performance category"
+      - name: discussion_participation_category
+        description: "Discussion forum participation level"
+      - name: engagement_level
+        description: "Overall engagement classification (Highly Engaged to Critically Disengaged)"
+      - name: engagement_balance_score
+        description: "Normalized score measuring diversity of engagement across dimensions"
+      - name: engagement_performance_quadrant
+        description: "Classification combining engagement and academic performance"
+      - name: engagement_concern_level
+        description: "Urgency classification for engagement-related concerns"
+      - name: recommended_engagement_action
+        description: "Specific recommended actions based on engagement profile"

@@ -1,0 +1,82 @@
+version: 2
+
+models:
+  - name: dq_hed__completeness
+    description: "Data quality component that monitors field completeness across required fields. Calculates missing value counts and completeness percentages for student IDs, enrollment dates, academic standing, GPA, and major codes."
+    columns:
+      - name: quality_dimension
+        description: "Quality dimension identifier (Record Completeness)"
+      - name: total_records
+        description: "Total number of records in source"
+      - name: unique_students
+        description: "Count of unique student IDs"
+      - name: unique_record_ids
+        description: "Count of unique record IDs"
+      - name: missing_student_ids
+        description: "Count of records missing student_id"
+      - name: missing_enrollment_dates
+        description: "Count of records missing enrollment_date"
+      - name: missing_academic_standing
+        description: "Count of records missing academic_standing"
+      - name: missing_gpa
+        description: "Count of records missing current_gpa"
+      - name: missing_major_codes
+        description: "Count of records missing major_code"
+      - name: overall_completeness_score
+        description: "Overall completeness score (0-100)"
+
+  - name: dq_hed__validity
+    description: "Data quality component that validates data ranges and logical consistency. Checks GPA bounds, credit hour logic, completion rate bounds, engagement score bounds, financial aid validity, and date logic."
+    columns:
+      - name: quality_dimension
+        description: "Quality dimension identifier (Data Validity)"
+      - name: invalid_gpa_records
+        description: "Count of records with GPA outside 0.0-4.0 range"
+      - name: gpa_validity_pct
+        description: "Percentage of records with valid GPA"
+      - name: invalid_credit_hour_records
+        description: "Count of records where earned > attempted"
+      - name: credit_hours_validity_pct
+        description: "Percentage of records with valid credit hours"
+      - name: overall_validity_score
+        description: "Overall validity score (0-100)"
+
+  - name: dq_hed__duplicates
+    description: "Data quality component that detects duplicate records. Identifies duplicate student IDs and record IDs, calculating uniqueness percentages."
+    columns:
+      - name: quality_dimension
+        description: "Quality dimension identifier (Duplicate Detection)"
+      - name: total_records
+        description: "Total number of records"
+      - name: unique_students
+        description: "Count of unique students"
+      - name: duplicate_student_records
+        description: "Count of duplicate student records"
+      - name: unique_record_ids
+        description: "Count of unique record IDs"
+      - name: duplicate_record_ids
+        description: "Count of duplicate record IDs"
+      - name: student_uniqueness_pct
+        description: "Percentage of unique student records"
+      - name: record_id_uniqueness_pct
+        description: "Percentage of unique record IDs"
+
+  - name: dq_hed__freshness
+    description: "Data quality component that monitors data freshness and staleness. Tracks most recent updates, calculates hours/days since last update, and identifies stale records."
+    columns:
+      - name: quality_dimension
+        description: "Quality dimension identifier (Data Freshness)"
+      - name: most_recent_update
+        description: "Timestamp of most recent data update"
+      - name: oldest_update
+        description: "Timestamp of oldest data update"
+      - name: hours_since_last_update
+        description: "Hours elapsed since last update"
+      - name: days_since_last_update
+        description: "Days elapsed since last update"
+      - name: freshness_status
+        description: "Freshness classification (Excellent/Good/Acceptable/Needs Attention/Stale)"
+      - name: records_over_7_days_old
+        description: "Count of records not updated in 7+ days"
+      - name: records_current_pct
+        description: "Percentage of records updated within 7 days"
