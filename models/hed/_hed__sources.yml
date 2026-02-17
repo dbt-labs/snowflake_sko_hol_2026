@@ -12,12 +12,19 @@ sources:
         columns:
           - name: record_id
             description: "Primary key for each record"
+            data_tests:
+              - unique
+              - not_null
           - name: student_id
             description: "Unique student identifier"
+            data_tests:
+              - not_null
           - name: enrollment_date
             description: "Date student enrolled"
           - name: academic_standing
             description: "Current academic status (e.g., Good Standing, Probation, Dean's List)"
+            data_tests:
+              - not_null
           - name: current_gpa
             description: "Current cumulative GPA"
           - name: credit_hours_attempted
