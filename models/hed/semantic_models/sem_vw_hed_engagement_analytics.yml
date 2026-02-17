@@ -1,0 +1,154 @@
+semantic_models:
+  - name: vw_hed_engagement_analytics
+    description: |
+      Student-level engagement analysis examining LMS login patterns, course
+      interactions, assignment behavior, and discussion participation. Identifies engagement
+      concerns and recommends actions, ordered by urgency.
+    model: ref('vw_hed_engagement_analytics')
+    defaults:
+      agg_time_dimension: last_login_date
+    
+    entities:
+      - name: student
+        type: primary
+        expr: STUDENT_ID
+    
+    dimensions:
+      - name: major_code
+        type: categorical
+      - name: academic_standing
+        type: categorical
+      - name: is_at_risk
+        expr: AT_RISK_FLAG
+        type: categorical
+      - name: last_login_date
+        type: time
+        type_params:
+          time_granularity: day
+      - name: login_recency_category
+        type: categorical
+      - name: course_views_category
+        type: categorical
+      - name: assignment_activity_category
+        type: categorical
+      - name: assignment_performance_category
+        type: categorical
+      - name: discussion_participation_category
+        type: categorical
+      - name: engagement_level
+        type: categorical
+      - name: engagement_performance_quadrant
+        type: categorical
+      - name: engagement_concern_level
+        type: categorical
+      - name: recommended_engagement_action
+        type: categorical
+      - name: enrollment_date
+        type: time
+        type_params:
+          time_granularity: day
+      - name: last_updated
+        type: time
+        type_params:
+          time_granularity: day
+    
+    measures:
+      - name: days_since_last_login
+        agg: sum
+      - name: days_active_since_enrollment
+        agg: sum
+      - name: total_course_views
+        agg: sum
+      - name: assignment_submissions
+        agg: sum
+      - name: avg_assignment_score
+        agg: average
+      - name: discussion_posts
+        agg: sum
+      - name: engagement_score
+        agg: average
+      - name: engagement_balance_score
+        agg: average
+      - name: current_gpa
+        agg: average
+      - name: course_completion_rate
+        agg: average
+      - name: intervention_count
+        agg: sum
+      - name: count_student
+        agg: count
+        expr: STUDENT_ID
+
+# Separate metrics definitions (no longer inline with measures)
+metrics:
+  - name: days_since_last_login
+    type: simple
+    label: Days Since Last Login
+    type_params:
+      measure: days_since_last_login
+  
+  - name: days_active_since_enrollment
+    type: simple
+    label: Days Active Since Enrollment
+    type_params:
+      measure: days_active_since_enrollment
+  
+  - name: total_course_views
+    type: simple
+    label: Total Course Views
+    type_params:
+      measure: total_course_views
+  
+  - name: assignment_submissions
+    type: simple
+    label: Assignment Submissions
+    type_params:
+      measure: assignment_submissions
+  
+  - name: avg_assignment_score
+    type: simple
+    label: Average Assignment Score
+    type_params:
+      measure: avg_assignment_score
+  
+  - name: discussion_posts
+    type: simple
+    label: Discussion Posts
+    type_params:
+      measure: discussion_posts
+  
+  - name: engagement_score
+    type: simple
+    label: Engagement Score
+    type_params:
+      measure: engagement_score
+  
+  - name: engagement_balance_score
+    type: simple
+    label: Engagement Balance Score
+    type_params:
+      measure: engagement_balance_score
+  
+  - name: current_gpa
+    type: simple
+    label: Current GPA
+    type_params:
+      measure: current_gpa
+  
+  - name: course_completion_rate
+    type: simple
+    label: Course Completion Rate
+    type_params:
+      measure: course_completion_rate
+  
+  - name: intervention_count
+    type: simple
+    label: Intervention Count
+    type_params:
+      measure: intervention_count
+  
+  - name: count_student
+    type: simple
+    label: Student Count
+    type_params:
+      measure: count_student
