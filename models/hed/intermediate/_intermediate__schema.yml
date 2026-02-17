@@ -14,43 +14,50 @@ models:
         data_tests:
           - not_null
           - accepted_values:
-              values: ['Critical', 'High', 'Moderate', 'Low']
+              arguments:
+                values: ['Critical', 'High', 'Moderate', 'Low']
       - name: completion_risk_level
         description: "Risk categorization based on course completion rate"
         data_tests:
           - not_null
           - accepted_values:
-              values: ['Critical', 'High', 'Moderate', 'Low']
+              arguments:
+                values: ['Critical', 'High', 'Moderate', 'Low']
       - name: engagement_risk_level
         description: "Risk categorization based on engagement score"
         data_tests:
           - not_null
           - accepted_values:
-              values: ['Critical', 'High', 'Moderate', 'Low']
+              arguments:
+                values: ['Critical', 'High', 'Moderate', 'Low']
       - name: login_recency_risk_level
         description: "Risk categorization based on days since last login"
         data_tests:
           - not_null
           - accepted_values:
-              values: ['Critical', 'High', 'Moderate', 'Low']
+              arguments:
+                values: ['Critical', 'High', 'Moderate', 'Low']
       - name: financial_aid_category
         description: "Financial aid classification (No Aid/Partial Aid/Full Support)"
         data_tests:
           - not_null
           - accepted_values:
-              values: ['No Aid', 'Partial Aid', 'Full Support']
+              arguments:
+                values: ['No Aid', 'Partial Aid', 'Full Support']
       - name: intervention_category
         description: "Intervention frequency classification"
         data_tests:
           - not_null
           - accepted_values:
-              values: ['No Intervention', 'Low Intervention', 'Moderate Intervention', 'High Intervention']
+              arguments:
+                values: ['No Intervention', 'Low Intervention', 'Moderate Intervention', 'High Intervention']
       - name: overall_risk_assessment
         description: "Composite risk level combining all dimensions"
         data_tests:
           - not_null
           - accepted_values:
-              values: ['Critical - Immediate Intervention', 'High - Priority Attention', 'Moderate - Monitor Closely', 'Low - Standard Support']
+              arguments:
+                values: ['Critical - Immediate Intervention', 'High - Priority Attention', 'Moderate - Monitor Closely', 'Low - Standard Support']
       - name: recommended_action
         description: "Recommended interventions based on risk profile"
         data_tests:
@@ -73,37 +80,43 @@ models:
         data_tests:
           - not_null
           - accepted_values:
-              values: ['Very High', 'High', 'Moderate', 'Low', 'Very Low']
+              arguments:
+                values: ['Very High', 'High', 'Moderate', 'Low', 'Very Low']
       - name: assignment_activity_category
         description: "Assignment submission activity level"
         data_tests:
           - not_null
           - accepted_values:
-              values: ['Very High', 'High', 'Moderate', 'Low', 'Very Low']
+              arguments:
+                values: ['Very High', 'High', 'Moderate', 'Low', 'Very Low']
       - name: assignment_performance_category
         description: "Assignment score performance category"
         data_tests:
           - not_null
           - accepted_values:
-              values: ['Excellent', 'Good', 'Average', 'Below Average', 'Poor']
+              arguments:
+                values: ['Excellent', 'Good', 'Average', 'Below Average', 'Poor']
       - name: discussion_participation_category
         description: "Discussion forum participation level"
         data_tests:
           - not_null
           - accepted_values:
-              values: ['Very Active', 'Active', 'Moderate', 'Low', 'Inactive']
+              arguments:
+                values: ['Very Active', 'Active', 'Moderate', 'Low', 'Inactive']
       - name: engagement_level
         description: "Overall engagement classification (Highly Engaged to Critically Disengaged)"
         data_tests:
           - not_null
           - accepted_values:
-              values: ['Highly Engaged', 'Engaged', 'Moderately Engaged', 'Disengaged', 'Critically Disengaged']
+              arguments:
+                values: ['Highly Engaged', 'Engaged', 'Moderately Engaged', 'Disengaged', 'Critically Disengaged']
       - name: engagement_balance_score
         description: "Normalized score measuring diversity of engagement across dimensions"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: engagement_performance_quadrant
         description: "Classification combining engagement and academic performance"
         data_tests:
@@ -113,7 +126,8 @@ models:
         data_tests:
           - not_null
           - accepted_values:
-              values: ['Critical', 'High', 'Moderate', 'Low', 'None']
+              arguments:
+                values: ['Critical', 'High', 'Moderate', 'Low', 'None']
       - name: recommended_engagement_action
         description: "Specific recommended actions based on engagement profile"
         data_tests:

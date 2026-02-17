@@ -26,7 +26,8 @@ sources:
             data_tests:
               - not_null
               - accepted_values:
-                  values: ['Good Standing', 'Probation', 'Academic Warning', 'Dean''s List', 'Honor Roll']
+                  arguments:
+                    values: ['Good Standing', 'Probation', 'Academic Warning', 'Dean''s List', 'Honor Roll']
           - name: current_gpa
             description: "Current cumulative GPA"
           - name: credit_hours_attempted

@@ -9,49 +9,57 @@ models:
         data_tests:
           - not_null
           - dbt_utils.accepted_range:
-              min_value: 0
+              arguments:
+                min_value: 0
       - name: at_risk_students
         description: "Number of students flagged as at-risk for retention"
         data_tests:
           - not_null
           - dbt_utils.accepted_range:
-              min_value: 0
+              arguments:
+                min_value: 0
       - name: at_risk_percentage
         description: "Percentage of students at retention risk"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: avg_gpa
         description: "Average GPA across all students"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 4
+              arguments:
+                min_value: 0
+                max_value: 4
       - name: avg_completion_rate_pct
         description: "Average course completion rate as percentage"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: avg_assignment_score
         description: "Average assignment score across all students"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: credit_hour_success_rate
         description: "Percentage of attempted credit hours successfully earned"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: avg_engagement_score
         description: "Average student engagement score (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: avg_course_views
         description: "Average number of course material views per student"
       - name: avg_assignments_submitted
@@ -64,14 +72,16 @@ models:
         description: "Percentage of students with at least one plagiarism incident"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: avg_writing_quality_score
         description: "Average writing quality assessment score"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: total_financial_aid
         description: "Total financial aid distributed to all students"
       - name: avg_financial_aid_per_student
@@ -82,8 +92,9 @@ models:
         description: "Percentage of students receiving financial aid"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: total_interventions
         description: "Total academic interventions/support sessions"
       - name: avg_interventions_per_student
@@ -118,43 +129,50 @@ models:
         data_tests:
           - not_null
           - accepted_values:
-              values: [true]
+              arguments:
+                values: [true]
       - name: current_gpa
         description: "Current cumulative GPA"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 4
+              arguments:
+                min_value: 0
+                max_value: 4
       - name: gpa_risk_level
         description: "Risk categorization based on GPA (Critical/High/Moderate/Low)"
         data_tests:
           - not_null
           - accepted_values:
-              values: ['Critical', 'High', 'Moderate', 'Low']
+              arguments:
+                values: ['Critical', 'High', 'Moderate', 'Low']
       - name: course_completion_rate
         description: "Percentage of courses completed"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 1
+              arguments:
+                min_value: 0
+                max_value: 1
       - name: completion_risk_level
         description: "Risk categorization based on completion rate"
         data_tests:
           - not_null
           - accepted_values:
-              values: ['Critical', 'High', 'Moderate', 'Low']
+              arguments:
+                values: ['Critical', 'High', 'Moderate', 'Low']
       - name: engagement_score
         description: "Composite engagement metric (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: engagement_risk_level
         description: "Risk categorization based on engagement"
         data_tests:
           - not_null
           - accepted_values:
-              values: ['Critical', 'High', 'Moderate', 'Low']
+              arguments:
+                values: ['Critical', 'High', 'Moderate', 'Low']
       - name: days_since_last_login
         description: "Days elapsed since last LMS login"
       - name: login_recency_risk_level
@@ -162,7 +180,8 @@ models:
         data_tests:
           - not_null
           - accepted_values:
-              values: ['Critical', 'High', 'Moderate', 'Low']
+              arguments:
+                values: ['Critical', 'High', 'Moderate', 'Low']
       - name: financial_aid_amount
         description: "Total financial aid received"
       - name: financial_aid_category
@@ -170,7 +189,8 @@ models:
         data_tests:
           - not_null
           - accepted_values:
-              values: ['No Aid', 'Partial Aid', 'Full Support']
+              arguments:
+                values: ['No Aid', 'Partial Aid', 'Full Support']
       - name: intervention_count
         description: "Number of academic interventions received"
       - name: intervention_category
@@ -203,7 +223,8 @@ models:
         data_tests:
           - not_null
           - dbt_utils.accepted_range:
-              min_value: 1
+              arguments:
+                min_value: 1
       - name: advisors_assigned
         description: "Number of advisors supporting this major"
       - name: avg_students_per_advisor
@@ -212,30 +233,34 @@ models:
         description: "Average GPA for students in this major"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 4
+              arguments:
+                min_value: 0
+                max_value: 4
       - name: avg_completion_rate_pct
         description: "Average course completion rate"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: avg_assignment_score
         description: "Average assignment performance"
       - name: credit_success_rate
         description: "Percentage of attempted credits successfully earned"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: at_risk_students
         description: "Number of at-risk students in this major"
       - name: at_risk_percentage
         description: "Percentage of students at retention risk"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: high_achievers
         description: "Number of students on Dean's List, Honor Roll, or similar"
       - name: students_on_probation
@@ -244,14 +269,16 @@ models:
         description: "Percentage of students on probation"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: avg_engagement_score
         description: "Average engagement score for the major"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: avg_course_views
         description: "Average course material views"
       - name: total_plagiarism_incidents
@@ -270,27 +297,31 @@ models:
         description: "Percentage of students receiving aid"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: program_health_score
         description: "Composite score (0-100) combining GPA, completion, engagement, and retention"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: overall_health_rank
         description: "Rank of this major's overall health score"
       - name: performance_quartile
         description: "Performance quartile (1=top, 4=bottom)"
         data_tests:
           - accepted_values:
-              values: [1, 2, 3, 4]
+              arguments:
+                values: [1, 2, 3, 4]
       - name: performance_category
         description: "Qualitative performance classification"
         data_tests:
           - not_null
           - accepted_values:
-              values: ['Top Performer', 'Above Average', 'Average', 'Needs Improvement']
+              arguments:
+                values: ['Top Performer', 'Above Average', 'Average', 'Needs Improvement']
 
   - name: vw_hed_engagement_analytics
     description: "Student-level engagement analysis examining LMS login patterns, course interactions, assignment behavior, and discussion participation. Identifies engagement concerns and recommends actions, ordered by urgency."
@@ -344,8 +375,9 @@ models:
         description: "Composite engagement metric (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: engagement_level
         description: "Qualitative engagement level classification"
         data_tests:
@@ -384,38 +416,44 @@ models:
         description: "Overall data completeness score (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: validity_score
         description: "Overall data validity score (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: uniqueness_score
         description: "Student record uniqueness score (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: freshness_score
         description: "Data freshness score based on update recency (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: composite_quality_score
         description: "Composite quality score averaging all dimensions (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: overall_quality_status
         description: "Qualitative quality assessment (Excellent/Good/Acceptable/Needs Improvement)"
         data_tests:
           - not_null
           - accepted_values:
-              values: ['Excellent', 'Good', 'Acceptable', 'Needs Improvement']
+              arguments:
+                values: ['Excellent', 'Good', 'Acceptable', 'Needs Improvement']
       - name: total_records
         description: "Total number of records in source table"
         data_tests:
