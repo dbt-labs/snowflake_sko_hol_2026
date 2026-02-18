@@ -1,3 +1,14 @@
+models:
+  - name: metricflow_time_spine
+    description: "Time spine table for MetricFlow. Contains one row per day."
+    
+    columns:
+      - name: date_day
+        description: "The date dimension at daily grain"
+        granularity: day  # This is the native granularity
+        dimension:
+          type: time
+
 semantic_models:
   - name: vw_hed_engagement_analytics
     description: |
