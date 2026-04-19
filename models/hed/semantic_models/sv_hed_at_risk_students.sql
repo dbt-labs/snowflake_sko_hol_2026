@@ -5,7 +5,7 @@
     docs={'node_color': 'blue'}
 ) }}
   tables (
-    AT_RISK_STUDENTS as ANALYTICS.INDUSTRIES_HIGHER_EDUCATION.VW_HED_RETENTION_RISK_ANALYSIS unique (STUDENT_ID) comment='View of students flagged as at-risk based on multiple retention indicators including GPA, course completion, engagement scores, login activity, and academic standing. Data flows from PostgreSQL through Fivetran to this Snowflake view via dbt transformations'
+    AT_RISK_STUDENTS as {{ ref('vw_hed_retention_risk_analysis') }} unique (STUDENT_ID) comment='View of students flagged as at-risk based on multiple retention indicators including GPA, course completion, engagement scores, login activity, and academic standing. Data flows from PostgreSQL through Fivetran to this Snowflake view via dbt transformations'
   )
   facts (
     AT_RISK_STUDENTS.ASSIGNMENT_SUBMISSIONS as ASSIGNMENT_SUBMISSIONS comment='Number of assignments submitted',
