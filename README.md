@@ -1,6 +1,6 @@
 # dbt Industries Views
 
-A Snowflake dbt project for industry-specific analytical views. The current implementation focuses on **Higher Education (HED)** student success, retention risk, engagement, program performance, data quality, and semantic-layer access.
+A dbt project for industry-specific analytical views. The current implementation focuses on **Higher Education (HED)** student success, retention risk, engagement, program performance, data quality, and semantic-layer access.
 
 This project is structured so additional industries can be added later under their own `models/<industry>/` folders while sharing the same dbt project configuration, dependency management, and deployment patterns.
 
@@ -10,7 +10,7 @@ This project is structured so additional industries can be added later under the
 
 ### Current Industry: Higher Education (HED)
 
-- **Source:** Snowflake table configured through dbt vars
+- **Source:** Source table configured through dbt vars
 - **Default source:** `RAW.INDUSTRIES_HIGHER_EDUCATION.HED_RECORDS`
 - **dbt source:** `source('hed', 'hed_records')`
 - **Target schema config:** `industries_higher_education`
