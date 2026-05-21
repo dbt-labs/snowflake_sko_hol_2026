@@ -1,249 +1,369 @@
 # dbt Industries Views
 
-A multi-industry dbt project designed for flexible, industry-specific analytics with Fivetran integration. This project supports multiple industry verticals with independent deployment and selective execution capabilities.
+A Snowflake dbt project for industry-specific analytical views. The current implementation focuses on **Higher Education (HED)** student success, retention risk, engagement, program performance, data quality, and semantic-layer access.
 
-## 🎯 Project Overview
-
-This dbt project creates analytical views from industry-specific datasets synced by Fivetran. The modular structure allows you to:
-
-- **Add multiple industries** to the same project (Healthcare, Agriculture, Meteorology, etc.)
-- **Deploy selectively** by industry using tags or folder paths
-- **Share common infrastructure** while maintaining industry-specific logic
-- **Scale easily** by adding new industry folders as needed
-
-### Current Industries
-
-#### Healthcare (CDS)
-**Source:** PostgreSQL `industries` database → `CDS_RECORDS` table  
-**Schema:** `INDUSTRIES_HEALTHCARE`  
-**Views:** 5 analytical views covering patient outcomes, treatment effectiveness, clinical trials, data quality, and high-risk alerts
-
-*Future industries (AGR, MET, etc.) will follow the same pattern.*
+This project is structured so additional industries can be added later under their own `models/<industry>/` folders while sharing the same dbt project configuration, dependency management, and deployment patterns.
 
 ---
 
-## 📁 Project Structure
+## Project Overview
 
-```
+### Current Industry: Higher Education (HED)
+
+- **Source:** Snowflake table configured through dbt vars
+- **Default source:** `RAW.INDUSTRIES_HIGHER_EDUCATION.HED_RECORDS`
+- **dbt source:** `source('hed', 'hed_records')`
+- **Target schema config:** `industries_higher_education`
+- **Primary materialization:** views
+
+The HED models provide analytics for:
+
+- Executive student-success KPIs
+- Student-level retention risk analysis
+- Program/major performance benchmarking
+- LMS and academic engagement analytics
+- Data quality monitoring
+- Semantic-layer exploration over engagement and at-risk-student data
+
+---
+
+## Project Structure
+
+```text
 dbt_industries_views/
-├── dbt_project.yml              # Project configuration with industry-specific settings
-├── profiles.yml                 # Snowflake connection template
-├── packages.yml                 # dbt dependencies
-├── .gitignore                   # Git exclusions
-├── README.md                    # This file
-├── models/
-│   ├── cds/                     # Healthcare industry models
-│   │   ├── _cds__sources.yml    # Source definitions
-│   │   ├── schema.yml           # Model documentation
-│   │   ├── vw_cds_patient_outcomes_kpi.sql
-│   │   ├── vw_cds_treatment_effectiveness.sql
-│   │   ├── vw_cds_clinical_trial_performance.sql
-│   │   ├── vw_cds_data_quality.sql
-│   │   └── vw_cds_high_risk_patients.sql
-│   └── [future industries]/     # AGR, MET, etc.
-└── macros/
-    └── generate_schema_name.sql # Custom schema routing
+├── dbt_project.yml
+├── packages.yml
+├── package-lock.yml
+├── profiles.yml                 # Local profile example; do not commit real credentials
+├── HED_SETUP_GUIDE.md           # Detailed HED setup and deployment guide
+├── macros/
+│   └── generate_schema_name.sql
+├── seeds/
+│   └── hed_records.csv
+└── models/
+    └── hed/
+        ├── _hed__sources.yml
+        ├── staging/
+        │   ├── _staging__schema.yml
+        │   └── stg_hed__students.sql
+        ├── intermediate/
+        │   ├── _intermediate__schema.yml
+        │   ├── int_hed__engagement_categories.sql
+        │   └── int_hed__risk_levels.sql
+        ├── data_quality/
+        │   ├── _data_quality__schema.yml
+        │   ├── dq_hed__completeness.sql
+        │   ├── dq_hed__duplicates.sql
+        │   ├── dq_hed__freshness.sql
+        │   └── dq_hed__validity.sql
+        ├── marts/
+        │   ├── schema.yml
+        │   ├── vw_hed_student_success_kpi.sql
+        │   ├── vw_hed_retention_risk_analysis.sql
+        │   ├── vw_hed_program_performance.sql
+        │   ├── vw_hed_engagement_analytics.sql
+        │   └── vw_hed_data_quality.sql
+        └── semantic_models/
+            ├── metricflow_time_spine.sql
+            ├── sem_vw_hed_engagement_analytics.yml
+            └── sv_hed_at_risk_students.sql
 ```
 
 ---
 
-## 🚀 Quick Start
+## Model Layers
 
-### Prerequisites
+### Staging
 
-- **dbt Core** 1.5+ installed ([installation guide](https://docs.getdbt.com/docs/core/installation))
-- **Snowflake** account with appropriate permissions
-- **Fivetran** connector syncing data to Snowflake
-- **Git** for version control
+#### `stg_hed__students`
 
-### 1. Clone and Setup
+The base student-record staging model. It centralizes the HED source reference, selects and standardizes the source columns, and adds reusable calculations such as:
+
+- `days_since_last_login`
+- `days_active_since_enrollment`
+- `credit_success_rate_pct`
+
+### Intermediate
+
+#### `int_hed__risk_levels`
+
+Student-level risk classification model. It derives GPA, completion, engagement, login-recency, financial-aid, intervention, and overall retention-risk categories.
+
+#### `int_hed__engagement_categories`
+
+Student-level engagement classification model. It derives categories for login recency, course views, assignments, discussion participation, engagement level, and recommended engagement actions.
+
+### Data Quality
+
+The data-quality layer breaks quality checks into focused component models:
+
+- `dq_hed__completeness`
+- `dq_hed__duplicates`
+- `dq_hed__freshness`
+- `dq_hed__validity`
+
+These feed the mart-level `vw_hed_data_quality` dashboard view.
+
+### Marts
+
+#### `vw_hed_student_success_kpi`
+
+Executive-level single-row KPI view summarizing enrollment, retention risk, GPA, course completion, engagement, financial aid, interventions, academic integrity incidents, and data freshness.
+
+#### `vw_hed_retention_risk_analysis`
+
+Student-level retention-risk view identifying at-risk students, risk drivers, severity levels, and recommended interventions.
+
+#### `vw_hed_program_performance`
+
+Major/program-level aggregation comparing enrollment, academic outcomes, retention risk, engagement, financial aid, interventions, academic integrity incidents, and overall program health.
+
+#### `vw_hed_engagement_analytics`
+
+Student-level engagement analytics across LMS login recency, course views, assignments, discussion participation, engagement categories, and recommended actions.
+
+#### `vw_hed_data_quality`
+
+Single-row data-quality dashboard summarizing completeness, validity, uniqueness, freshness, and overall quality status.
+
+### Semantic Layer Assets
+
+#### `metricflow_time_spine`
+
+Date spine table used by MetricFlow for time-based semantic-layer queries.
+
+#### `sem_vw_hed_engagement_analytics.yml`
+
+MetricFlow semantic model and metrics for `vw_hed_engagement_analytics`.
+
+#### `sv_hed_at_risk_students`
+
+Snowflake semantic view over `vw_hed_retention_risk_analysis`, exposing facts, dimensions, filters, and verified queries for at-risk-student analysis.
+
+---
+
+## Source Configuration
+
+The HED source is defined in `models/hed/_hed__sources.yml` and configured with dbt vars.
+
+Current project vars in `dbt_project.yml`:
+
+```yaml
+vars:
+  hed_source_database: 'RAW'
+  hed_source_schema: 'INDUSTRIES_HIGHER_EDUCATION'
+  hed_source_table: 'HED_RECORDS'
+```
+
+Source definition pattern:
+
+```yaml
+sources:
+  - name: hed
+    database: "{{ var('hed_source_database', 'HOL_DATABASE') }}"
+    schema: "{{ var('hed_source_schema', 'INDUSTRIES_HIGHER_EDUCATION') }}"
+    tables:
+      - name: hed_records
+        identifier: "{{ var('hed_source_table', 'HED_RECORDS') }}"
+```
+
+> Note: `dbt_project.yml` currently sets `hed_source_database` to `RAW`, while the source YAML fallback is `HOL_DATABASE`. The explicit project var takes precedence. If this project is reused in a different environment, update the vars in `dbt_project.yml` or override them at runtime.
+
+---
+
+## Prerequisites
+
+- dbt with Snowflake adapter support
+- Snowflake account and role with permissions to read the HED source table and create models in the target database/schema
+- Access to the configured HED source table
+- Installed dbt packages from `packages.yml`
+
+Install package dependencies:
 
 ```bash
-# Clone the repository (or download the project files)
-git clone <your-repo-url>
-cd dbt_industries_views
-
-# Install dbt dependencies
 dbt deps
 ```
 
-### 2. Configure Connection
+Packages used by this project:
 
-Copy the `profiles.yml` template to `~/.dbt/profiles.yml` and update with your Snowflake credentials:
+- `dbt-labs/dbt_utils` `1.1.1`
+- `Snowflake-Labs/dbt_semantic_view` `1.0.3`
 
-```yaml
-industries_snowflake:
-  target: dev
-  outputs:
-    dev:
-      type: snowflake
-      account: YOUR_SNOWFLAKE_ACCOUNT
-      user: YOUR_USERNAME
-      password: YOUR_PASSWORD
-      role: YOUR_ROLE
-      database: HOL_DATABASE
-      warehouse: YOUR_WAREHOUSE
-      schema: INDUSTRIES_HEALTHCARE
-      threads: 4
-```
+---
 
-### 3. Test Connection
+## Quick Start
+
+Validate the local dbt configuration:
 
 ```bash
-# Verify connection
 dbt debug
+```
 
-# Compile models to check for errors
+Install dependencies:
+
+```bash
+dbt deps
+```
+
+Compile the project:
+
+```bash
 dbt compile
 ```
 
-### 4. Run Models
+Build the HED models and tests:
 
 ```bash
-# Run all models
-dbt run
-
-# Run only CDS healthcare models
-dbt run --select cds.*
-
-# Run models with specific tag
-dbt run --select tag:healthcare
+dbt build --select hed.*
 ```
 
----
-
-## 📊 CDS Healthcare Views
-
-### 1. vw_cds_patient_outcomes_kpi
-**Purpose:** Executive KPI dashboard  
-**Metrics:** Patient volume, outcome scores, treatment success, costs, satisfaction, risk indicators  
-**Audience:** Healthcare executives, clinical leadership  
-**Query Example:**
-```sql
-SELECT * FROM INDUSTRIES_HEALTHCARE.VW_CDS_PATIENT_OUTCOMES_KPI;
-```
-
-### 2. vw_cds_treatment_effectiveness
-**Purpose:** Treatment outcome analysis by diagnosis and plan  
-**Dimensions:** Diagnosis, Treatment Plan  
-**Metrics:** Success rates, cost per outcome, adherence impact  
-**Audience:** Clinical teams, treatment coordinators  
-**Query Example:**
-```sql
-SELECT 
-  DIAGNOSIS,
-  TREATMENT_PLAN,
-  success_rate,
-  cost_per_successful_outcome
-FROM INDUSTRIES_HEALTHCARE.VW_CDS_TREATMENT_EFFECTIVENESS
-ORDER BY success_rate DESC;
-```
-
-### 3. vw_cds_clinical_trial_performance
-**Purpose:** Clinical trial monitoring and effectiveness  
-**Dimensions:** Trial Name, Trial Status  
-**Metrics:** Enrollment, outcomes, safety, costs, publications  
-**Audience:** Research teams, trial coordinators  
-**Query Example:**
-```sql
-SELECT 
-  TRIAL_NAME,
-  TRIAL_STATUS,
-  enrolled_patients,
-  success_rate,
-  efficiency_score
-FROM INDUSTRIES_HEALTHCARE.VW_CDS_CLINICAL_TRIAL_PERFORMANCE
-WHERE TRIAL_STATUS = 'Active';
-```
-
-### 4. vw_cds_data_quality
-**Purpose:** Data completeness and integrity monitoring  
-**Checks:** Null percentages, duplicates, validity, freshness  
-**Audience:** Data engineers, quality assurance  
-**Query Example:**
-```sql
-SELECT 
-  overall_quality_score,
-  quality_rating,
-  completeness_score,
-  validity_score,
-  freshness_score
-FROM INDUSTRIES_HEALTHCARE.VW_CDS_DATA_QUALITY;
-```
-
-### 5. vw_cds_high_risk_patients
-**Purpose:** Patient alerts requiring immediate attention  
-**Filters:** High readmission risk, critical vitals, poor outcomes  
-**Audience:** Clinical teams, care coordinators  
-**Query Example:**
-```sql
-SELECT 
-  PATIENT_ID,
-  priority_level,
-  risk_score,
-  alert_message,
-  recommended_actions
-FROM INDUSTRIES_HEALTHCARE.VW_CDS_HIGH_RISK_PATIENTS
-WHERE priority_level IN ('Critical', 'High')
-ORDER BY risk_score DESC;
-```
-
----
-
-## 🔄 Fivetran dbt Core Integration
-
-### Setup Instructions
-
-1. **Push to GitHub:**
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial dbt industries project"
-   git remote add origin <your-github-repo>
-   git push -u origin main
-   ```
-
-2. **Configure in Fivetran:**
-   - Navigate to **Transformations** → **dbt Core**
-   - Connect your GitHub repository
-   - Set **Target:** `prod`
-   - Configure credentials in Fivetran UI (not in `profiles.yml`)
-
-3. **Selective Execution:**
-   Configure dbt command based on your needs:
-
-   **Run all CDS models:**
-   ```bash
-   dbt run --select cds.*
-   ```
-
-   **Run only KPI views:**
-   ```bash
-   dbt run --select tag:kpi
-   ```
-
-   **Run specific model:**
-   ```bash
-   dbt run --select vw_cds_patient_outcomes_kpi
-   ```
-
-4. **Schedule:**
-   - Fivetran runs dbt automatically after connector syncs
-   - No additional scheduling needed
-
----
-
-## 🏗️ Adding New Industries
-
-To add a new industry (e.g., Agriculture):
-
-### 1. Create Industry Folder
+Run only HED models:
 
 ```bash
-mkdir -p models/agr
+dbt run --select hed.*
 ```
 
-### 2. Update dbt_project.yml
+Run only HED tests:
+
+```bash
+dbt test --select hed.*
+```
+
+Run by tag:
+
+```bash
+dbt run --select tag:hed
+dbt run --select tag:education
+```
+
+Run a specific mart:
+
+```bash
+dbt run --select vw_hed_student_success_kpi
+```
+
+---
+
+## Example Queries
+
+### Executive KPI summary
+
+```sql
+select *
+from INDUSTRIES_HIGHER_EDUCATION.VW_HED_STUDENT_SUCCESS_KPI;
+```
+
+### At-risk students needing intervention
+
+```sql
+select
+  student_id,
+  major_code,
+  advisor_id,
+  current_gpa,
+  engagement_score,
+  overall_risk_assessment,
+  recommended_action
+from INDUSTRIES_HIGHER_EDUCATION.VW_HED_RETENTION_RISK_ANALYSIS
+order by current_gpa asc;
+```
+
+### Program performance
+
+```sql
+select
+  major_code,
+  total_students,
+  avg_gpa,
+  at_risk_percentage,
+  program_health_score,
+  performance_category
+from INDUSTRIES_HIGHER_EDUCATION.VW_HED_PROGRAM_PERFORMANCE
+order by program_health_score desc;
+```
+
+### Engagement concerns
+
+```sql
+select
+  student_id,
+  major_code,
+  days_since_last_login,
+  engagement_level,
+  engagement_concern_level,
+  recommended_engagement_action
+from INDUSTRIES_HIGHER_EDUCATION.VW_HED_ENGAGEMENT_ANALYTICS
+order by days_since_last_login desc;
+```
+
+### Data quality dashboard
+
+```sql
+select *
+from INDUSTRIES_HIGHER_EDUCATION.VW_HED_DATA_QUALITY;
+```
+
+Adjust database and schema names as needed for the active dbt target and schema-generation behavior.
+
+---
+
+## Testing and Documentation
+
+Run tests for HED models:
+
+```bash
+dbt test --select hed.*
+```
+
+Test the HED source:
+
+```bash
+dbt test --select source:hed
+```
+
+Generate docs:
+
+```bash
+dbt docs generate
+```
+
+Serve docs locally:
+
+```bash
+dbt docs serve
+```
+
+---
+
+## Deployment
+
+This project can be run from dbt Core, dbt Cloud, or another orchestrator.
+
+A typical deployment command for the current HED implementation is:
+
+```bash
+dbt build --select hed.*
+```
+
+For narrower deployments, select by folder, model, or tag:
+
+```bash
+dbt build --select hed.marts.*
+dbt build --select tag:data_quality
+dbt build --select vw_hed_retention_risk_analysis
+```
+
+The project includes a `dbt-cloud` project id in `dbt_project.yml`, but credentials and environment configuration should be managed outside the repository.
+
+---
+
+## Adding a New Industry
+
+To add another industry, follow the same folder-based pattern used by HED.
+
+### 1. Add project configuration
+
+Example for agriculture:
 
 ```yaml
 models:
@@ -254,19 +374,20 @@ models:
       +materialized: view
 
 vars:
-  agr_source_database: 'HOL_DATABASE'
+  agr_source_database: 'RAW'
   agr_source_schema: 'INDUSTRIES_AGRICULTURE'
   agr_source_table: 'AGR_RECORDS'
 ```
 
-### 3. Create Source Definition
+### 2. Add a source definition
 
 Create `models/agr/_agr__sources.yml`:
+
 ```yaml
 version: 2
 
 sources:
-  - name: industries_agriculture
+  - name: agr
     database: "{{ var('agr_source_database') }}"
     schema: "{{ var('agr_source_schema') }}"
     tables:
@@ -274,210 +395,94 @@ sources:
         identifier: "{{ var('agr_source_table') }}"
 ```
 
-### 4. Create Views
+### 3. Add models by layer
 
-Add SQL files in `models/agr/`:
-- `vw_agr_crop_yields_kpi.sql`
-- `vw_agr_weather_impact.sql`
-- etc.
+Recommended structure:
 
-### 5. Document Models
+```text
+models/agr/
+├── _agr__sources.yml
+├── staging/
+├── intermediate/
+├── data_quality/
+├── marts/
+└── semantic_models/        # Optional
+```
 
-Create `models/agr/schema.yml` with model documentation.
+### 4. Document and test
 
-### 6. Deploy
+Add schema YAML files for model descriptions, column descriptions, and data tests. Follow the HED directory as the current convention.
+
+### 5. Deploy selectively
 
 ```bash
-# Test locally
-dbt run --select agr.*
-
-# Push to GitHub
-git add models/agr/
-git commit -m "Add agriculture industry models"
-git push
-
-# Configure in Fivetran with: dbt run --select agr.*
+dbt build --select agr.*
 ```
 
 ---
 
-## 🎨 Customization
+## Troubleshooting
 
-### Modify Source Tables
+### dbt cannot find the source table
 
-Update variables in `dbt_project.yml`:
+Check the HED source vars:
 
 ```yaml
-vars:
-  cds_source_database: 'YOUR_DATABASE'
-  cds_source_schema: 'YOUR_SCHEMA'
-  cds_source_table: 'YOUR_TABLE'
+hed_source_database
+hed_source_schema
+hed_source_table
 ```
 
-### Change Materialization
+Then confirm the active dbt target has permission to read the resolved Snowflake object.
 
-Update model config in SQL file:
+### Compilation fails
 
-```sql
-{{
-  config(
-    materialized='table',  -- Change from 'view' to 'table'
-    tags=['cds', 'healthcare', 'kpi']
-  )
-}}
-```
-
-### Add Custom Tags
-
-Add tags for selective execution:
-
-```sql
-{{
-  config(
-    tags=['cds', 'healthcare', 'executive', 'weekly_report']
-  )
-}}
-```
-
-Then run: `dbt run --select tag:weekly_report`
-
----
-
-## 🧪 Testing
+Run:
 
 ```bash
-# Compile all models
-dbt compile
-
-# Run all models
-dbt run
-
-# Test source data
-dbt test --select source:*
-
-# Test specific model
-dbt test --select vw_cds_patient_outcomes_kpi
-
-# Generate documentation
-dbt docs generate
-dbt docs serve  # Opens in browser
+dbt compile --select hed.*
 ```
 
----
+Review the failing model and any referenced YAML files for Jinja, YAML, or dependency errors.
 
-## 📋 Development Workflow
+### Tests fail
 
-### Local Development
+Run a narrower test selection to isolate the issue:
 
 ```bash
-# Create feature branch
-git checkout -b feature/new-industry-views
-
-# Develop and test
-dbt run --select <your_models>
-dbt test
-
-# Commit changes
-git add .
-git commit -m "Add new industry views"
-git push origin feature/new-industry-views
+dbt test --select stg_hed__students
+dbt test --select vw_hed_data_quality
 ```
 
-### Deployment
+Do not loosen or remove tests without first confirming whether the failure is caused by source data quality, model logic, or an outdated test assumption.
 
-1. Create Pull Request in GitHub
-2. Review and merge to main branch
-3. Fivetran automatically deploys on next connector sync
+### Views are empty
 
----
+Check that the source table has rows and that the model's filters are not excluding expected records. Start with the staging model and work downstream through intermediate and mart models.
 
-## 🔍 Monitoring
+### Semantic-layer assets fail
 
-### Data Quality
+Check package installation and Snowflake support for the configured semantic view materialization. Re-run:
 
-Check data quality regularly:
-```sql
-SELECT * FROM INDUSTRIES_HEALTHCARE.VW_CDS_DATA_QUALITY;
-```
-
-### Fivetran Logs
-
-Monitor in Fivetran UI:
-- **Transformations** → **Logs** for dbt run history
-- **Connectors** → **Logs** for sync status
-
-### Alert Integration
-
-Query high-risk patients for alerting:
-```sql
-SELECT 
-  PATIENT_ID,
-  priority_level,
-  alert_message
-FROM INDUSTRIES_HEALTHCARE.VW_CDS_HIGH_RISK_PATIENTS
-WHERE priority_level = 'Critical';
+```bash
+dbt deps
+dbt compile --select hed.semantic_models.*
 ```
 
 ---
 
-## 🛠️ Troubleshooting
+## Additional Guide
 
-### Common Issues
-
-**"Column not found" errors:**
-- Verify column names match exactly (case-sensitive in Snowflake)
-- Check source table with: `SHOW COLUMNS IN TABLE <table>`
-
-**dbt compilation fails:**
-- Check YAML syntax (use 2 spaces, no tabs)
-- Validate with: `dbt compile`
-
-**Views empty after creation:**
-- Verify source table has data
-- Check WHERE clause filters aren't too restrictive
-
-**Fivetran transformation fails:**
-- Review Fivetran logs for specific error
-- Test locally first: `dbt run --select <model>`
-- Verify credentials are configured in Fivetran
+For detailed setup and deployment instructions specific to the Higher Education analytics package, see [`HED_SETUP_GUIDE.md`](HED_SETUP_GUIDE.md).
 
 ---
 
-## 📚 Resources
+## Project Metadata
 
-- [dbt Documentation](https://docs.getdbt.com/)
-- [Fivetran dbt Core Guide](https://fivetran.com/docs/transformations/dbt)
-- [Snowflake Documentation](https://docs.snowflake.com/)
-
----
-
-## 🤝 Contributing
-
-To contribute new industries or views:
-
-1. Follow the structure in `models/cds/` as a template
-2. Document all models in `schema.yml`
-3. Add tests for critical fields
-4. Update this README with new industry documentation
-5. Submit Pull Request with clear description
-
----
-
-## 📄 License
-
-[Add your license information here]
-
----
-
-## ✨ Project Metadata
-
-- **Project Name:** dbt_industries_views
-- **Version:** 1.0.0
-- **dbt Version:** 1.5+
-- **Warehouse:** Snowflake
-- **Connector:** Fivetran
-- **Industries:** Healthcare (CDS) - *More to come*
-
----
-
-**Questions or Issues?** [Create an issue in GitHub]
+- **Project name:** `dbt_industries_views`
+- **Version:** `1.0.0`
+- **Warehouse adapter:** Snowflake
+- **Current industry:** Higher Education (HED)
+- **Current source:** `hed.hed_records`
+- **Primary target schema config:** `industries_higher_education`
+- **Primary materialization:** views
