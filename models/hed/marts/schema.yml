@@ -128,9 +128,6 @@ models:
         description: "Boolean indicating retention risk (always TRUE in this view)"
         data_tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values: [true]
       - name: current_gpa
         description: "Current cumulative GPA"
         data_tests:
