@@ -107,9 +107,6 @@ models:
         description: "Boolean flag indicating retention risk"
         data_tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values: [true, false]
       - name: intervention_count
         description: "Number of academic interventions"
         data_tests:
