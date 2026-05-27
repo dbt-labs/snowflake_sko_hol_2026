@@ -1,9 +1,11 @@
+version: 2
+
 models:
   - name: metricflow_time_spine
     description: "Time spine table for MetricFlow. Contains one row per day."
+    time_spine:
+      standard_granularity_column: date_day
     columns:
       - name: date_day
         description: "The date dimension at daily grain"
-        granularity: day  # This is the native granularity
-        dimension:
-          type: time
+        granularity: day
