@@ -23,6 +23,7 @@ clean-targets:
 # Global configurations
 models:
   dbt_industries_views:
+    +static_analysis: strict
     +materialized: view
     +persist_docs:
       relation: true
