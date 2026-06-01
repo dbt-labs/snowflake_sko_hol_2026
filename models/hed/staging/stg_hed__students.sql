@@ -28,7 +28,7 @@ staged as (
         student_id,
         advisor_id,
         major_code,
-        
+        null as new_column, 
         -- Academic Information
         academic_standing,
         current_gpa,
