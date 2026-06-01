@@ -96,15 +96,20 @@ models:
                 min_value: 0
                 max_value: 100
       - name: total_interventions
-        description: "Total academic interventions/support sessions"
+        description: "Total academic interventions"
       - name: avg_interventions_per_student
-        description: "Average number of interventions per student"
-      - name: students_with_interventions
-        description: "Number of students who have received interventions"
-      - name: last_data_refresh
-        description: "Timestamp of most recent data update"
-      - name: report_generated_at
-        description: "Timestamp when this view was queried"
+        description: "Average interventions per student"
+      - name: retention_health_score
+        description: "Composite health score for student retention"
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: overall_performance_tier
+        description: "Qualitative performance tier"
+        data_tests:
+          - not_null
 
   - name: vw_hed_retention_risk_analysis
     description: "Detailed student-level retention risk analysis identifying at-risk students with risk factors, risk levels, and recommended interventions. Filters to show only at-risk students, ordered by severity."
@@ -208,7 +213,7 @@ models:
           - not_null
 
   - name: vw_hed_program_performance
-    description: "Academic program performance analysis aggregated by major, comparing enrollment, academic outcomes, retention rates, engagement, and overall program health. Includes rankings and quartile classifications."
+    description: "Academic program performance analysis aggregated by major, comparing enrollment, academic outcomes, retention rates, engagement, and overall program health. Includes rankings and quartile classifications for benchmarking."
     columns:
       - name: major_code
         description: "Academic major code"
@@ -313,7 +318,7 @@ models:
           - not_null
 
   - name: vw_hed_engagement_analytics
-    description: "Student-level engagement analysis examining LMS login patterns, course interactions, assignment behavior, and discussion participation. Identifies engagement concerns and recommends actions, ordered by urgency."
+    description: "Student-level engagement analysis examining LMS login patterns, course interactions, assignment behavior, and discussion participation. Identifies engagement concerns and recommends actions, ordered by engagement score ascending."
     columns:
       - name: student_id
         description: "Unique student identifier"
@@ -479,6 +484,7 @@ models:
         agg: count
         expr: STUDENT_ID
 
+
   - name: vw_hed_data_quality
     description: "Data quality monitoring dashboard providing completeness, validity, uniqueness, freshness, and anomaly detection metrics. Single-row summary with composite quality score and status."
     columns:
@@ -488,9 +494,15 @@ models:
           - not_null
       - name: report_section
         description: "Report section identifier"
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Overall Data Quality Summary']
       - name: completeness_score
         description: "Overall data completeness score (0-100)"
         data_tests:
+          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
@@ -498,6 +510,7 @@ models:
       - name: validity_score
         description: "Overall data validity score (0-100)"
         data_tests:
+          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
@@ -505,6 +518,7 @@ models:
       - name: uniqueness_score
         description: "Student record uniqueness score (0-100)"
         data_tests:
+          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
@@ -512,6 +526,7 @@ models:
       - name: freshness_score
         description: "Data freshness score based on update recency (0-100)"
         data_tests:
+          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
@@ -519,6 +534,7 @@ models:
       - name: composite_quality_score
         description: "Composite quality score averaging all dimensions (0-100)"
         data_tests:
+          - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
@@ -534,9 +550,24 @@ models:
         description: "Total number of records in source table"
         data_tests:
           - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: unique_students
         description: "Number of unique students"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: most_recent_data_update
         description: "Timestamp of most recent data update"
+        data_tests:
+          - not_null
       - name: hours_since_last_update
         description: "Hours elapsed since most recent update"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
