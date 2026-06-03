@@ -488,9 +488,17 @@ models:
           - not_null
       - name: report_section
         description: "Report section identifier"
+        data_tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values: ['Overall Data Quality Summary']
       - name: completeness_score
         description: "Overall data completeness score (0-100)"
         data_tests:
+          - not_null
+          - unique
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
@@ -498,6 +506,8 @@ models:
       - name: validity_score
         description: "Overall data validity score (0-100)"
         data_tests:
+          - not_null
+          - unique
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
@@ -505,6 +515,8 @@ models:
       - name: uniqueness_score
         description: "Student record uniqueness score (0-100)"
         data_tests:
+          - not_null
+          - unique
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
@@ -512,6 +524,8 @@ models:
       - name: freshness_score
         description: "Data freshness score based on update recency (0-100)"
         data_tests:
+          - not_null
+          - unique
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
@@ -519,6 +533,8 @@ models:
       - name: composite_quality_score
         description: "Composite quality score averaging all dimensions (0-100)"
         data_tests:
+          - not_null
+          - unique
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
@@ -534,9 +550,23 @@ models:
         description: "Total number of records in source table"
         data_tests:
           - not_null
+          - unique
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: unique_students
         description: "Number of unique students"
+        data_tests:
+          - not_null
+          - unique
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: most_recent_data_update
         description: "Timestamp of most recent data update"
       - name: hours_since_last_update
         description: "Hours elapsed since most recent update"
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
