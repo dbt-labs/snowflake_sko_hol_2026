@@ -105,6 +105,8 @@ models:
         description: "Timestamp of most recent data update"
       - name: report_generated_at
         description: "Timestamp when this view was queried"
+        data_tests:
+          - not_null
 
   - name: vw_hed_retention_risk_analysis
     description: "Detailed student-level retention risk analysis identifying at-risk students with risk factors, risk levels, and recommended interventions. Filters to show only at-risk students, ordered by severity."
@@ -128,6 +130,9 @@ models:
         description: "Boolean indicating retention risk (always TRUE in this view)"
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: [true, 'TRUE']
       - name: current_gpa
         description: "Current cumulative GPA"
         data_tests:
@@ -170,6 +175,12 @@ models:
           - accepted_values:
               arguments:
                 values: ['Critical', 'High', 'Moderate', 'Low']
+      - name: total_course_views
+        description: "Total course material views"
+      - name: assignment_submissions
+        description: "Number of assignments submitted"
+      - name: discussion_posts
+        description: "Number of discussion forum posts"
       - name: days_since_last_login
         description: "Days elapsed since last LMS login"
       - name: login_recency_risk_level
@@ -206,6 +217,12 @@ models:
         description: "Specific recommended interventions based on risk profile"
         data_tests:
           - not_null
+      - name: enrollment_date
+        description: "Student enrollment date"
+      - name: last_login_date
+        description: "Most recent LMS login date"
+      - name: last_updated
+        description: "Timestamp of most recent source update"
 
   - name: vw_hed_program_performance
     description: "Academic program performance analysis aggregated by major, comparing enrollment, academic outcomes, retention rates, engagement, and overall program health. Includes rankings and quartile classifications."
@@ -311,6 +328,9 @@ models:
         description: "Qualitative performance classification"
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: ['Top Performing', 'Above Average', 'Below Average', 'Needs Improvement']
 
   - name: vw_hed_engagement_analytics
     description: "Student-level engagement analysis examining LMS login patterns, course interactions, assignment behavior, and discussion participation. Identifies engagement concerns and recommends actions, ordered by urgency."
@@ -488,6 +508,11 @@ models:
           - not_null
       - name: report_section
         description: "Report section identifier"
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Overall Data Quality Summary']
       - name: completeness_score
         description: "Overall data completeness score (0-100)"
         data_tests:
