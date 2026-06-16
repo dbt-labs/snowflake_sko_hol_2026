@@ -51,4 +51,7 @@ vars:
   hed_source_database: 'SNOWFLAKE_SUMMIT_2026_HOL_DB'
   hed_source_schema: 'LUIS_LEON_HIGHER_EDUCATION'
   hed_source_table: 'HED_RECORDS'
+
+flags:
+  static_parser: strict
   
