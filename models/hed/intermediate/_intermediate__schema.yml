@@ -9,6 +9,10 @@ models:
         data_tests:
           - not_null
           - unique
+          - relationships:
+              arguments:
+                to: ref('stg_hed__students')
+                field: student_id
       - name: gpa_risk_level
         description: "Risk categorization based on GPA (Critical/High/Moderate/Low)"
         data_tests:
@@ -71,6 +75,10 @@ models:
         data_tests:
           - not_null
           - unique
+          - relationships:
+              arguments:
+                to: ref('stg_hed__students')
+                field: student_id
       - name: login_recency_category
         description: "Categorical description of login recency (Today, Within 24 Hours, etc.)"
         data_tests:
