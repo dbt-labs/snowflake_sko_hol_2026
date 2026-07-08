@@ -1,0 +1,265 @@
+version: 2
+
+unit_tests:
+  - name: test_int_hed__risk_levels_threshold_boundaries
+    model: int_hed__risk_levels
+    given:
+      - input: ref('stg_hed__students')
+        rows:
+          - student_id: s_critical
+            record_id: r_critical
+            advisor_id: a_1
+            major_code: ENGR
+            academic_standing: Academic Probation
+            at_risk_flag: true
+            current_gpa: 1.9
+            course_completion_rate: 0.49
+            engagement_score: 29
+            days_since_last_login: 15
+            total_course_views: 10
+            assignment_submissions: 1
+            discussion_posts: 0
+            financial_aid_amount: 0
+            intervention_count: 0
+            plagiarism_incidents: 0
+            writing_quality_score: 70
+            enrollment_date: 2024-01-01
+            last_login_date: 2024-01-02
+            last_updated: 2024-01-03
+          - student_id: s_high
+            record_id: r_high
+            advisor_id: a_1
+            major_code: BUSN
+            academic_standing: Good Standing
+            at_risk_flag: true
+            current_gpa: 2.0
+            course_completion_rate: 0.50
+            engagement_score: 30
+            days_since_last_login: 8
+            total_course_views: 20
+            assignment_submissions: 2
+            discussion_posts: 1
+            financial_aid_amount: 5000
+            intervention_count: 1
+            plagiarism_incidents: 0
+            writing_quality_score: 75
+            enrollment_date: 2024-01-01
+            last_login_date: 2024-01-03
+            last_updated: 2024-01-04
+          - student_id: s_moderate
+            record_id: r_moderate
+            advisor_id: a_2
+            major_code: NURS
+            academic_standing: Good Standing
+            at_risk_flag: true
+            current_gpa: 2.5
+            course_completion_rate: 0.70
+            engagement_score: 50
+            days_since_last_login: 4
+            total_course_views: 30
+            assignment_submissions: 3
+            discussion_posts: 2
+            financial_aid_amount: 15000
+            intervention_count: 2
+            plagiarism_incidents: 0
+            writing_quality_score: 80
+            enrollment_date: 2024-01-01
+            last_login_date: 2024-01-04
+            last_updated: 2024-01-05
+          - student_id: s_low
+            record_id: r_low
+            advisor_id: a_2
+            major_code: ARTS
+            academic_standing: Dean's List
+            at_risk_flag: false
+            current_gpa: 3.0
+            course_completion_rate: 0.85
+            engagement_score: 70
+            days_since_last_login: 3
+            total_course_views: 40
+            assignment_submissions: 4
+            discussion_posts: 3
+            financial_aid_amount: 15000
+            intervention_count: 5
+            plagiarism_incidents: 0
+            writing_quality_score: 90
+            enrollment_date: 2024-01-01
+            last_login_date: 2024-01-05
+            last_updated: 2024-01-06
+    expect:
+      rows:
+        - student_id: s_critical
+          gpa_risk_level: Critical
+          completion_risk_level: Critical
+          engagement_risk_level: Critical
+          login_recency_risk_level: Critical
+          financial_aid_category: No Aid
+          intervention_category: No Intervention
+          overall_risk_assessment: Critical - Immediate Intervention
+        - student_id: s_high
+          gpa_risk_level: High
+          completion_risk_level: High
+          engagement_risk_level: High
+          login_recency_risk_level: High
+          financial_aid_category: Partial Aid
+          intervention_category: Low Intervention
+          overall_risk_assessment: High - Priority Attention
+        - student_id: s_moderate
+          gpa_risk_level: Moderate
+          completion_risk_level: Moderate
+          engagement_risk_level: Moderate
+          login_recency_risk_level: Moderate
+          financial_aid_category: Full Support
+          intervention_category: Moderate Intervention
+          overall_risk_assessment: Moderate - Monitor Closely
+        - student_id: s_low
+          gpa_risk_level: Low
+          completion_risk_level: Low
+          engagement_risk_level: Low
+          login_recency_risk_level: Low
+          financial_aid_category: Full Support
+          intervention_category: High Intervention
+          overall_risk_assessment: Low - Standard Support
+
+  - name: test_int_hed__engagement_categories_threshold_boundaries
+    model: int_hed__engagement_categories
+    given:
+      - input: ref('stg_hed__students')
+        rows:
+          - student_id: e_today
+            record_id: re_today
+            advisor_id: a_1
+            major_code: ENGR
+            academic_standing: Good Standing
+            at_risk_flag: false
+            current_gpa: 3.2
+            course_completion_rate: 0.9
+            engagement_score: 80
+            total_course_views: 300
+            assignment_submissions: 18
+            avg_assignment_score: 85
+            discussion_posts: 25
+            intervention_count: 0
+            enrollment_date: 2024-01-01
+            last_login_date: 2024-01-02
+            last_updated: 2024-01-03
+            days_since_last_login: 0
+            days_active_since_enrollment: 1
+          - student_id: e_24h
+            record_id: re_24h
+            advisor_id: a_1
+            major_code: BUSN
+            academic_standing: Good Standing
+            at_risk_flag: false
+            current_gpa: 3.1
+            course_completion_rate: 0.8
+            engagement_score: 60
+            total_course_views: 200
+            assignment_submissions: 14
+            avg_assignment_score: 75
+            discussion_posts: 15
+            intervention_count: 0
+            enrollment_date: 2024-01-01
+            last_login_date: 2024-01-03
+            last_updated: 2024-01-04
+            days_since_last_login: 1
+            days_active_since_enrollment: 2
+          - student_id: e_3days
+            record_id: re_3days
+            advisor_id: a_2
+            major_code: NURS
+            academic_standing: Good Standing
+            at_risk_flag: true
+            current_gpa: 2.8
+            course_completion_rate: 0.7
+            engagement_score: 40
+            total_course_views: 100
+            assignment_submissions: 10
+            avg_assignment_score: 65
+            discussion_posts: 8
+            intervention_count: 1
+            enrollment_date: 2024-01-01
+            last_login_date: 2024-01-04
+            last_updated: 2024-01-05
+            days_since_last_login: 3
+            days_active_since_enrollment: 3
+          - student_id: e_1week
+            record_id: re_1week
+            advisor_id: a_2
+            major_code: ARTS
+            academic_standing: Academic Warning
+            at_risk_flag: true
+            current_gpa: 2.4
+            course_completion_rate: 0.6
+            engagement_score: 20
+            total_course_views: 50
+            assignment_submissions: 6
+            avg_assignment_score: 50
+            discussion_posts: 3
+            intervention_count: 2
+            enrollment_date: 2024-01-01
+            last_login_date: 2024-01-05
+            last_updated: 2024-01-06
+            days_since_last_login: 7
+            days_active_since_enrollment: 4
+          - student_id: e_2weeks
+            record_id: re_2weeks
+            advisor_id: a_3
+            major_code: SCI
+            academic_standing: Academic Probation
+            at_risk_flag: true
+            current_gpa: 2.0
+            course_completion_rate: 0.5
+            engagement_score: 19
+            total_course_views: 49
+            assignment_submissions: 5
+            avg_assignment_score: 49
+            discussion_posts: 2
+            intervention_count: 3
+            enrollment_date: 2024-01-01
+            last_login_date: 2024-01-06
+            last_updated: 2024-01-07
+            days_since_last_login: 14
+            days_active_since_enrollment: 5
+    expect:
+      rows:
+        - student_id: e_today
+          login_recency_category: Today
+          course_views_category: Very High
+          assignment_activity_category: Very Active
+          assignment_performance_category: Excellent
+          discussion_participation_category: Very Active
+          engagement_level: Highly Engaged
+          engagement_performance_quadrant: High Engagement / High Performance
+        - student_id: e_24h
+          login_recency_category: Within 24 Hours
+          course_views_category: High
+          assignment_activity_category: Active
+          assignment_performance_category: Good
+          discussion_participation_category: Active
+          engagement_level: Engaged
+          engagement_performance_quadrant: High Engagement / High Performance
+        - student_id: e_3days
+          login_recency_category: Within 3 Days
+          course_views_category: Moderate
+          assignment_activity_category: Moderate
+          assignment_performance_category: Satisfactory
+          discussion_participation_category: Moderate
+          engagement_level: Moderately Engaged
+          engagement_performance_quadrant: Low Engagement / Low Performance
+        - student_id: e_1week
+          login_recency_category: Within 1 Week
+          course_views_category: Low
+          assignment_activity_category: Low
+          assignment_performance_category: Needs Improvement
+          discussion_participation_category: Low
+          engagement_level: Disengaged
+          engagement_performance_quadrant: Low Engagement / Low Performance
+        - student_id: e_2weeks
+          login_recency_category: Within 2 Weeks
+          course_views_category: Very Low
+          assignment_activity_category: Very Low
+          assignment_performance_category: Critical
+          discussion_participation_category: Minimal
+          engagement_level: Critically Disengaged
+          engagement_performance_quadrant: Low Engagement / Low Performance
