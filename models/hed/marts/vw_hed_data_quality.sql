@@ -39,7 +39,7 @@ freshness as (
     select * from {{ ref('dq_hed__freshness') }}
 ),
 
-summary as (
+base as (
     select
         current_timestamp() as quality_check_timestamp,
         'Overall Data Quality Summary' as report_section,
@@ -48,37 +48,54 @@ summary as (
         c.overall_completeness_score as completeness_score,
         v.overall_validity_score as validity_score,
         d.student_uniqueness_pct as uniqueness_score,
+        d.record_id_uniqueness_pct as record_id_uniqueness_score,
         f.records_current_pct as freshness_score,
-        
-        -- Calculate composite quality score
-        round(
-            (
-                c.overall_completeness_score +
-                v.overall_validity_score +
-                d.student_uniqueness_pct +
-                f.records_current_pct
-            ) / 4.0,
-            1
-        ) as composite_quality_score,
-        
-        case
-            when round((c.overall_completeness_score + v.overall_validity_score + d.student_uniqueness_pct + f.records_current_pct) / 4.0, 1) >= 95 
-            then 'Excellent'
-            when round((c.overall_completeness_score + v.overall_validity_score + d.student_uniqueness_pct + f.records_current_pct) / 4.0, 1) >= 85 
-            then 'Good'
-            when round((c.overall_completeness_score + v.overall_validity_score + d.student_uniqueness_pct + f.records_current_pct) / 4.0, 1) >= 70 
-            then 'Acceptable'
-            else 'Needs Improvement'
-        end as overall_quality_status,
+        f.records_recent_30d_pct as freshness_30d_score,
         
         c.total_records,
         c.unique_students,
+        c.missing_advisor_ids,
+        c.missing_last_login_dates,
+        c.missing_last_updated_timestamps,
+        v.invalid_assignment_score_records,
+        v.invalid_date_logic_records,
+        v.invalid_plagiarism_records,
+        v.invalid_intervention_records,
+        d.duplicate_student_records,
+        d.duplicate_record_ids,
         f.most_recent_update as most_recent_data_update,
-        f.hours_since_last_update
+        f.hours_since_last_update,
+        f.records_over_7_days_old,
+        f.records_over_30_days_old
     from completeness c
     cross join validity v
     cross join duplicates d
     cross join freshness f
+),
+
+summary as (
+    select
+        *,
+        round(
+            (
+                completeness_score +
+                validity_score +
+                uniqueness_score +
+                record_id_uniqueness_score +
+                freshness_score
+            ) / 5.0,
+            1
+        ) as composite_quality_score
+    from base
 )
 
-select * from summary
+select
+    *,
+    case
+        when composite_quality_score >= 95 then 'Excellent'
+        when composite_quality_score >= 85 then 'Good'
+        when composite_quality_score >= 70 then 'Acceptable'
+        else 'Needs Improvement'
+    end as overall_quality_status
+from summary
+

@@ -18,6 +18,8 @@
   - Assignment score validity (0 - 100)
   - Financial aid validity (non-negative)
   - Date logic validity (enrollment <= last_login)
+  - Plagiarism incidents validity (non-negative)
+  - Intervention count validity (non-negative)
   - Overall validity score
 */
 
@@ -84,6 +86,22 @@ validity_metrics as (
             / nullif(count(*), 0) * 100,
             2
         ) as date_logic_validity_pct,
+
+        -- Plagiarism incident validity (should be non-negative)
+        count(case when plagiarism_incidents < 0 then 1 end) as invalid_plagiarism_records,
+        round(
+            count(case when plagiarism_incidents >= 0 then 1 end)::decimal
+            / nullif(count(*), 0) * 100,
+            2
+        ) as plagiarism_validity_pct,
+
+        -- Intervention count validity (should be non-negative)
+        count(case when intervention_count < 0 then 1 end) as invalid_intervention_records,
+        round(
+            count(case when intervention_count >= 0 then 1 end)::decimal
+            / nullif(count(*), 0) * 100,
+            2
+        ) as intervention_validity_pct,
         
         -- Overall validity score
         round(
@@ -92,8 +110,12 @@ validity_metrics as (
                 (count(case when credit_hours_earned <= credit_hours_attempted then 1 end)::decimal / nullif(count(*), 0)) +
                 (count(case when course_completion_rate >= 0.0 and course_completion_rate <= 1.0 then 1 end)::decimal / nullif(count(*), 0)) +
                 (count(case when engagement_score >= 0 and engagement_score <= 100 then 1 end)::decimal / nullif(count(*), 0)) +
-                (count(case when financial_aid_amount >= 0 then 1 end)::decimal / nullif(count(*), 0))
-            ) / 5.0 * 100,
+                (count(case when avg_assignment_score >= 0 and avg_assignment_score <= 100 then 1 end)::decimal / nullif(count(*), 0)) +
+                (count(case when financial_aid_amount >= 0 then 1 end)::decimal / nullif(count(*), 0)) +
+                (count(case when enrollment_date <= last_login_date then 1 end)::decimal / nullif(count(*), 0)) +
+                (count(case when plagiarism_incidents >= 0 then 1 end)::decimal / nullif(count(*), 0)) +
+                (count(case when intervention_count >= 0 then 1 end)::decimal / nullif(count(*), 0))
+            ) / 9.0 * 100,
             1
         ) as overall_validity_score
     from source_data

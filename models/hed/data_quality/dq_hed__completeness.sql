@@ -17,6 +17,8 @@
   - Missing GPA
   - Missing major codes
   - Missing advisor IDs
+  - Missing last login dates
+  - Missing last updated timestamps
   - Overall completeness score
 */
 
@@ -38,6 +40,8 @@ completeness_metrics as (
         count(*) - count(current_gpa) as missing_gpa,
         count(*) - count(major_code) as missing_major_codes,
         count(*) - count(advisor_id) as missing_advisor_ids,
+        count(*) - count(last_login_date) as missing_last_login_dates,
+        count(*) - count(last_updated) as missing_last_updated_timestamps,
         
         -- Calculate completeness percentages
         round((count(student_id)::decimal / nullif(count(*), 0)) * 100, 2) as student_id_completeness_pct,
@@ -45,6 +49,9 @@ completeness_metrics as (
         round((count(academic_standing)::decimal / nullif(count(*), 0)) * 100, 2) as academic_standing_completeness_pct,
         round((count(current_gpa)::decimal / nullif(count(*), 0)) * 100, 2) as gpa_completeness_pct,
         round((count(major_code)::decimal / nullif(count(*), 0)) * 100, 2) as major_completeness_pct,
+        round((count(advisor_id)::decimal / nullif(count(*), 0)) * 100, 2) as advisor_id_completeness_pct,
+        round((count(last_login_date)::decimal / nullif(count(*), 0)) * 100, 2) as last_login_date_completeness_pct,
+        round((count(last_updated)::decimal / nullif(count(*), 0)) * 100, 2) as last_updated_completeness_pct,
         
         -- Overall completeness score
         round(
@@ -53,8 +60,11 @@ completeness_metrics as (
                 (count(enrollment_date)::decimal / nullif(count(*), 0)) +
                 (count(academic_standing)::decimal / nullif(count(*), 0)) +
                 (count(current_gpa)::decimal / nullif(count(*), 0)) +
-                (count(major_code)::decimal / nullif(count(*), 0))
-            ) / 5.0 * 100,
+                (count(major_code)::decimal / nullif(count(*), 0)) +
+                (count(advisor_id)::decimal / nullif(count(*), 0)) +
+                (count(last_login_date)::decimal / nullif(count(*), 0)) +
+                (count(last_updated)::decimal / nullif(count(*), 0))
+            ) / 8.0 * 100,
             1
         ) as overall_completeness_score
     from source_data

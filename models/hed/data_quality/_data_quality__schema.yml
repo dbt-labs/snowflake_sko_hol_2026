@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: dq_hed__completeness
-    description: "Data quality component that monitors field completeness across required fields. Calculates missing value counts and completeness percentages for student IDs, enrollment dates, academic standing, GPA, and major codes."
+    description: "Data quality component that monitors field completeness across required fields. Calculates missing value counts and completeness percentages for student IDs, enrollment dates, academic standing, GPA, major codes, advisor ownership, and operational timestamps."
     columns:
       - name: quality_dimension
         description: "Quality dimension identifier (Record Completeness)"
@@ -22,11 +22,17 @@ models:
         description: "Count of records missing current_gpa"
       - name: missing_major_codes
         description: "Count of records missing major_code"
+      - name: missing_advisor_ids
+        description: "Count of records missing advisor_id"
+      - name: missing_last_login_dates
+        description: "Count of records missing last_login_date"
+      - name: missing_last_updated_timestamps
+        description: "Count of records missing last_updated"
       - name: overall_completeness_score
         description: "Overall completeness score (0-100)"
 
   - name: dq_hed__validity
-    description: "Data quality component that validates data ranges and logical consistency. Checks GPA bounds, credit hour logic, completion rate bounds, engagement score bounds, financial aid validity, and date logic."
+    description: "Data quality component that validates data ranges and logical consistency. Checks GPA bounds, credit hour logic, completion rate bounds, engagement score bounds, assignment score bounds, financial aid validity, date logic, and non-negative event counts."
     columns:
       - name: quality_dimension
         description: "Quality dimension identifier (Data Validity)"
@@ -38,6 +44,14 @@ models:
         description: "Count of records where earned > attempted"
       - name: credit_hours_validity_pct
         description: "Percentage of records with valid credit hours"
+      - name: invalid_assignment_score_records
+        description: "Count of records with assignment scores outside 0-100"
+      - name: invalid_date_logic_records
+        description: "Count of records where enrollment_date is after last_login_date"
+      - name: invalid_plagiarism_records
+        description: "Count of records with negative plagiarism incident counts"
+      - name: invalid_intervention_records
+        description: "Count of records with negative intervention counts"
       - name: overall_validity_score
         description: "Overall validity score (0-100)"
 
@@ -62,7 +76,7 @@ models:
         description: "Percentage of unique record IDs"
 
   - name: dq_hed__freshness
-    description: "Data quality component that monitors data freshness and staleness. Tracks most recent updates, calculates hours/days since last update, and identifies stale records."
+    description: "Data quality component that monitors data freshness and staleness. Tracks most recent updates, calculates hours/days since last update, and identifies stale records across short and long recency windows."
     columns:
       - name: quality_dimension
         description: "Quality dimension identifier (Data Freshness)"
@@ -78,5 +92,9 @@ models:
         description: "Freshness classification (Excellent/Good/Acceptable/Needs Attention/Stale)"
       - name: records_over_7_days_old
         description: "Count of records not updated in 7+ days"
+      - name: records_over_30_days_old
+        description: "Count of records not updated in 30+ days"
       - name: records_current_pct
         description: "Percentage of records updated within 7 days"
+      - name: records_recent_30d_pct
+        description: "Percentage of records updated within 30 days"

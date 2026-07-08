@@ -17,7 +17,8 @@
   - Days since last update
   - Freshness status classification
   - Records over 7 days old
-  - Current records percentage
+  - Records over 30 days old
+  - Data recency percentage
 */
 
 with source_data as (
@@ -42,11 +43,17 @@ freshness_metrics as (
         
         -- Check for stale individual records
         count(case when datediff('day', last_updated, current_timestamp()) > 7 then 1 end) as records_over_7_days_old,
+        count(case when datediff('day', last_updated, current_timestamp()) > 30 then 1 end) as records_over_30_days_old,
         round(
             count(case when datediff('day', last_updated, current_timestamp()) <= 7 then 1 end)::decimal 
             / nullif(count(*), 0) * 100,
             2
-        ) as records_current_pct
+        ) as records_current_pct,
+        round(
+            count(case when datediff('day', last_updated, current_timestamp()) <= 30 then 1 end)::decimal
+            / nullif(count(*), 0) * 100,
+            2
+        ) as records_recent_30d_pct
     from source_data
 )
 

@@ -509,15 +509,29 @@ models:
               arguments:
                 min_value: 0
                 max_value: 100
+      - name: record_id_uniqueness_score
+        description: "Record identifier uniqueness score (0-100)"
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: freshness_score
-        description: "Data freshness score based on update recency (0-100)"
+        description: "Data freshness score based on update recency within 7 days (0-100)"
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: freshness_30d_score
+        description: "Data freshness score based on update recency within 30 days (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 100
       - name: composite_quality_score
-        description: "Composite quality score averaging all dimensions (0-100)"
+        description: "Composite quality score averaging completeness, validity, student uniqueness, record ID uniqueness, and freshness (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
@@ -536,7 +550,29 @@ models:
           - not_null
       - name: unique_students
         description: "Number of unique students"
+      - name: missing_advisor_ids
+        description: "Count of records missing advisor ownership"
+      - name: missing_last_login_dates
+        description: "Count of records missing last login timestamps"
+      - name: missing_last_updated_timestamps
+        description: "Count of records missing audit timestamps"
+      - name: invalid_assignment_score_records
+        description: "Count of records with assignment scores outside 0-100"
+      - name: invalid_date_logic_records
+        description: "Count of records with invalid enrollment and login chronology"
+      - name: invalid_plagiarism_records
+        description: "Count of records with negative plagiarism incident counts"
+      - name: invalid_intervention_records
+        description: "Count of records with negative intervention counts"
+      - name: duplicate_student_records
+        description: "Count of duplicate student IDs"
+      - name: duplicate_record_ids
+        description: "Count of duplicate record IDs"
       - name: most_recent_data_update
         description: "Timestamp of most recent data update"
       - name: hours_since_last_update
         description: "Hours elapsed since most recent update"
+      - name: records_over_7_days_old
+        description: "Count of records older than 7 days"
+      - name: records_over_30_days_old
+        description: "Count of records older than 30 days"
