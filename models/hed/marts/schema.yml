@@ -480,7 +480,7 @@ models:
         expr: STUDENT_ID
 
   - name: vw_hed_data_quality
-    description: "Data quality monitoring dashboard providing completeness, validity, uniqueness, freshness, and anomaly detection metrics. Single-row summary with composite quality score and status."
+    description: "Data quality monitoring dashboard providing completeness, validity, uniqueness, freshness, and anomaly detection metrics. Single-row summary with composite quality score and status. Freshness is aligned to the configured source freshness SLA thresholds."
     columns:
       - name: quality_check_timestamp
         description: "Timestamp when quality checks were executed"
@@ -510,7 +510,7 @@ models:
                 min_value: 0
                 max_value: 100
       - name: freshness_score
-        description: "Data freshness score based on update recency (0-100)"
+        description: "Source freshness SLA score derived from configured thresholds (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
@@ -536,6 +536,13 @@ models:
           - not_null
       - name: unique_students
         description: "Number of unique students"
+      - name: source_freshness_status
+        description: "Source freshness SLA status based on configured thresholds"
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Fresh', 'Warning', 'Error']
       - name: most_recent_data_update
         description: "Timestamp of most recent data update"
       - name: hours_since_last_update

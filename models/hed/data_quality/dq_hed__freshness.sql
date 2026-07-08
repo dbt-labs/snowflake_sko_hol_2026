@@ -15,7 +15,8 @@
   - Oldest update timestamp
   - Hours since last update
   - Days since last update
-  - Freshness status classification
+  - Source freshness SLA classification
+  - Source freshness score aligned to configured thresholds
   - Records over 7 days old
   - Current records percentage
 */
@@ -31,7 +32,19 @@ freshness_metrics as (
         min(last_updated) as oldest_update,
         datediff('hour', max(last_updated), current_timestamp()) as hours_since_last_update,
         datediff('day', max(last_updated), current_timestamp()) as days_since_last_update,
-        
+
+        case
+            when datediff('hour', max(last_updated), current_timestamp()) <= 24 then 'Fresh'
+            when datediff('hour', max(last_updated), current_timestamp()) <= 48 then 'Warning'
+            else 'Error'
+        end as source_freshness_status,
+
+        case
+            when datediff('hour', max(last_updated), current_timestamp()) <= 24 then 100
+            when datediff('hour', max(last_updated), current_timestamp()) <= 48 then 50
+            else 0
+        end as source_freshness_score,
+
         case
             when datediff('hour', max(last_updated), current_timestamp()) <= 1 then 'Excellent'
             when datediff('hour', max(last_updated), current_timestamp()) <= 6 then 'Good'
@@ -40,7 +53,6 @@ freshness_metrics as (
             else 'Stale Data'
         end as freshness_status,
         
-        -- Check for stale individual records
         count(case when datediff('day', last_updated, current_timestamp()) > 7 then 1 end) as records_over_7_days_old,
         round(
             count(case when datediff('day', last_updated, current_timestamp()) <= 7 then 1 end)::decimal 

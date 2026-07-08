@@ -62,7 +62,7 @@ models:
         description: "Percentage of unique record IDs"
 
   - name: dq_hed__freshness
-    description: "Data quality component that monitors data freshness and staleness. Tracks most recent updates, calculates hours/days since last update, and identifies stale records."
+    description: "Data quality component that monitors data freshness and staleness. Tracks most recent updates, calculates hours/days since last update, aligns to source freshness SLA thresholds, and identifies stale records."
     columns:
       - name: quality_dimension
         description: "Quality dimension identifier (Data Freshness)"
@@ -74,8 +74,12 @@ models:
         description: "Hours elapsed since last update"
       - name: days_since_last_update
         description: "Days elapsed since last update"
+      - name: source_freshness_status
+        description: "SLA status aligned to source freshness thresholds (Fresh/Warning/Error)"
+      - name: source_freshness_score
+        description: "SLA-based freshness score derived from source freshness thresholds (100/50/0)"
       - name: freshness_status
-        description: "Freshness classification (Excellent/Good/Acceptable/Needs Attention/Stale)"
+        description: "Operational freshness classification (Excellent/Good/Acceptable/Needs Attention/Stale)"
       - name: records_over_7_days_old
         description: "Count of records not updated in 7+ days"
       - name: records_current_pct
