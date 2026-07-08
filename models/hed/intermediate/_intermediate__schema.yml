@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: int_hed__risk_levels
-    description: "Intermediate model providing centralized risk categorization logic. Calculates GPA risk, completion risk, engagement risk, login recency risk, and overall risk assessment used by downstream retention analysis models."
+    description: "Intermediate model providing centralized risk categorization logic. Calculates GPA risk, completion risk, engagement risk, login recency risk, and overall risk assessment used by downstream retention analysis and intervention workflows."
     columns:
       - name: student_id
         description: "Unique student identifier"
@@ -64,7 +64,7 @@ models:
           - not_null
 
   - name: int_hed__engagement_categories
-    description: "Intermediate model providing centralized engagement categorization logic. Calculates login recency, course views, assignment activity, discussion participation, and engagement levels used by downstream engagement analytics models."
+    description: "Intermediate model providing centralized engagement categorization logic. Calculates login recency, course views, assignment activity, discussion participation, and engagement levels used by downstream analytics and intervention workflows."
     columns:
       - name: student_id
         description: "Unique student identifier"
@@ -109,3 +109,118 @@ models:
         description: "Specific recommended actions based on engagement profile"
         data_tests:
           - not_null
+
+unit_tests:
+  - name: test_int_hed__risk_levels__critical_rollup_from_gpa
+    description: "A GPA below 2.0 should classify the student as Critical and drive the composite risk assessment and action."
+    model: int_hed__risk_levels
+    given:
+      - input: ref('stg_hed__students')
+        rows:
+          - student_id: S001
+            record_id: R001
+            advisor_id: A101
+            major_code: ENGR
+            academic_standing: Probation
+            at_risk_flag: true
+            current_gpa: 1.9
+            course_completion_rate: 0.9
+            engagement_score: 85
+            days_since_last_login: 1
+            total_course_views: 250
+            assignment_submissions: 16
+            discussion_posts: 12
+            financial_aid_amount: 12000
+            intervention_count: 1
+            plagiarism_incidents: 0
+            writing_quality_score: 88
+            enrollment_date: 2024-08-15
+            last_login_date: 2025-01-14
+            last_updated: 2025-01-15 10:00:00
+    expect:
+      rows:
+        - student_id: S001
+          gpa_risk_level: Critical
+          completion_risk_level: Low
+          engagement_risk_level: Low
+          login_recency_risk_level: Low
+          financial_aid_category: Full Support
+          intervention_category: Low Intervention
+          overall_risk_assessment: Critical - Immediate Intervention
+          recommended_action: Schedule mandatory advisor meeting; Review academic plan; Connect with tutoring/counseling; Verify financial aid status
+
+  - name: test_int_hed__risk_levels__moderate_thresholds_roll_up_to_moderate
+    description: "Boundary values just above the High cutoffs should land in Moderate categories and produce the Moderate composite rollup."
+    model: int_hed__risk_levels
+    given:
+      - input: ref('stg_hed__students')
+        rows:
+          - student_id: S002
+            record_id: R002
+            advisor_id: A102
+            major_code: BUSN
+            academic_standing: Good Standing
+            at_risk_flag: false
+            current_gpa: 2.5
+            course_completion_rate: 0.7
+            engagement_score: 50
+            days_since_last_login: 4
+            total_course_views: 160
+            assignment_submissions: 11
+            discussion_posts: 6
+            financial_aid_amount: 5000
+            intervention_count: 2
+            plagiarism_incidents: 0
+            writing_quality_score: 79
+            enrollment_date: 2024-08-15
+            last_login_date: 2025-01-11
+            last_updated: 2025-01-15 10:00:00
+    expect:
+      rows:
+        - student_id: S002
+          gpa_risk_level: Moderate
+          completion_risk_level: Moderate
+          engagement_risk_level: Moderate
+          login_recency_risk_level: Moderate
+          financial_aid_category: Partial Aid
+          intervention_category: Moderate Intervention
+          overall_risk_assessment: Moderate - Monitor Closely
+          recommended_action: Monitor engagement metrics; Send supportive communication; Track attendance patterns
+
+  - name: test_int_hed__risk_levels__all_low_dimensions_stay_low
+    description: "Students with strong academic and engagement signals across every dimension should remain in the Low support tier."
+    model: int_hed__risk_levels
+    given:
+      - input: ref('stg_hed__students')
+        rows:
+          - student_id: S003
+            record_id: R003
+            advisor_id: A103
+            major_code: NURS
+            academic_standing: Good Standing
+            at_risk_flag: false
+            current_gpa: 3.4
+            course_completion_rate: 0.92
+            engagement_score: 78
+            days_since_last_login: 2
+            total_course_views: 310
+            assignment_submissions: 19
+            discussion_posts: 18
+            financial_aid_amount: 0
+            intervention_count: 0
+            plagiarism_incidents: 0
+            writing_quality_score: 93
+            enrollment_date: 2024-08-15
+            last_login_date: 2025-01-13
+            last_updated: 2025-01-15 10:00:00
+    expect:
+      rows:
+        - student_id: S003
+          gpa_risk_level: Low
+          completion_risk_level: Low
+          engagement_risk_level: Low
+          login_recency_risk_level: Low
+          financial_aid_category: No Aid
+          intervention_category: No Intervention
+          overall_risk_assessment: Low - Standard Support
+          recommended_action: Continue standard support; Celebrate successes; Maintain engagement
