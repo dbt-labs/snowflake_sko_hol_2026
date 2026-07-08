@@ -3,6 +3,16 @@ version: 2
 models:
   - name: vw_hed_student_success_kpi
     description: "Executive-level KPI dashboard summarizing key student success metrics across enrollment, academic performance, engagement, financial aid, and interventions. Single-row summary view for dashboards and executive reporting."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "at_risk_students <= total_students"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "students_receiving_aid <= total_students"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "students_with_interventions <= total_students"
     columns:
       - name: total_students
         description: "Total count of unique students"
@@ -103,11 +113,19 @@ models:
         description: "Number of students who have received interventions"
       - name: last_data_refresh
         description: "Timestamp of most recent data update"
+        data_tests:
+          - not_null
       - name: report_generated_at
         description: "Timestamp when this view was queried"
+        data_tests:
+          - not_null
 
   - name: vw_hed_retention_risk_analysis
     description: "Detailed student-level retention risk analysis identifying at-risk students with risk factors, risk levels, and recommended interventions. Filters to show only at-risk students, ordered by severity."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "at_risk_flag = true or upper(at_risk_flag::varchar) = 'TRUE'"
     columns:
       - name: student_id
         description: "Unique student identifier"
@@ -209,6 +227,16 @@ models:
 
   - name: vw_hed_program_performance
     description: "Academic program performance analysis aggregated by major, comparing enrollment, academic outcomes, retention rates, engagement, and overall program health. Includes rankings and quartile classifications."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "at_risk_students <= total_students"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "students_on_probation <= total_students"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "financial_aid_coverage_pct between 0 and 100"
     columns:
       - name: major_code
         description: "Academic major code"
