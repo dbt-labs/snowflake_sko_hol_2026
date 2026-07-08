@@ -1,0 +1,129 @@
+version: 2
+
+unit_tests:
+  - name: int_hed__risk_levels__classifies_thresholds_correctly
+    model: int_hed__risk_levels
+    given:
+      - input: ref('stg_hed__students')
+        rows:
+          - student_id: 'S1'
+            record_id: 'R1'
+            advisor_id: 'A1'
+            major_code: 'ENGR'
+            academic_standing: 'Good Standing'
+            at_risk_flag: true
+            current_gpa: 1.9
+            course_completion_rate: 0.49
+            engagement_score: 29
+            days_since_last_login: 15
+            total_course_views: 2
+            assignment_submissions: 1
+            discussion_posts: 0
+            financial_aid_amount: 0
+            intervention_count: 0
+            plagiarism_incidents: 0
+            writing_quality_score: 75
+            enrollment_date: '2024-01-10'
+            last_login_date: '2024-01-20'
+            last_updated: '2024-01-21 00:00:00'
+          - student_id: 'S2'
+            record_id: 'R2'
+            advisor_id: 'A2'
+            major_code: 'BUSN'
+            academic_standing: 'Good Standing'
+            at_risk_flag: false
+            current_gpa: 2.5
+            course_completion_rate: 0.70
+            engagement_score: 50
+            days_since_last_login: 7
+            total_course_views: 10
+            assignment_submissions: 5
+            discussion_posts: 2
+            financial_aid_amount: 5000
+            intervention_count: 2
+            plagiarism_incidents: 0
+            writing_quality_score: 88
+            enrollment_date: '2024-01-10'
+            last_login_date: '2024-01-20'
+            last_updated: '2024-01-21 00:00:00'
+          - student_id: 'S3'
+            record_id: 'R3'
+            advisor_id: 'A3'
+            major_code: 'NURS'
+            academic_standing: "Dean's List"
+            at_risk_flag: false
+            current_gpa: 3.6
+            course_completion_rate: 0.92
+            engagement_score: 82
+            days_since_last_login: 1
+            total_course_views: 20
+            assignment_submissions: 8
+            discussion_posts: 6
+            financial_aid_amount: 15000
+            intervention_count: 5
+            plagiarism_incidents: 0
+            writing_quality_score: 95
+            enrollment_date: '2024-01-10'
+            last_login_date: '2024-01-20'
+            last_updated: '2024-01-21 00:00:00'
+    expect:
+      rows:
+        - student_id: 'S1'
+          gpa_risk_level: 'Critical'
+          completion_risk_level: 'Critical'
+          engagement_risk_level: 'Critical'
+          login_recency_risk_level: 'Critical'
+          financial_aid_category: 'No Aid'
+          intervention_category: 'No Intervention'
+          overall_risk_assessment: 'Critical - Immediate Intervention'
+        - student_id: 'S2'
+          gpa_risk_level: 'Moderate'
+          completion_risk_level: 'Moderate'
+          engagement_risk_level: 'Moderate'
+          login_recency_risk_level: 'Moderate'
+          financial_aid_category: 'Partial Aid'
+          intervention_category: 'Moderate Intervention'
+          overall_risk_assessment: 'Moderate - Monitor Closely'
+        - student_id: 'S3'
+          gpa_risk_level: 'Low'
+          completion_risk_level: 'Low'
+          engagement_risk_level: 'Low'
+          login_recency_risk_level: 'Low'
+          financial_aid_category: 'Full Support'
+          intervention_category: 'High Intervention'
+          overall_risk_assessment: 'Low - Standard Support'
+
+  - name: int_hed__risk_levels__high_dimension_escalates_overall_risk
+    model: int_hed__risk_levels
+    given:
+      - input: ref('stg_hed__students')
+        rows:
+          - student_id: 'S4'
+            record_id: 'R4'
+            advisor_id: 'A4'
+            major_code: 'PSYC'
+            academic_standing: 'Good Standing'
+            at_risk_flag: true
+            current_gpa: 3.4
+            course_completion_rate: 0.93
+            engagement_score: 48
+            days_since_last_login: 2
+            total_course_views: 12
+            assignment_submissions: 7
+            discussion_posts: 4
+            financial_aid_amount: 2000
+            intervention_count: 1
+            plagiarism_incidents: 0
+            writing_quality_score: 91
+            enrollment_date: '2024-02-01'
+            last_login_date: '2024-02-10'
+            last_updated: '2024-02-11 00:00:00'
+    expect:
+      rows:
+        - student_id: 'S4'
+          gpa_risk_level: 'Low'
+          completion_risk_level: 'Low'
+          engagement_risk_level: 'High'
+          login_recency_risk_level: 'Low'
+          overall_risk_assessment: 'High - Priority Attention'
+          recommended_action: 'Advisor check-in within 1 week; Offer academic support resources; Review course load'

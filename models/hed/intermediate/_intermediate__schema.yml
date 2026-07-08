@@ -2,8 +2,16 @@ version: 2
 
 models:
   - name: int_hed__risk_levels
-    description: "Intermediate model providing centralized risk categorization logic. Calculates GPA risk, completion risk, engagement risk, login recency risk, and overall risk assessment used by downstream retention analysis models."
+    description: "Intermediate model providing centralized risk categorization logic. Calculates GPA risk, completion risk, engagement risk, login recency risk, and overall risk assessment used by downstream retention analysis and data quality monitoring."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "overall_risk_assessment in ('Critical - Immediate Intervention', 'High - Priority Attention', 'Moderate - Monitor Closely', 'Low - Standard Support')"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "recommended_action is not null"
     columns:
+
       - name: student_id
         description: "Unique student identifier"
         data_tests:

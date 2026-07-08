@@ -3,7 +3,18 @@ version: 2
 models:
   - name: vw_hed_student_success_kpi
     description: "Executive-level KPI dashboard summarizing key student success metrics across enrollment, academic performance, engagement, financial aid, and interventions. Single-row summary view for dashboards and executive reporting."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "total_students >= at_risk_students"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "total_students >= students_receiving_aid"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "total_students >= students_with_interventions"
     columns:
+
       - name: total_students
         description: "Total count of unique students"
         data_tests:
@@ -108,6 +119,10 @@ models:
 
   - name: vw_hed_retention_risk_analysis
     description: "Detailed student-level retention risk analysis identifying at-risk students with risk factors, risk levels, and recommended interventions. Filters to show only at-risk students, ordered by severity."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "at_risk_flag = true or upper(at_risk_flag::varchar) = 'TRUE'"
     columns:
       - name: student_id
         description: "Unique student identifier"
@@ -208,7 +223,14 @@ models:
           - not_null
 
   - name: vw_hed_program_performance
-    description: "Academic program performance analysis aggregated by major, comparing enrollment, academic outcomes, retention rates, engagement, and overall program health. Includes rankings and quartile classifications."
+    description: "Academic program performance analysis aggregated by major, comparing enrollment, academic outcomes, retention rates, engagement, and overall program health. Includes rankings and quartile classifications for program review and resource allocation."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "total_students >= at_risk_students"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "total_students >= advisors_assigned"
     columns:
       - name: major_code
         description: "Academic major code"
@@ -311,6 +333,7 @@ models:
         description: "Qualitative performance classification"
         data_tests:
           - not_null
+
 
   - name: vw_hed_engagement_analytics
     description: "Student-level engagement analysis examining LMS login patterns, course interactions, assignment behavior, and discussion participation. Identifies engagement concerns and recommends actions, ordered by urgency."
