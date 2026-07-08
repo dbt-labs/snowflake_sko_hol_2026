@@ -141,7 +141,7 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values: ['Critical', 'High', 'Moderate', 'Low']
+                values: ["Critical", "High", "Moderate", "Low"]
       - name: course_completion_rate
         description: "Percentage of courses completed"
         data_tests:
@@ -155,7 +155,7 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values: ['Critical', 'High', 'Moderate', 'Low']
+                values: ["Critical", "High", "Moderate", "Low"]
       - name: engagement_score
         description: "Composite engagement metric (0-100)"
         data_tests:
@@ -169,7 +169,7 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values: ['Critical', 'High', 'Moderate', 'Low']
+                values: ["Critical", "High", "Moderate", "Low"]
       - name: days_since_last_login
         description: "Days elapsed since last LMS login"
       - name: login_recency_risk_level
@@ -178,7 +178,7 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values: ['Critical', 'High', 'Moderate', 'Low']
+                values: ["Critical", "High", "Moderate", "Low"]
       - name: financial_aid_amount
         description: "Total financial aid received"
       - name: financial_aid_category
@@ -187,7 +187,7 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values: ['No Aid', 'Partial Aid', 'Full Support']
+                values: ["No Aid", "Partial Aid", "Full Support"]
       - name: intervention_count
         description: "Number of academic interventions received"
       - name: intervention_category
@@ -529,7 +529,7 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values: ['Excellent', 'Good', 'Acceptable', 'Needs Improvement']
+                values: ["Excellent", "Good", "Acceptable", "Needs Improvement"]
       - name: total_records
         description: "Total number of records in source table"
         data_tests:
