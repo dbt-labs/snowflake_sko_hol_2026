@@ -8,13 +8,14 @@
 /*
   Higher Education Data Quality Monitor
   
-  Purpose: Monitor data completeness, validity, and freshness for HED records
+  Purpose: Monitor data completeness, validity, freshness, and row-count stability for HED records
   
   Quality Checks (now modular):
   - Record completeness (dq_hed__completeness)
   - Data validity (dq_hed__validity)
   - Duplicate detection (dq_hed__duplicates)
   - Data freshness tracking (dq_hed__freshness)
+  - Row-count drift monitoring (dq_hed__row_count_drift)
   
   Use Cases:
   - Daily data quality monitoring
@@ -37,6 +38,10 @@ duplicates as (
 
 freshness as (
     select * from {{ ref('dq_hed__freshness') }}
+),
+
+row_count_drift as (
+    select * from {{ ref('dq_hed__row_count_drift') }}
 ),
 
 summary as (
@@ -74,11 +79,17 @@ summary as (
         c.total_records,
         c.unique_students,
         f.most_recent_update as most_recent_data_update,
-        f.hours_since_last_update
+        f.hours_since_last_update,
+        r.latest_updated_date as row_count_drift_latest_date,
+        r.current_row_count,
+        r.avg_row_count_previous_7_days,
+        r.row_count_drift_pct,
+        r.row_count_drift_status
     from completeness c
     cross join validity v
     cross join duplicates d
     cross join freshness f
+    cross join row_count_drift r
 )
 
 select * from summary

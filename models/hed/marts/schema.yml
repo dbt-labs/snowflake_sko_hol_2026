@@ -480,7 +480,7 @@ models:
         expr: STUDENT_ID
 
   - name: vw_hed_data_quality
-    description: "Data quality monitoring dashboard providing completeness, validity, uniqueness, freshness, and anomaly detection metrics. Single-row summary with composite quality score and status."
+    description: "Data quality monitoring dashboard providing completeness, validity, uniqueness, freshness, row-count drift, and anomaly detection metrics. Single-row summary with composite quality score and status."
     columns:
       - name: quality_check_timestamp
         description: "Timestamp when quality checks were executed"
@@ -540,3 +540,17 @@ models:
         description: "Timestamp of most recent data update"
       - name: hours_since_last_update
         description: "Hours elapsed since most recent update"
+      - name: row_count_drift_latest_date
+        description: "Most recent update date used in the row-count drift comparison"
+      - name: current_row_count
+        description: "Number of records updated on the most recent update date"
+      - name: avg_row_count_previous_7_days
+        description: "Average number of updated records across the trailing seven-day comparison window"
+      - name: row_count_drift_pct
+        description: "Percent difference between the most recent updated-record count and the trailing seven-day average"
+      - name: row_count_drift_status
+        description: "Row-count drift classification (Insufficient History/Stable/Moderate Drift/Significant Drift)"
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Insufficient History', 'Stable', 'Moderate Drift', 'Significant Drift']

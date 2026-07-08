@@ -80,3 +80,25 @@ models:
         description: "Count of records not updated in 7+ days"
       - name: records_current_pct
         description: "Percentage of records updated within 7 days"
+
+  - name: dq_hed__row_count_drift
+    description: "Data quality component that monitors daily row-count drift by comparing the latest update-date volume to the trailing seven-day baseline."
+    columns:
+      - name: quality_dimension
+        description: "Quality dimension identifier (Row Count Drift)"
+      - name: latest_updated_date
+        description: "Most recent update date represented in the source data"
+      - name: current_row_count
+        description: "Number of records updated on the most recent update date"
+      - name: baseline_days
+        description: "Number of prior days included in the seven-day comparison window"
+      - name: avg_row_count_previous_7_days
+        description: "Average updated-record count across the trailing seven days"
+      - name: min_row_count_previous_7_days
+        description: "Minimum updated-record count across the trailing seven days"
+      - name: max_row_count_previous_7_days
+        description: "Maximum updated-record count across the trailing seven days"
+      - name: row_count_drift_pct
+        description: "Percent difference between the latest updated-record count and the trailing seven-day average"
+      - name: row_count_drift_status
+        description: "Row-count drift classification (Insufficient History/Stable/Moderate Drift/Significant Drift)"
