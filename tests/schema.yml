@@ -1,0 +1,11 @@
+version: 2
+
+data_tests:
+  - name: assert_vw_hed_student_success_kpi_has_one_row
+    description: "Ensures the KPI mart remains a single-row executive summary."
+
+  - name: assert_vw_hed_retention_risk_analysis_only_at_risk_students
+    description: "Ensures the retention risk mart only exposes records flagged as at-risk."
+
+  - name: assert_vw_hed_data_quality_has_one_row
+    description: "Ensures the data quality summary mart remains a single-row status output."
