@@ -3,6 +3,10 @@ version: 2
 models:
   - name: stg_hed__students
     description: "Staging model for HED student records. Single source of truth that centralizes the source reference, standardizes column naming, and provides base calculations used across all downstream models."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "credit_hours_earned <= credit_hours_attempted"
     columns:
       - name: record_id
         description: "Primary key for each record"
