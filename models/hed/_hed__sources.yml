@@ -9,6 +9,28 @@ sources:
       - name: hed_records
         identifier: "{{ var('hed_source_table', 'HED_RECORDS') }}"
         description: "Student academic performance, engagement, and retention data"
+        config:
+          loaded_at_field: last_updated
+          freshness:
+            warn_after:
+              count: 6
+              period: hour
+            error_after:
+              count: 24
+              period: hour
+        data_tests:
+          - dbt_utils.expression_is_true:
+              name: source_credit_hours_earned_not_gt_attempted
+              arguments:
+                expression: "credit_hours_earned <= credit_hours_attempted"
+              config:
+                where: "credit_hours_earned is not null and credit_hours_attempted is not null"
+          - dbt_utils.expression_is_true:
+              name: source_enrollment_before_last_login
+              arguments:
+                expression: "enrollment_date <= last_login_date"
+              config:
+                where: "enrollment_date is not null and last_login_date is not null"
         columns:
           - name: record_id
             description: "Primary key for each record"
@@ -27,37 +49,98 @@ sources:
               - not_null
           - name: current_gpa
             description: "Current cumulative GPA"
+            data_tests:
+              - dbt_utils.accepted_range:
+                  arguments:
+                    min_value: 0
+                    max_value: 4
           - name: credit_hours_attempted
             description: "Total credit hours attempted"
+            data_tests:
+              - dbt_utils.accepted_range:
+                  arguments:
+                    min_value: 0
           - name: credit_hours_earned
             description: "Total credit hours successfully completed"
+            data_tests:
+              - dbt_utils.accepted_range:
+                  arguments:
+                    min_value: 0
           - name: major_code
             description: "Student's declared major (e.g., ENGR, BUSN, NURS)"
           - name: advisor_id
             description: "Academic advisor assigned to student"
           - name: financial_aid_amount
             description: "Total financial aid received"
+            data_tests:
+              - dbt_utils.accepted_range:
+                  arguments:
+                    min_value: 0
           - name: last_login_date
             description: "Most recent LMS login timestamp"
           - name: total_course_views
             description: "Total number of course material views"
+            data_tests:
+              - dbt_utils.accepted_range:
+                  arguments:
+                    min_value: 0
           - name: assignment_submissions
             description: "Number of assignments submitted"
+            data_tests:
+              - dbt_utils.accepted_range:
+                  arguments:
+                    min_value: 0
           - name: discussion_posts
             description: "Number of discussion forum posts"
+            data_tests:
+              - dbt_utils.accepted_range:
+                  arguments:
+                    min_value: 0
           - name: avg_assignment_score
             description: "Average score across all assignments"
+            data_tests:
+              - dbt_utils.accepted_range:
+                  arguments:
+                    min_value: 0
+                    max_value: 100
           - name: course_completion_rate
             description: "Percentage of courses completed (0-1 scale)"
+            data_tests:
+              - dbt_utils.accepted_range:
+                  arguments:
+                    min_value: 0
+                    max_value: 1
           - name: plagiarism_incidents
             description: "Number of academic integrity violations"
+            data_tests:
+              - dbt_utils.accepted_range:
+                  arguments:
+                    min_value: 0
           - name: writing_quality_score
             description: "Writing assessment score (0-100)"
+            data_tests:
+              - dbt_utils.accepted_range:
+                  arguments:
+                    min_value: 0
+                    max_value: 100
           - name: engagement_score
             description: "Composite engagement metric (0-100)"
+            data_tests:
+              - dbt_utils.accepted_range:
+                  arguments:
+                    min_value: 0
+                    max_value: 100
           - name: at_risk_flag
             description: "Boolean flag indicating retention risk"
+            data_tests:
+              - not_null
           - name: intervention_count
             description: "Number of academic interventions/support sessions"
+            data_tests:
+              - dbt_utils.accepted_range:
+                  arguments:
+                    min_value: 0
           - name: last_updated
             description: "Timestamp of last record update"
+            data_tests:
+              - not_null
