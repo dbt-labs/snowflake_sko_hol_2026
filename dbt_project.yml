@@ -49,5 +49,6 @@ models:
 vars:
   # Source configuration for HED Higher Education (NEW)
   hed_source_database: 'SNOWFLAKE_SUMMIT_2026_HOL_DB'
-  hed_source_schema: 'LUIS_LEON_HIGHER_EDUCATION'
+  hed_source_schema: 'dbt_workshop_NLe_85d10e'
   hed_source_table: 'HED_RECORDS'
+
