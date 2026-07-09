@@ -9,6 +9,32 @@ sources:
       - name: hed_records
         identifier: "{{ var('hed_source_table', 'HED_RECORDS') }}"
         description: "Student academic performance, engagement, and retention data"
+        config:
+          loaded_at_field: last_updated
+          freshness:
+            warn_after:
+              count: 24
+              period: hour
+            error_after:
+              count: 48
+              period: hour
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "credit_hours_earned <= credit_hours_attempted"
+                where: "credit_hours_earned is not null and credit_hours_attempted is not null"
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "enrollment_date <= last_login_date"
+                where: "enrollment_date is not null and last_login_date is not null"
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "financial_aid_amount >= 0"
+                where: "financial_aid_amount is not null"
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "intervention_count >= 0"
+                where: "intervention_count is not null"
         columns:
           - name: record_id
             description: "Primary key for each record"
