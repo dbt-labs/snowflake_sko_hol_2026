@@ -2,81 +2,358 @@ version: 2
 
 models:
   - name: dq_hed__completeness
-    description: "Data quality component that monitors field completeness across required fields. Calculates missing value counts and completeness percentages for student IDs, enrollment dates, academic standing, GPA, and major codes."
+    description: "Data quality component that monitors field completeness across required fields. Calculates missing value counts and completeness percentages for student IDs, enrollment dates, academic standing, GPA, and major codes, plus an overall completeness score."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "quality_dimension = 'Record Completeness'"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "unique_students <= total_records"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "unique_record_ids <= total_records"
     columns:
       - name: quality_dimension
         description: "Quality dimension identifier (Record Completeness)"
+        data_tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values: ['Record Completeness']
       - name: total_records
         description: "Total number of records in source"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: unique_students
         description: "Count of unique student IDs"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: unique_record_ids
         description: "Count of unique record IDs"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: missing_student_ids
         description: "Count of records missing student_id"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: missing_enrollment_dates
         description: "Count of records missing enrollment_date"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: missing_academic_standing
         description: "Count of records missing academic_standing"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: missing_gpa
         description: "Count of records missing current_gpa"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: missing_major_codes
         description: "Count of records missing major_code"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: overall_completeness_score
         description: "Overall completeness score (0-100)"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
 
   - name: dq_hed__validity
-    description: "Data quality component that validates data ranges and logical consistency. Checks GPA bounds, credit hour logic, completion rate bounds, engagement score bounds, financial aid validity, and date logic."
+    description: "Data quality component that validates data ranges and logical consistency. Checks GPA bounds, credit hour logic, completion rate bounds, engagement score bounds, assignment score bounds, financial aid validity, and date logic."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "quality_dimension = 'Data Validity'"
     columns:
       - name: quality_dimension
         description: "Quality dimension identifier (Data Validity)"
+        data_tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values: ['Data Validity']
       - name: invalid_gpa_records
         description: "Count of records with GPA outside 0.0-4.0 range"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: gpa_validity_pct
         description: "Percentage of records with valid GPA"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: invalid_credit_hour_records
         description: "Count of records where earned > attempted"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: credit_hours_validity_pct
         description: "Percentage of records with valid credit hours"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: invalid_completion_rate_records
+        description: "Count of records with completion rate outside 0.0-1.0 range"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: completion_rate_validity_pct
+        description: "Percentage of records with valid completion rate"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: invalid_engagement_score_records
+        description: "Count of records with engagement score outside 0-100 range"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: engagement_score_validity_pct
+        description: "Percentage of records with valid engagement score"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: invalid_assignment_score_records
+        description: "Count of records with assignment score outside 0-100 range"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: assignment_score_validity_pct
+        description: "Percentage of records with valid assignment score"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: invalid_financial_aid_records
+        description: "Count of records with negative financial aid amount"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: financial_aid_validity_pct
+        description: "Percentage of records with valid financial aid amount"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: invalid_date_logic_records
+        description: "Count of records where enrollment_date is after last_login_date"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+      - name: date_logic_validity_pct
+        description: "Percentage of records with valid enrollment/login date ordering"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: overall_validity_score
         description: "Overall validity score (0-100)"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
 
   - name: dq_hed__duplicates
     description: "Data quality component that detects duplicate records. Identifies duplicate student IDs and record IDs, calculating uniqueness percentages."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "quality_dimension = 'Duplicate Detection'"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "unique_students <= total_records"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "unique_record_ids <= total_records"
     columns:
       - name: quality_dimension
         description: "Quality dimension identifier (Duplicate Detection)"
+        data_tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values: ['Duplicate Detection']
       - name: total_records
         description: "Total number of records"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: unique_students
         description: "Count of unique students"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: duplicate_student_records
         description: "Count of duplicate student records"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: unique_record_ids
         description: "Count of unique record IDs"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: duplicate_record_ids
         description: "Count of duplicate record IDs"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: student_uniqueness_pct
         description: "Percentage of unique student records"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
       - name: record_id_uniqueness_pct
         description: "Percentage of unique record IDs"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
 
   - name: dq_hed__freshness
     description: "Data quality component that monitors data freshness and staleness. Tracks most recent updates, calculates hours/days since last update, and identifies stale records."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "quality_dimension = 'Data Freshness'"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "hours_since_last_update >= 0"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "days_since_last_update >= 0"
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "most_recent_update >= oldest_update"
     columns:
       - name: quality_dimension
         description: "Quality dimension identifier (Data Freshness)"
+        data_tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values: ['Data Freshness']
       - name: most_recent_update
         description: "Timestamp of most recent data update"
+        data_tests:
+          - not_null
       - name: oldest_update
         description: "Timestamp of oldest data update"
+        data_tests:
+          - not_null
       - name: hours_since_last_update
         description: "Hours elapsed since last update"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: days_since_last_update
         description: "Days elapsed since last update"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: freshness_status
         description: "Freshness classification (Excellent/Good/Acceptable/Needs Attention/Stale)"
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Excellent', 'Good', 'Acceptable', 'Needs Attention', 'Stale Data']
       - name: records_over_7_days_old
         description: "Count of records not updated in 7+ days"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: records_current_pct
         description: "Percentage of records updated within 7 days"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
