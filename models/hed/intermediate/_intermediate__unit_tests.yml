@@ -1,0 +1,34 @@
+version: 2
+
+unit_tests:
+  - name: int_hed__risk_levels__classifies_mixed_risk_profiles
+    description: "Validates composite risk classification across critical, high, moderate, and low scenarios."
+    model: int_hed__risk_levels
+    given:
+      - input: ref('stg_hed__students')
+        rows:
+          - {student_id: S1, record_id: 1, advisor_id: A1, major_code: ENGR, academic_standing: Probation, at_risk_flag: true, current_gpa: 1.8, course_completion_rate: 0.92, engagement_score: 82, days_since_last_login: 1, total_course_views: 40, assignment_submissions: 8, discussion_posts: 3, financial_aid_amount: 12000, intervention_count: 3, plagiarism_incidents: 0, writing_quality_score: 88, enrollment_date: '2024-08-15', last_login_date: '2024-10-01', last_updated: '2024-10-02 09:00:00'}
+          - {student_id: S2, record_id: 2, advisor_id: A2, major_code: BUSN, academic_standing: Good Standing, at_risk_flag: true, current_gpa: 2.3, course_completion_rate: 0.88, engagement_score: 72, days_since_last_login: 2, total_course_views: 33, assignment_submissions: 7, discussion_posts: 4, financial_aid_amount: 5000, intervention_count: 1, plagiarism_incidents: 0, writing_quality_score: 84, enrollment_date: '2024-08-15', last_login_date: '2024-10-01', last_updated: '2024-10-02 09:00:00'}
+          - {student_id: S3, record_id: 3, advisor_id: A3, major_code: NURS, academic_standing: Good Standing, at_risk_flag: false, current_gpa: 3.2, course_completion_rate: 0.8, engagement_score: 75, days_since_last_login: 5, total_course_views: 25, assignment_submissions: 6, discussion_posts: 2, financial_aid_amount: 0, intervention_count: 0, plagiarism_incidents: 0, writing_quality_score: 90, enrollment_date: '2024-08-15', last_login_date: '2024-09-27', last_updated: '2024-10-02 09:00:00'}
+          - {student_id: S4, record_id: 4, advisor_id: A4, major_code: ARTS, academic_standing: Good Standing, at_risk_flag: false, current_gpa: 3.6, course_completion_rate: 0.9, engagement_score: 88, days_since_last_login: 1, total_course_views: 55, assignment_submissions: 9, discussion_posts: 5, financial_aid_amount: 0, intervention_count: 0, plagiarism_incidents: 0, writing_quality_score: 93, enrollment_date: '2024-08-15', last_login_date: '2024-10-01', last_updated: '2024-10-02 09:00:00'}
+    expect:
+      rows:
+        - {student_id: S1, gpa_risk_level: Critical, completion_risk_level: Low, engagement_risk_level: Low, login_recency_risk_level: Low, financial_aid_category: Full Support, intervention_category: Moderate Intervention, overall_risk_assessment: 'Critical - Immediate Intervention', recommended_action: 'Schedule mandatory advisor meeting; Review academic plan; Connect with tutoring/counseling; Verify financial aid status'}
+        - {student_id: S2, gpa_risk_level: High, completion_risk_level: Low, engagement_risk_level: Low, login_recency_risk_level: Low, financial_aid_category: Partial Aid, intervention_category: Low Intervention, overall_risk_assessment: 'High - Priority Attention', recommended_action: 'Advisor check-in within 1 week; Offer academic support resources; Review course load'}
+        - {student_id: S3, gpa_risk_level: Low, completion_risk_level: Moderate, engagement_risk_level: Low, login_recency_risk_level: Moderate, financial_aid_category: No Aid, intervention_category: No Intervention, overall_risk_assessment: 'Moderate - Monitor Closely', recommended_action: 'Monitor engagement metrics; Send supportive communication; Track attendance patterns'}
+        - {student_id: S4, gpa_risk_level: Low, completion_risk_level: Low, engagement_risk_level: Low, login_recency_risk_level: Low, financial_aid_category: No Aid, intervention_category: No Intervention, overall_risk_assessment: 'Low - Standard Support', recommended_action: 'Continue standard support; Celebrate successes; Maintain engagement'}
+
+  - name: int_hed__risk_levels__respects_threshold_boundaries
+    description: "Locks down the exact boundary behavior for GPA, completion, engagement, login recency, aid, and intervention thresholds."
+    model: int_hed__risk_levels
+    given:
+      - input: ref('stg_hed__students')
+        rows:
+          - {student_id: B1, record_id: 10, advisor_id: A1, major_code: ENGR, academic_standing: Good Standing, at_risk_flag: false, current_gpa: 2.0, course_completion_rate: 0.5, engagement_score: 30, days_since_last_login: 14, total_course_views: 10, assignment_submissions: 2, discussion_posts: 1, financial_aid_amount: 0, intervention_count: 0, plagiarism_incidents: 0, writing_quality_score: 80, enrollment_date: '2024-08-15', last_login_date: '2024-09-18', last_updated: '2024-10-02 09:00:00'}
+          - {student_id: B2, record_id: 11, advisor_id: A2, major_code: BUSN, academic_standing: Good Standing, at_risk_flag: false, current_gpa: 2.5, course_completion_rate: 0.7, engagement_score: 50, days_since_last_login: 7, total_course_views: 10, assignment_submissions: 2, discussion_posts: 1, financial_aid_amount: 9999, intervention_count: 2, plagiarism_incidents: 0, writing_quality_score: 80, enrollment_date: '2024-08-15', last_login_date: '2024-09-25', last_updated: '2024-10-02 09:00:00'}
+          - {student_id: B3, record_id: 12, advisor_id: A3, major_code: NURS, academic_standing: Good Standing, at_risk_flag: false, current_gpa: 3.0, course_completion_rate: 0.85, engagement_score: 70, days_since_last_login: 3, total_course_views: 10, assignment_submissions: 2, discussion_posts: 1, financial_aid_amount: 10000, intervention_count: 5, plagiarism_incidents: 0, writing_quality_score: 80, enrollment_date: '2024-08-15', last_login_date: '2024-09-29', last_updated: '2024-10-02 09:00:00'}
+    expect:
+      rows:
+        - {student_id: B1, gpa_risk_level: High, completion_risk_level: High, engagement_risk_level: High, login_recency_risk_level: High, financial_aid_category: No Aid, intervention_category: No Intervention, overall_risk_assessment: 'High - Priority Attention'}
+        - {student_id: B2, gpa_risk_level: Moderate, completion_risk_level: Moderate, engagement_risk_level: Moderate, login_recency_risk_level: Moderate, financial_aid_category: Partial Aid, intervention_category: Moderate Intervention, overall_risk_assessment: 'Moderate - Monitor Closely'}
+        - {student_id: B3, gpa_risk_level: Low, completion_risk_level: Low, engagement_risk_level: Low, login_recency_risk_level: Low, financial_aid_category: Full Support, intervention_category: High Intervention, overall_risk_assessment: 'Low - Standard Support'}
