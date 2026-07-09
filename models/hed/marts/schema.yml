@@ -534,9 +534,24 @@ models:
         description: "Total number of records in source table"
         data_tests:
           - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: unique_students
         description: "Number of unique students"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: most_recent_data_update
         description: "Timestamp of most recent data update"
+        data_tests:
+          - not_null
       - name: hours_since_last_update
         description: "Hours elapsed since most recent update"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
