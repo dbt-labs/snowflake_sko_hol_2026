@@ -23,6 +23,9 @@ models:
         description: "Current academic status (e.g., Good Standing, Probation)"
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: ["Good Standing", "Dean''s List", "Probation", "At Risk"]
       - name: current_gpa
         description: "Current cumulative GPA"
         data_tests:
@@ -107,6 +110,9 @@ models:
         description: "Boolean flag indicating retention risk"
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
       - name: intervention_count
         description: "Number of academic interventions"
         data_tests:
@@ -121,6 +127,8 @@ models:
         description: "Most recent LMS login timestamp"
       - name: last_updated
         description: "Timestamp of last record update"
+        data_tests:
+          - not_null
       - name: days_since_last_login
         description: "Calculated: Days since last LMS login"
       - name: days_active_since_enrollment
@@ -132,3 +140,4 @@ models:
               arguments:
                 min_value: 0
                 max_value: 100
+
