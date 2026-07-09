@@ -109,3 +109,128 @@ models:
         description: "Specific recommended actions based on engagement profile"
         data_tests:
           - not_null
+
+unit_tests:
+  - name: int_hed__risk_levels_classifies_boundary_conditions
+    model: int_hed__risk_levels
+    given:
+      - input: ref('stg_hed__students')
+        rows:
+          - student_id: s_critical
+            record_id: 1
+            advisor_id: adv_1
+            major_code: ENGR
+            academic_standing: Probation
+            at_risk_flag: true
+            current_gpa: 1.9
+            course_completion_rate: 0.90
+            engagement_score: 80
+            days_since_last_login: 1
+            total_course_views: 50
+            assignment_submissions: 10
+            discussion_posts: 5
+            financial_aid_amount: 0
+            intervention_count: 0
+            plagiarism_incidents: 0
+            writing_quality_score: 88
+            enrollment_date: 2024-09-01
+            last_login_date: 2024-09-10
+            last_updated: 2024-09-10 12:00:00
+          - student_id: s_high
+            record_id: 2
+            advisor_id: adv_2
+            major_code: BUSN
+            academic_standing: Good Standing
+            at_risk_flag: true
+            current_gpa: 2.0
+            course_completion_rate: 0.70
+            engagement_score: 49
+            days_since_last_login: 5
+            total_course_views: 40
+            assignment_submissions: 8
+            discussion_posts: 4
+            financial_aid_amount: 5000
+            intervention_count: 1
+            plagiarism_incidents: 0
+            writing_quality_score: 82
+            enrollment_date: 2024-09-01
+            last_login_date: 2024-09-08
+            last_updated: 2024-09-10 12:00:00
+          - student_id: s_moderate
+            record_id: 3
+            advisor_id: adv_3
+            major_code: NURS
+            academic_standing: Good Standing
+            at_risk_flag: false
+            current_gpa: 2.5
+            course_completion_rate: 0.84
+            engagement_score: 50
+            days_since_last_login: 4
+            total_course_views: 35
+            assignment_submissions: 7
+            discussion_posts: 3
+            financial_aid_amount: 12000
+            intervention_count: 2
+            plagiarism_incidents: 0
+            writing_quality_score: 90
+            enrollment_date: 2024-09-01
+            last_login_date: 2024-09-06
+            last_updated: 2024-09-10 12:00:00
+          - student_id: s_low
+            record_id: 4
+            advisor_id: adv_4
+            major_code: ARTS
+            academic_standing: Dean's List
+            at_risk_flag: false
+            current_gpa: 3.0
+            course_completion_rate: 0.85
+            engagement_score: 70
+            days_since_last_login: 3
+            total_course_views: 60
+            assignment_submissions: 12
+            discussion_posts: 6
+            financial_aid_amount: 15000
+            intervention_count: 5
+            plagiarism_incidents: 0
+            writing_quality_score: 95
+            enrollment_date: 2024-09-01
+            last_login_date: 2024-09-07
+            last_updated: 2024-09-10 12:00:00
+    expect:
+      rows:
+        - student_id: s_critical
+          gpa_risk_level: Critical
+          completion_risk_level: Low
+          engagement_risk_level: Low
+          login_recency_risk_level: Low
+          financial_aid_category: No Aid
+          intervention_category: No Intervention
+          overall_risk_assessment: Critical - Immediate Intervention
+          recommended_action: Schedule mandatory advisor meeting; Review academic plan; Connect with tutoring/counseling; Verify financial aid status
+        - student_id: s_high
+          gpa_risk_level: High
+          completion_risk_level: Moderate
+          engagement_risk_level: High
+          login_recency_risk_level: Moderate
+          financial_aid_category: Partial Aid
+          intervention_category: Low Intervention
+          overall_risk_assessment: High - Priority Attention
+          recommended_action: Advisor check-in within 1 week; Offer academic support resources; Review course load
+        - student_id: s_moderate
+          gpa_risk_level: Moderate
+          completion_risk_level: Moderate
+          engagement_risk_level: Moderate
+          login_recency_risk_level: Moderate
+          financial_aid_category: Full Support
+          intervention_category: Moderate Intervention
+          overall_risk_assessment: Moderate - Monitor Closely
+          recommended_action: Monitor engagement metrics; Send supportive communication; Track attendance patterns
+        - student_id: s_low
+          gpa_risk_level: Low
+          completion_risk_level: Low
+          engagement_risk_level: Low
+          login_recency_risk_level: Low
+          financial_aid_category: Full Support
+          intervention_category: High Intervention
+          overall_risk_assessment: Low - Standard Support
+          recommended_action: Continue standard support; Celebrate successes; Maintain engagement
