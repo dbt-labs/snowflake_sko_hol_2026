@@ -488,6 +488,9 @@ models:
           - not_null
       - name: report_section
         description: "Report section identifier"
+        data_tests:
+          - not_null
+          - unique
       - name: completeness_score
         description: "Overall data completeness score (0-100)"
         data_tests:
