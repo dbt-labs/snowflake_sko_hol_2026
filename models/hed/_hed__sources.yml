@@ -3,7 +3,7 @@ version: 2
 sources:
   - name: hed
     database: "{{ var('hed_source_database', 'HOL_DATABASE') }}"
-    schema: "{{ var('hed_source_schema', 'INDUSTRIES_HIGHER_EDUCATION') }}"
+    schema: "{{ var('hed_source_schema', 'dbt_workshop_TQuaderi_9d101c') }}"
     description: "Higher Education data from Fivetran connector"
     tables:
       - name: hed_records
