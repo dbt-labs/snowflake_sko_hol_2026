@@ -9,6 +9,15 @@ sources:
       - name: hed_records
         identifier: "{{ var('hed_source_table', 'HED_RECORDS') }}"
         description: "Student academic performance, engagement, and retention data"
+        config:
+          loaded_at_field: last_updated
+          freshness:
+            warn_after:
+              count: 6
+              period: hour
+            error_after:
+              count: 24
+              period: hour
         columns:
           - name: record_id
             description: "Primary key for each record"
