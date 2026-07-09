@@ -108,12 +108,21 @@ models:
 
   - name: vw_hed_retention_risk_analysis
     description: "Detailed student-level retention risk analysis identifying at-risk students with risk factors, risk levels, and recommended interventions. Filters to show only at-risk students, ordered by severity."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          name: vw_hed_retention_risk_analysis_all_rows_are_at_risk
+          arguments:
+            expression: "UPPER(at_risk_flag::VARCHAR) = 'TRUE'"
     columns:
       - name: student_id
         description: "Unique student identifier"
         data_tests:
           - not_null
           - unique
+          - relationships:
+              arguments:
+                to: ref('stg_hed__students')
+                field: student_id
       - name: major_code
         description: "Student's academic major"
         data_tests:
@@ -206,6 +215,7 @@ models:
         description: "Specific recommended interventions based on risk profile"
         data_tests:
           - not_null
+
 
   - name: vw_hed_program_performance
     description: "Academic program performance analysis aggregated by major, comparing enrollment, academic outcomes, retention rates, engagement, and overall program health. Includes rankings and quartile classifications."
