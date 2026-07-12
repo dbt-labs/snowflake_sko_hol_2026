@@ -15,6 +15,7 @@
   - Data validity (dq_hed__validity)
   - Duplicate detection (dq_hed__duplicates)
   - Data freshness tracking (dq_hed__freshness)
+  - Source freshness tracking (raw HED source)
   
   Use Cases:
   - Daily data quality monitoring
@@ -39,6 +40,20 @@ freshness as (
     select * from {{ ref('dq_hed__freshness') }}
 ),
 
+source_freshness as (
+    select
+        max(last_updated) as source_most_recent_update,
+        min(last_updated) as source_oldest_update,
+        datediff('hour', max(last_updated), current_timestamp()) as source_hours_since_last_update,
+        datediff('day', max(last_updated), current_timestamp()) as source_days_since_last_update,
+        case
+            when datediff('hour', max(last_updated), current_timestamp()) <= 6 then 'Pass'
+            when datediff('hour', max(last_updated), current_timestamp()) <= 24 then 'Warn'
+            else 'Error'
+        end as source_freshness_status
+    from {{ source('hed', 'hed_records') }}
+),
+
 summary as (
     select
         current_timestamp() as quality_check_timestamp,
@@ -49,6 +64,13 @@ summary as (
         v.overall_validity_score as validity_score,
         d.student_uniqueness_pct as uniqueness_score,
         f.records_current_pct as freshness_score,
+        
+        -- Source freshness metrics from raw source table
+        sf.source_most_recent_update,
+        sf.source_oldest_update,
+        sf.source_hours_since_last_update,
+        sf.source_days_since_last_update,
+        sf.source_freshness_status,
         
         -- Calculate composite quality score
         round(
@@ -79,6 +101,7 @@ summary as (
     cross join validity v
     cross join duplicates d
     cross join freshness f
+    cross join source_freshness sf
 )
 
 select * from summary
