@@ -3,6 +3,19 @@ version: 2
 models:
   - name: stg_hed__students
     description: "Staging model for HED student records. Single source of truth that centralizes the source reference, standardizes column naming, and provides base calculations used across all downstream models."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          name: stg_hed__students_earned_credits_lte_attempted
+          arguments:
+            expression: "credit_hours_earned <= credit_hours_attempted"
+      - dbt_utils.expression_is_true:
+          name: stg_hed__students_zero_attempted_implies_zero_earned
+          arguments:
+            expression: "credit_hours_attempted != 0 or credit_hours_earned = 0"
+      - dbt_utils.expression_is_true:
+          name: stg_hed__students_login_not_before_enrollment
+          arguments:
+            expression: "last_login_date is null or cast(last_login_date as date) >= enrollment_date"
     columns:
       - name: record_id
         description: "Primary key for each record"
