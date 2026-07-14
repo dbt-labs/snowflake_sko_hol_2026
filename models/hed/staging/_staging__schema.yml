@@ -3,6 +3,17 @@ version: 2
 models:
   - name: stg_hed__students
     description: "Staging model for HED student records. Single source of truth that centralizes the source reference, standardizes column naming, and provides base calculations used across all downstream models."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          name: stg_hed_credit_hours_earned_not_greater_than_attempted
+          arguments:
+            expression: "credit_hours_earned <= credit_hours_attempted"
+      - dbt_utils.expression_is_true:
+          name: stg_hed_last_login_not_before_enrollment
+          arguments:
+            expression: "last_login_date >= enrollment_date"
+          config:
+            where: "last_login_date is not null and enrollment_date is not null"
     columns:
       - name: record_id
         description: "Primary key for each record"
@@ -23,6 +34,9 @@ models:
         description: "Current academic status (e.g., Good Standing, Probation)"
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: ['Good Standing', 'Probation', 'Dean''s List', 'Academic Warning', 'Suspension', 'Honor Roll']
       - name: current_gpa
         description: "Current cumulative GPA"
         data_tests:

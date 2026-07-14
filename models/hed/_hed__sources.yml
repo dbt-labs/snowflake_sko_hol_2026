@@ -9,6 +9,14 @@ sources:
       - name: hed_records
         identifier: "{{ var('hed_source_table', 'HED_RECORDS') }}"
         description: "Student academic performance, engagement, and retention data"
+        loaded_at_field: last_updated
+        freshness:
+          warn_after:
+            count: 6
+            period: hour
+          error_after:
+            count: 24
+            period: hour
         columns:
           - name: record_id
             description: "Primary key for each record"
@@ -25,6 +33,9 @@ sources:
             description: "Current academic status (e.g., Good Standing, Probation, Dean's List)"
             data_tests:
               - not_null
+              - accepted_values:
+                  arguments:
+                    values: ['Good Standing', 'Probation', 'Dean''s List', 'Academic Warning', 'Suspension', 'Honor Roll']
           - name: current_gpa
             description: "Current cumulative GPA"
           - name: credit_hours_attempted
