@@ -32,6 +32,7 @@ with source_data as (
 program_metrics as (
   select
     major_code,
+    max(to_date(last_updated)) as snapshot_date,
     
     -- Enrollment Metrics
     count(distinct student_id) as total_students,
@@ -131,6 +132,7 @@ ranked_programs as (
 
 select
   major_code,
+  snapshot_date,
   total_students,
   advisors_assigned,
   avg_students_per_advisor,

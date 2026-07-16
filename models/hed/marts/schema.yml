@@ -215,6 +215,16 @@ models:
         data_tests:
           - not_null
           - unique
+        entity:
+          type: primary
+          name: program
+      - name: snapshot_date
+        description: "As-of date for the program performance snapshot based on the latest source update in the major"
+        data_tests:
+          - not_null
+        dimension:
+          type: time
+        granularity: day
       - name: total_students
         description: "Number of students enrolled in this major"
         data_tests:
@@ -307,10 +317,48 @@ models:
           - accepted_values:
               arguments:
                 values: [1, 2, 3, 4]
+        dimension:
+          type: categorical
       - name: performance_category
         description: "Qualitative performance classification"
         data_tests:
           - not_null
+        dimension:
+          type: categorical
+    semantic_model:
+      enabled: true
+    agg_time_dimension: snapshot_date
+    metrics:
+      - name: total_program_students
+        description: "Total number of students across programs"
+        type: simple
+        label: Total Program Students
+        agg: sum
+        expr: total_students
+      - name: total_program_at_risk_students
+        description: "Total number of at-risk students across programs"
+        type: simple
+        label: Total Program At-Risk Students
+        agg: sum
+        expr: at_risk_students
+      - name: total_program_financial_aid
+        description: "Total financial aid distributed across programs"
+        type: simple
+        label: Total Program Financial Aid
+        agg: sum
+        expr: total_financial_aid
+      - name: average_program_gpa
+        description: "Average GPA across program rows"
+        type: simple
+        label: Average Program GPA
+        agg: average
+        expr: avg_gpa
+      - name: average_program_health_score
+        description: "Average program health score across program rows"
+        type: simple
+        label: Average Program Health Score
+        agg: average
+        expr: program_health_score
 
   - name: vw_hed_engagement_analytics
     description: "Student-level engagement analysis examining LMS login patterns, course interactions, assignment behavior, and discussion participation. Identifies engagement concerns and recommends actions, ordered by urgency."
