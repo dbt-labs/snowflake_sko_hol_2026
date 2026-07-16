@@ -26,7 +26,7 @@
 
 with source_data as (
   select *
-  from {{ ref('stg_hed__students') }}
+  from {{ ref('stg_hed__student') }}
 ),
 
 program_metrics as (

@@ -25,7 +25,7 @@
 */
 
 with students as (
-    select * from {{ ref('stg_hed__students') }}
+    select * from {{ ref('stg_hed__student') }}
 ),
 
 engagement_calculations as (

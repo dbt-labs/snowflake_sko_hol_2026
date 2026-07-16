@@ -21,7 +21,7 @@
 */
 
 with source_data as (
-    select * from {{ ref('stg_hed__students') }}
+    select * from {{ ref('stg_hed__student') }}
 ),
 
 freshness_metrics as (
