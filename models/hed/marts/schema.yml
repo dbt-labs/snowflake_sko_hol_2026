@@ -478,6 +478,14 @@ models:
         label: Student Count
         agg: count
         expr: STUDENT_ID
+      - name: at_risk_student_count
+        type: simple
+        label: At-Risk Student Count
+        agg: count
+        expr: STUDENT_ID
+        filter: |
+          {{ Dimension('is_at_risk') }} = true
+
 
   - name: vw_hed_data_quality
     description: "Data quality monitoring dashboard providing completeness, validity, uniqueness, freshness, and anomaly detection metrics. Single-row summary with composite quality score and status."
