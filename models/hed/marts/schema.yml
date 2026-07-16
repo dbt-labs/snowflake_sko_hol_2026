@@ -114,20 +114,35 @@ models:
         data_tests:
           - not_null
           - unique
+        entity:
+          type: primary
+          name: student
       - name: major_code
         description: "Student's academic major"
         data_tests:
           - not_null
+        dimension:
+          type: categorical
+          name: retention_risk_major_code
       - name: advisor_id
         description: "Assigned academic advisor"
+        dimension:
+          type: categorical
       - name: academic_standing
         description: "Current academic status"
         data_tests:
           - not_null
+        dimension:
+          type: categorical
+          name: retention_risk_academic_standing
       - name: at_risk_flag
         description: "Boolean indicating retention risk (always TRUE in this view)"
         data_tests:
           - not_null
+        dimension:
+          type: categorical
+          name: retention_risk_is_at_risk
+
       - name: current_gpa
         description: "Current cumulative GPA"
         data_tests:
@@ -142,6 +157,8 @@ models:
           - accepted_values:
               arguments:
                 values: ['Critical', 'High', 'Moderate', 'Low']
+        dimension:
+          type: categorical
       - name: course_completion_rate
         description: "Percentage of courses completed"
         data_tests:
@@ -156,6 +173,8 @@ models:
           - accepted_values:
               arguments:
                 values: ['Critical', 'High', 'Moderate', 'Low']
+        dimension:
+          type: categorical
       - name: engagement_score
         description: "Composite engagement metric (0-100)"
         data_tests:
@@ -170,6 +189,8 @@ models:
           - accepted_values:
               arguments:
                 values: ['Critical', 'High', 'Moderate', 'Low']
+        dimension:
+          type: categorical
       - name: days_since_last_login
         description: "Days elapsed since last LMS login"
       - name: login_recency_risk_level
@@ -179,6 +200,8 @@ models:
           - accepted_values:
               arguments:
                 values: ['Critical', 'High', 'Moderate', 'Low']
+        dimension:
+          type: categorical
       - name: financial_aid_amount
         description: "Total financial aid received"
       - name: financial_aid_category
@@ -188,12 +211,16 @@ models:
           - accepted_values:
               arguments:
                 values: ['No Aid', 'Partial Aid', 'Full Support']
+        dimension:
+          type: categorical
       - name: intervention_count
         description: "Number of academic interventions received"
       - name: intervention_category
         description: "Intervention frequency classification"
         data_tests:
           - not_null
+        dimension:
+          type: categorical
       - name: plagiarism_incidents
         description: "Number of academic integrity violations"
       - name: writing_quality_score
@@ -202,10 +229,41 @@ models:
         description: "Composite risk level with severity classification"
         data_tests:
           - not_null
+        dimension:
+          type: categorical
       - name: recommended_action
         description: "Specific recommended interventions based on risk profile"
         data_tests:
           - not_null
+        dimension:
+          type: categorical
+      - name: enrollment_date
+        dimension:
+          type: time
+          name: retention_risk_enrollment_date
+        granularity: day
+      - name: last_login_date
+        dimension:
+          type: time
+          name: retention_risk_last_login_date
+        granularity: day
+      - name: last_updated
+        dimension:
+          type: time
+          name: retention_risk_last_updated
+        granularity: day
+    semantic_model:
+      enabled: true
+    agg_time_dimension: retention_risk_last_updated
+    metrics:
+      - name: at_risk_student_count
+        type: simple
+        label: At-Risk Student Count
+        description: "Count of students currently flagged as at risk in the retention risk analysis model."
+        agg: count
+        expr: student_id
+
+
 
   - name: vw_hed_program_performance
     description: "Academic program performance analysis aggregated by major, comparing enrollment, academic outcomes, retention rates, engagement, and overall program health. Includes rankings and quartile classifications."
