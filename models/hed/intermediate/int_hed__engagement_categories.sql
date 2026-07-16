@@ -174,9 +174,13 @@ final as (
             
             when engagement_score >= 80 
             then 'Acknowledge engagement; Consider peer mentor role'
+
+            when engagement_score >= 30 and engagement_score < 60
+            then 'Send email from advisor'
             
             else 'Monitor ongoing; Maintain regular touchpoints'
         end as recommended_engagement_action
+
         
     from engagement_calculations
 )

@@ -383,6 +383,8 @@ models:
           - not_null
         dimension:
           type: categorical
+      - name: discussion_posts_per_assignment_submission
+        description: "Ratio of discussion posts to assignment submissions for each student; null when assignment submissions is zero"
       - name: engagement_score
         description: "Composite engagement metric (0-100)"
       - name: engagement_level
@@ -390,6 +392,8 @@ models:
         data_tests:
           - not_null
         dimension:
+          type: categorical
+
           type: categorical
       - name: engagement_balance_score
         description: "Normalized score measuring diversity of engagement across dimensions"

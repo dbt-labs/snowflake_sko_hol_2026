@@ -56,6 +56,7 @@ select
     -- Discussion Forum Participation
     discussion_posts,
     discussion_participation_category,
+    round(discussion_posts::float / nullif(assignment_submissions, 0), 2) as discussion_posts_per_assignment_submission,
     
     -- Overall Engagement Metrics
     engagement_score,
@@ -77,6 +78,7 @@ select
     -- Dates
     enrollment_date,
     last_updated
+
 from engagement_data
 order by
     case engagement_concern_level
