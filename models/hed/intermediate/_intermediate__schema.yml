@@ -2,7 +2,37 @@ version: 2
 
 models:
   - name: int_hed__risk_levels
-    description: "Intermediate model providing centralized risk categorization logic. Calculates GPA risk, completion risk, engagement risk, login recency risk, and overall risk assessment used by downstream retention analysis models."
+    description: "Intermediate model providing centralized risk categorization logic. Calculates GPA risk, completion risk, engagement risk, login recency risk, and overall risk assessment used by downstream retention and intervention models."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          name: risk_levels_overall_assessment_matches_dimensions
+          arguments:
+            expression: |
+              case
+                when gpa_risk_level = 'Critical'
+                  or completion_risk_level = 'Critical'
+                  or engagement_risk_level = 'Critical'
+                  or login_recency_risk_level = 'Critical'
+                  then overall_risk_assessment = 'Critical - Immediate Intervention'
+                when gpa_risk_level = 'High'
+                  or completion_risk_level = 'High'
+                  or engagement_risk_level = 'High'
+                  or login_recency_risk_level = 'High'
+                  then overall_risk_assessment = 'High - Priority Attention'
+                when gpa_risk_level = 'Moderate'
+                  or completion_risk_level = 'Moderate'
+                  or engagement_risk_level = 'Moderate'
+                  or login_recency_risk_level = 'Moderate'
+                  then overall_risk_assessment = 'Moderate - Monitor Closely'
+                else overall_risk_assessment = 'Low - Standard Support'
+              end
+      - dbt_utils.expression_is_true:
+          name: risk_levels_category_consistency
+          arguments:
+            expression: |
+              (financial_aid_amount = 0 and financial_aid_category = 'No Aid')
+              or (financial_aid_amount > 0 and financial_aid_amount < 10000 and financial_aid_category = 'Partial Aid')
+              or (financial_aid_amount >= 10000 and financial_aid_category = 'Full Support')
     columns:
       - name: student_id
         description: "Unique student identifier"
@@ -64,7 +94,7 @@ models:
           - not_null
 
   - name: int_hed__engagement_categories
-    description: "Intermediate model providing centralized engagement categorization logic. Calculates login recency, course views, assignment activity, discussion participation, and engagement levels used by downstream engagement analytics models."
+    description: "Intermediate model providing centralized engagement categorization logic. Calculates login recency, course views, assignment activity, discussion participation, and engagement levels used by downstream engagement analytics."
     columns:
       - name: student_id
         description: "Unique student identifier"

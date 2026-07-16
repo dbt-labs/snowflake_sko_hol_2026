@@ -3,6 +3,15 @@ version: 2
 models:
   - name: vw_hed_student_success_kpi
     description: "Executive-level KPI dashboard summarizing key student success metrics across enrollment, academic performance, engagement, financial aid, and interventions. Single-row summary view for dashboards and executive reporting."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          name: student_success_kpi_risk_counts_within_total_students
+          arguments:
+            expression: "at_risk_students <= total_students"
+      - dbt_utils.expression_is_true:
+          name: student_success_kpi_aid_counts_within_total_students
+          arguments:
+            expression: "students_receiving_aid <= total_students"
     columns:
       - name: total_students
         description: "Total count of unique students"
@@ -108,12 +117,21 @@ models:
 
   - name: vw_hed_retention_risk_analysis
     description: "Detailed student-level retention risk analysis identifying at-risk students with risk factors, risk levels, and recommended interventions. Filters to show only at-risk students, ordered by severity."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          name: retention_risk_analysis_only_contains_at_risk_students
+          arguments:
+            expression: "at_risk_flag = true or upper(at_risk_flag::varchar) = 'TRUE'"
     columns:
       - name: student_id
         description: "Unique student identifier"
         data_tests:
           - not_null
           - unique
+          - relationships:
+              arguments:
+                to: ref('int_hed__risk_levels')
+                field: student_id
       - name: major_code
         description: "Student's academic major"
         data_tests:
@@ -209,12 +227,25 @@ models:
 
   - name: vw_hed_program_performance
     description: "Academic program performance analysis aggregated by major, comparing enrollment, academic outcomes, retention rates, engagement, and overall program health. Includes rankings and quartile classifications."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          name: program_performance_students_on_probation_within_total_students
+          arguments:
+            expression: "students_on_probation <= total_students"
+      - dbt_utils.expression_is_true:
+          name: program_performance_high_achievers_within_total_students
+          arguments:
+            expression: "high_achievers <= total_students"
     columns:
       - name: major_code
         description: "Academic major code"
         data_tests:
           - not_null
           - unique
+          - relationships:
+              arguments:
+                to: ref('stg_hed__students')
+                field: major_code
       - name: total_students
         description: "Number of students enrolled in this major"
         data_tests:
@@ -313,7 +344,7 @@ models:
           - not_null
 
   - name: vw_hed_engagement_analytics
-    description: "Student-level engagement analysis examining LMS login patterns, course interactions, assignment behavior, and discussion participation. Identifies engagement concerns and recommends actions, ordered by urgency."
+    description: "Student-level engagement analysis examining LMS login patterns, course interactions, assignment behavior, and discussion participation. Identifies engagement concerns and recommends actions."
     columns:
       - name: student_id
         description: "Unique student identifier"
@@ -503,40 +534,27 @@ models:
                 min_value: 0
                 max_value: 100
       - name: uniqueness_score
-        description: "Student record uniqueness score (0-100)"
+        description: "Overall uniqueness score (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 100
       - name: freshness_score
-        description: "Data freshness score based on update recency (0-100)"
+        description: "Overall freshness score (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 100
-      - name: composite_quality_score
-        description: "Composite quality score averaging all dimensions (0-100)"
+      - name: anomaly_count
+        description: "Number of detected anomalies"
+      - name: overall_quality_score
+        description: "Composite data quality score (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 100
-      - name: overall_quality_status
-        description: "Qualitative quality assessment (Excellent/Good/Acceptable/Needs Improvement)"
-        data_tests:
-          - not_null
-          - accepted_values:
-              arguments:
-                values: ['Excellent', 'Good', 'Acceptable', 'Needs Improvement']
-      - name: total_records
-        description: "Total number of records in source table"
-        data_tests:
-          - not_null
-      - name: unique_students
-        description: "Number of unique students"
-      - name: most_recent_data_update
-        description: "Timestamp of most recent data update"
-      - name: hours_since_last_update
-        description: "Hours elapsed since most recent update"
+      - name: quality_status
+        description: "Overall data quality status"
