@@ -1,11 +1,11 @@
-name: 'dbt_industries_views'
-version: '1.0.0'
+name: "dbt_industries_views"
+version: "1.0.0"
 config-version: 2
 
 # This dbt project supports multiple industry verticals with selective execution
 # Each industry has its own folder under models/ for independent deployment
 
-profile: 'industries_snowflake'
+profile: "industries_snowflake"
 
 model-paths: ["models"]
 analysis-paths: ["analyses"]
@@ -31,16 +31,16 @@ models:
 
     # HED Higher Education Models (NEW)
     hed:
-      +tags: ['hed', 'education']
+      +tags: ["hed", "education"]
       +schema: industries_higher_education
       +materialized: view
-    
+
     # Future Industry Models (examples)
     # agr:
     #   +tags: ['agr', 'agriculture']
     #   +schema: industries_agriculture
     #   +materialized: view
-    
+
     # met:
     #   +tags: ['met', 'meteorology']
     #   +schema: industries_meteorology
@@ -48,6 +48,6 @@ models:
 
 vars:
   # Source configuration for HED Higher Education (NEW)
-  hed_source_database: 'SNOWFLAKE_SUMMIT_2026_HOL_DB'
-  hed_source_schema: 'LUIS_LEON_HIGHER_EDUCATION'
-  hed_source_table: 'HED_RECORDS'
+  hed_source_database: "SNOWFLAKE_SUMMIT_2026_HOL_DB"
+  hed_source_schema: "LUIS_LEON_HIGHER_EDUCATION"
+  hed_source_table: "HED_RECORDS"
