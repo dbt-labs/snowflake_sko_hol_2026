@@ -40,6 +40,8 @@ engagement_calculations as (
         
         -- Pass through metrics
         current_gpa,
+        credit_hours_attempted,
+
         course_completion_rate,
         engagement_score,
         total_course_views,
