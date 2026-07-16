@@ -465,6 +465,12 @@ models:
         type: simple
         label: Current GPA
         agg: average
+      - name: avg_current_gpa
+        type: simple
+        label: Average Current GPA
+        agg: average
+        expr: current_gpa
+
       - name: course_completion_rate
         type: simple
         label: Course Completion Rate
