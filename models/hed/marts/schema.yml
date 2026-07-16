@@ -488,6 +488,11 @@ models:
           - not_null
       - name: report_section
         description: "Report section identifier"
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Overall Data Quality Summary']
+
       - name: completeness_score
         description: "Overall data completeness score (0-100)"
         data_tests:
