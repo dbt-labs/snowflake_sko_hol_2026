@@ -481,6 +481,15 @@ models:
 
   - name: vw_hed_data_quality
     description: "Data quality monitoring dashboard providing completeness, validity, uniqueness, freshness, and anomaly detection metrics. Single-row summary with composite quality score and status."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          name: vw_hed_data_quality_unique_students_lte_total_records
+          arguments:
+            expression: "unique_students <= total_records"
+      - dbt_utils.expression_is_true:
+          name: vw_hed_data_quality_non_negative_hours_since_last_update
+          arguments:
+            expression: "hours_since_last_update >= 0"
     columns:
       - name: quality_check_timestamp
         description: "Timestamp when quality checks were executed"
@@ -488,6 +497,11 @@ models:
           - not_null
       - name: report_section
         description: "Report section identifier"
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Overall Data Quality Summary']
       - name: completeness_score
         description: "Overall data completeness score (0-100)"
         data_tests:
@@ -540,3 +554,4 @@ models:
         description: "Timestamp of most recent data update"
       - name: hours_since_last_update
         description: "Hours elapsed since most recent update"
+
