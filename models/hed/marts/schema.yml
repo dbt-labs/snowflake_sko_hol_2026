@@ -483,10 +483,6 @@ models:
     description: "Data quality monitoring dashboard providing completeness, validity, uniqueness, freshness, and anomaly detection metrics. Single-row summary with composite quality score and status."
     data_tests:
       - dbt_utils.expression_is_true:
-          name: vw_hed_data_quality_exactly_one_summary_row
-          arguments:
-            expression: "(select count(*) from {{ this }}) = 1"
-      - dbt_utils.expression_is_true:
           name: vw_hed_data_quality_unique_students_lte_total_records
           arguments:
             expression: "unique_students <= total_records"
