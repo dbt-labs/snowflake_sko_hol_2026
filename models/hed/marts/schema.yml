@@ -478,6 +478,13 @@ models:
         label: Student Count
         agg: count
         expr: STUDENT_ID
+      - name: avg_days_since_last_login
+        description: "Average number of days since a student's last login"
+        type: simple
+        label: Average Days Since Last Login
+        agg: average
+        expr: days_since_last_login
+
 
   - name: vw_hed_data_quality
     description: "Data quality monitoring dashboard providing completeness, validity, uniqueness, freshness, and anomaly detection metrics. Single-row summary with composite quality score and status."
@@ -486,8 +493,12 @@ models:
         description: "Timestamp when quality checks were executed"
         data_tests:
           - not_null
+          - unique
       - name: report_section
         description: "Report section identifier"
+        data_tests:
+          - not_null
+          - unique
       - name: completeness_score
         description: "Overall data completeness score (0-100)"
         data_tests:
