@@ -3,6 +3,9 @@ version: 2
 models:
   - name: stg_hed__students
     description: "Staging model for HED student records. Single source of truth that centralizes the source reference, standardizes column naming, and provides base calculations used across all downstream models."
+    data_tests:
+      - credit_hours_earned_lte_attempted
+      - last_login_on_or_after_enrollment
     columns:
       - name: record_id
         description: "Primary key for each record"
@@ -13,6 +16,7 @@ models:
         description: "Unique student identifier"
         data_tests:
           - not_null
+          - unique
       - name: advisor_id
         description: "Academic advisor assigned to student"
       - name: major_code
@@ -23,6 +27,10 @@ models:
         description: "Current academic status (e.g., Good Standing, Probation)"
         data_tests:
           - not_null
+          - value_in_list:
+              arguments:
+                values: ["Good Standing", "Dean''s List", "At Risk", "Probation"]
+
       - name: current_gpa
         description: "Current cumulative GPA"
         data_tests:
@@ -107,6 +115,9 @@ models:
         description: "Boolean flag indicating retention risk"
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
       - name: intervention_count
         description: "Number of academic interventions"
         data_tests:
