@@ -75,37 +75,93 @@ models:
         description: "Categorical description of login recency (Today, Within 24 Hours, etc.)"
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: ['Today', 'Within 24 Hours', 'Within 3 Days', 'Within 1 Week', 'Within 2 Weeks', 'Over 2 Weeks Ago']
       - name: course_views_category
         description: "Course viewing behavior category (Very High/High/Moderate/Low/Very Low)"
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: ['Very High', 'High', 'Moderate', 'Low', 'Very Low']
       - name: assignment_activity_category
         description: "Assignment submission activity level"
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: ['Very Active', 'Active', 'Moderate', 'Low', 'Very Low']
       - name: assignment_performance_category
         description: "Assignment score performance category"
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: ['Excellent', 'Good', 'Satisfactory', 'Needs Improvement', 'Critical']
       - name: discussion_participation_category
         description: "Discussion forum participation level"
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: ['Very Active', 'Active', 'Moderate', 'Low', 'Minimal']
       - name: engagement_level
         description: "Overall engagement classification (Highly Engaged to Critically Disengaged)"
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: ['Highly Engaged', 'Engaged', 'Moderately Engaged', 'Disengaged', 'Critically Disengaged']
       - name: engagement_balance_score
         description: "Normalized score measuring diversity of engagement across dimensions"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
       - name: engagement_performance_quadrant
         description: "Classification combining engagement and academic performance"
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: ['High Engagement / High Performance', 'High Engagement / Low Performance', 'Low Engagement / High Performance', 'Low Engagement / Low Performance']
       - name: engagement_concern_level
         description: "Urgency classification for engagement-related concerns"
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: ['Immediate Concern - Student Dropout Risk', 'Elevated Concern - Declining Engagement', 'High Concern - Critically Disengaged', 'Moderate Concern - Minimal Participation', 'No Immediate Concern']
       - name: recommended_engagement_action
         description: "Specific recommended actions based on engagement profile"
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: ['Immediate outreach required; Check student wellness', 'Schedule advisor meeting; Review barriers to engagement', 'Connect with instructor; Offer tutoring support', 'Encourage peer collaboration; Review discussion participation expectations', 'Acknowledge engagement; Consider peer mentor role', 'Monitor ongoing; Maintain regular touchpoints']
+
+unit_tests:
+  - name: test_int_hed__engagement_categories_threshold_boundaries
+    description: "Validate bucket boundaries, concern precedence, and recommended actions for engagement categorization logic."
+    model: int_hed__engagement_categories
+    given:
+      - input: ref('stg_hed__students')
+        rows:
+          - {student_id: 1, record_id: 101, advisor_id: 9001, major_code: BIOL, academic_standing: Good Standing, at_risk_flag: false, current_gpa: 3.5, course_completion_rate: 0.95, engagement_score: 80, total_course_views: 300, assignment_submissions: 18, avg_assignment_score: 85, discussion_posts: 25, intervention_count: 0, enrollment_date: 2024-01-01, last_login_date: 2024-04-01, last_updated: 2024-04-02 00:00:00, days_since_last_login: 0, days_active_since_enrollment: 91}
+          - {student_id: 2, record_id: 102, advisor_id: 9002, major_code: CHEM, academic_standing: Good Standing, at_risk_flag: false, current_gpa: 2.8, course_completion_rate: 0.88, engagement_score: 60, total_course_views: 200, assignment_submissions: 14, avg_assignment_score: 75, discussion_posts: 15, intervention_count: 1, enrollment_date: 2024-01-01, last_login_date: 2024-03-31, last_updated: 2024-04-02 00:00:00, days_since_last_login: 1, days_active_since_enrollment: 90}
+          - {student_id: 3, record_id: 103, advisor_id: 9003, major_code: HIST, academic_standing: Probation, at_risk_flag: true, current_gpa: 3.2, course_completion_rate: 0.72, engagement_score: 40, total_course_views: 100, assignment_submissions: 10, avg_assignment_score: 65, discussion_posts: 8, intervention_count: 2, enrollment_date: 2024-01-01, last_login_date: 2024-03-25, last_updated: 2024-04-02 00:00:00, days_since_last_login: 7, days_active_since_enrollment: 84}
+          - {student_id: 4, record_id: 104, advisor_id: 9004, major_code: MATH, academic_standing: Warning, at_risk_flag: true, current_gpa: 2.0, course_completion_rate: 0.61, engagement_score: 20, total_course_views: 50, assignment_submissions: 6, avg_assignment_score: 50, discussion_posts: 3, intervention_count: 3, enrollment_date: 2024-01-01, last_login_date: 2024-03-18, last_updated: 2024-04-02 00:00:00, days_since_last_login: 14, days_active_since_enrollment: 77}
+          - {student_id: 5, record_id: 105, advisor_id: 9005, major_code: ENGL, academic_standing: Probation, at_risk_flag: true, current_gpa: 2.1, course_completion_rate: 0.55, engagement_score: 19, total_course_views: 49, assignment_submissions: 5, avg_assignment_score: 49, discussion_posts: 2, intervention_count: 4, enrollment_date: 2024-01-01, last_login_date: 2024-03-17, last_updated: 2024-04-02 00:00:00, days_since_last_login: 15, days_active_since_enrollment: 76}
+          - {student_id: 6, record_id: 106, advisor_id: 9006, major_code: PSYC, academic_standing: Good Standing, at_risk_flag: false, current_gpa: 2.9, course_completion_rate: 0.84, engagement_score: 45, total_course_views: 120, assignment_submissions: 11, avg_assignment_score: 70, discussion_posts: 9, intervention_count: 0, enrollment_date: 2024-01-01, last_login_date: 2024-03-24, last_updated: 2024-04-02 00:00:00, days_since_last_login: 8, days_active_since_enrollment: 83}
+          - {student_id: 7, record_id: 107, advisor_id: 9007, major_code: SOCI, academic_standing: Good Standing, at_risk_flag: false, current_gpa: 2.7, course_completion_rate: 0.81, engagement_score: 55, total_course_views: 70, assignment_submissions: 4, avg_assignment_score: 72, discussion_posts: 2, intervention_count: 1, enrollment_date: 2024-01-01, last_login_date: 2024-03-30, last_updated: 2024-04-02 00:00:00, days_since_last_login: 2, days_active_since_enrollment: 89}
+    expect:
+      rows:
+        - {student_id: 1, login_recency_category: Today, course_views_category: Very High, assignment_activity_category: Very Active, assignment_performance_category: Excellent, discussion_participation_category: Very Active, engagement_level: Highly Engaged, engagement_performance_quadrant: High Engagement / High Performance, engagement_concern_level: No Immediate Concern, recommended_engagement_action: Acknowledge engagement; Consider peer mentor role}
+        - {student_id: 2, login_recency_category: Within 24 Hours, course_views_category: High, assignment_activity_category: Active, assignment_performance_category: Good, discussion_participation_category: Active, engagement_level: Engaged, engagement_performance_quadrant: High Engagement / Low Performance, engagement_concern_level: No Immediate Concern, recommended_engagement_action: Monitor ongoing; Maintain regular touchpoints}
+        - {student_id: 3, login_recency_category: Within 1 Week, course_views_category: Moderate, assignment_activity_category: Moderate, assignment_performance_category: Satisfactory, discussion_participation_category: Moderate, engagement_level: Moderately Engaged, engagement_performance_quadrant: Low Engagement / High Performance, engagement_concern_level: No Immediate Concern, recommended_engagement_action: Monitor ongoing; Maintain regular touchpoints}
+        - {student_id: 4, login_recency_category: Within 2 Weeks, course_views_category: Low, assignment_activity_category: Low, assignment_performance_category: Needs Improvement, discussion_participation_category: Low, engagement_level: Disengaged, engagement_performance_quadrant: Low Engagement / Low Performance, engagement_concern_level: High Concern - Critically Disengaged, recommended_engagement_action: Schedule advisor meeting; Review barriers to engagement}
+        - {student_id: 5, login_recency_category: Over 2 Weeks Ago, course_views_category: Very Low, assignment_activity_category: Very Low, assignment_performance_category: Critical, discussion_participation_category: Minimal, engagement_level: Critically Disengaged, engagement_performance_quadrant: Low Engagement / Low Performance, engagement_concern_level: Immediate Concern - Student Dropout Risk, recommended_engagement_action: Immediate outreach required; Check student wellness}
+        - {student_id: 6, login_recency_category: Over 2 Weeks Ago, course_views_category: Moderate, assignment_activity_category: Moderate, assignment_performance_category: Satisfactory, discussion_participation_category: Moderate, engagement_level: Moderately Engaged, engagement_performance_quadrant: Low Engagement / Low Performance, engagement_concern_level: Elevated Concern - Declining Engagement, recommended_engagement_action: Monitor ongoing; Maintain regular touchpoints}
+        - {student_id: 7, login_recency_category: Within 3 Days, course_views_category: Low, assignment_activity_category: Very Low, assignment_performance_category: Satisfactory, discussion_participation_category: Minimal, engagement_level: Moderately Engaged, engagement_performance_quadrant: Low Engagement / Low Performance, engagement_concern_level: Moderate Concern - Minimal Participation, recommended_engagement_action: Connect with instructor; Offer tutoring support}
