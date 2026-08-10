@@ -48,7 +48,8 @@ summary as (
         c.overall_completeness_score as completeness_score,
         v.overall_validity_score as validity_score,
         d.student_uniqueness_pct as uniqueness_score,
-        f.records_current_pct as freshness_score,
+        f.source_freshness_score as freshness_score,
+
         
         -- Calculate composite quality score
         round(
@@ -56,20 +57,21 @@ summary as (
                 c.overall_completeness_score +
                 v.overall_validity_score +
                 d.student_uniqueness_pct +
-                f.records_current_pct
+                f.source_freshness_score
             ) / 4.0,
             1
         ) as composite_quality_score,
         
         case
-            when round((c.overall_completeness_score + v.overall_validity_score + d.student_uniqueness_pct + f.records_current_pct) / 4.0, 1) >= 95 
+            when round((c.overall_completeness_score + v.overall_validity_score + d.student_uniqueness_pct + f.source_freshness_score) / 4.0, 1) >= 95 
             then 'Excellent'
-            when round((c.overall_completeness_score + v.overall_validity_score + d.student_uniqueness_pct + f.records_current_pct) / 4.0, 1) >= 85 
+            when round((c.overall_completeness_score + v.overall_validity_score + d.student_uniqueness_pct + f.source_freshness_score) / 4.0, 1) >= 85 
             then 'Good'
-            when round((c.overall_completeness_score + v.overall_validity_score + d.student_uniqueness_pct + f.records_current_pct) / 4.0, 1) >= 70 
+            when round((c.overall_completeness_score + v.overall_validity_score + d.student_uniqueness_pct + f.source_freshness_score) / 4.0, 1) >= 70 
             then 'Acceptable'
             else 'Needs Improvement'
         end as overall_quality_status,
+
         
         c.total_records,
         c.unique_students,

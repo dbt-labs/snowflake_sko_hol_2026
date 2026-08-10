@@ -3,6 +3,29 @@ version: 2
 models:
   - name: stg_hed__students
     description: "Staging model for HED student records. Single source of truth that centralizes the source reference, standardizes column naming, and provides base calculations used across all downstream models."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          name: credit_hours_earned_do_not_exceed_attempted
+          description: "Earned credit hours cannot exceed attempted credit hours. Check the upstream academic-record feed for failed rows."
+          arguments:
+            expression: "credit_hours_earned <= credit_hours_attempted"
+      - dbt_utils.expression_is_true:
+          name: login_date_is_not_before_enrollment
+          description: "A recorded LMS login cannot predate enrollment. Check source date parsing for failed rows."
+          arguments:
+            expression: "enrollment_date is null or last_login_date is null or enrollment_date <= last_login_date"
+      - dbt_utils.expression_is_true:
+          name: last_updated_is_not_in_the_future
+          description: "Source update timestamps must not be later than the warehouse clock. Check source timezone or timestamp parsing for failed rows."
+          arguments:
+            expression: "last_updated is null or last_updated <= current_timestamp()"
+      - dbt_utils.expression_is_true:
+          name: last_updated_is_not_before_enrollment
+          description: "A source update cannot precede enrollment. Check source timestamp parsing for failed rows."
+          arguments:
+            expression: "enrollment_date is null or last_updated is null or enrollment_date <= last_updated"
+
+
     columns:
       - name: record_id
         description: "Primary key for each record"
@@ -23,6 +46,9 @@ models:
         description: "Current academic status (e.g., Good Standing, Probation)"
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: ['At Risk', "Dean''s List", 'Good Standing', 'Probation']
       - name: current_gpa
         description: "Current cumulative GPA"
         data_tests:
@@ -107,6 +133,10 @@ models:
         description: "Boolean flag indicating retention risk"
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+                quote: false
       - name: intervention_count
         description: "Number of academic interventions"
         data_tests:
@@ -119,8 +149,13 @@ models:
           - not_null
       - name: last_login_date
         description: "Most recent LMS login timestamp"
+        data_tests:
+          - not_null
       - name: last_updated
         description: "Timestamp of last record update"
+        data_tests:
+          - not_null
+
       - name: days_since_last_login
         description: "Calculated: Days since last LMS login"
       - name: days_active_since_enrollment

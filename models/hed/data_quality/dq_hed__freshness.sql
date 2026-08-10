@@ -33,7 +33,14 @@ freshness_metrics as (
         datediff('day', max(last_updated), current_timestamp()) as days_since_last_update,
         
         case
+            when datediff('day', max(last_updated), current_timestamp()) <= 7 then 100
+            when datediff('day', max(last_updated), current_timestamp()) <= 30 then 50
+            else 0
+        end as source_freshness_score,
+        
+        case
             when datediff('hour', max(last_updated), current_timestamp()) <= 1 then 'Excellent'
+
             when datediff('hour', max(last_updated), current_timestamp()) <= 6 then 'Good'
             when datediff('hour', max(last_updated), current_timestamp()) <= 24 then 'Acceptable'
             when datediff('day', max(last_updated), current_timestamp()) <= 3 then 'Needs Attention'
