@@ -13,6 +13,8 @@ models:
         description: "Unique student identifier"
         data_tests:
           - not_null
+          - unique
+
       - name: advisor_id
         description: "Academic advisor assigned to student"
       - name: major_code
