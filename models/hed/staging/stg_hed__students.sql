@@ -31,14 +31,23 @@ staged as (
         
         -- Academic Information
         academic_standing,
-        current_gpa,
+        case
+            when current_gpa > 4 then current_gpa / 100.0
+            else current_gpa
+        end as current_gpa,
         credit_hours_attempted,
         credit_hours_earned,
-        course_completion_rate,
+        case
+            when course_completion_rate > 1 then course_completion_rate / 100.0
+            else course_completion_rate
+        end as course_completion_rate,
         avg_assignment_score,
         
         -- Engagement Metrics
-        engagement_score,
+        case
+            when engagement_score > 100 then engagement_score::float / 10
+            else engagement_score::float
+        end as engagement_score,
         total_course_views,
         assignment_submissions,
         discussion_posts,
@@ -59,8 +68,8 @@ staged as (
         last_login_date,
         last_updated,
         
-        -- Calculated Fields: Days since last login
-        datediff('day', last_login_date, current_date()) as days_since_last_login,
+        -- Calculated Fields: Days since last login, as of the source snapshot
+        datediff('day', last_login_date, max(last_updated) over ()) as days_since_last_login,
         
         -- Calculated Fields: Days active since enrollment
         datediff('day', enrollment_date, last_login_date) as days_active_since_enrollment,
