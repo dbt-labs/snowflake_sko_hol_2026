@@ -47,6 +47,7 @@ program_metrics as (
     round(max(current_gpa), 2) as max_gpa,
     round(avg(course_completion_rate) * 100, 1) as avg_completion_rate_pct,
     round(avg(avg_assignment_score), 1) as avg_assignment_score,
+    1 as new_col,
     
     -- Credit Hour Analysis
     round(avg(credit_hours_attempted), 1) as avg_credits_attempted,
