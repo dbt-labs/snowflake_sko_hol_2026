@@ -36,6 +36,7 @@ select
     advisor_id,
     academic_standing,
     at_risk_flag,
+    1 as new_col,
     
     -- Academic Risk Factors
     current_gpa,
