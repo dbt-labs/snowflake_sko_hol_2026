@@ -540,3 +540,25 @@ models:
         description: "Timestamp of most recent data update"
       - name: hours_since_last_update
         description: "Hours elapsed since most recent update"
+
+
+  - name: vw_hed_assignment_performance_by_student
+    description: "Student-level assignment performance, grouped by the derived assignment performance category."
+    columns:
+      - name: student
+        description: "Unique student identifier."
+        data_tests:
+          - not_null
+          - unique
+      - name: student__assignment_performance_category
+        description: "Derived assignment performance category based on the student's average assignment score."
+        data_tests:
+          - not_null
+      - name: avg_assignment_score
+        description: "Average assignment score for the student and assignment performance category."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
