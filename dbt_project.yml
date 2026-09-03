@@ -32,7 +32,7 @@ models:
     # HED Higher Education Models (NEW)
     hed:
       +tags: ['hed', 'education']
-      +schema: industries_higher_education
+      +schema: ayanp_higher_education
       +materialized: view
     
     # Future Industry Models (examples)
