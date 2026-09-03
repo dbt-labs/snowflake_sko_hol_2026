@@ -540,3 +540,33 @@ models:
         description: "Timestamp of most recent data update"
       - name: hours_since_last_update
         description: "Hours elapsed since most recent update"
+
+
+  - name: vw_hed_course_score_extremes
+    description: "Best and worst student average assignment scores by academic program. One row per major_code. The source does not include a course identifier, so major_code is used as the available course-level grouping."
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "best_avg_assignment_score >= worst_avg_assignment_score"
+    columns:
+      - name: major_code
+        description: "Academic major code used as the course-level grouping key"
+        data_tests:
+          - unique
+          - not_null
+      - name: best_avg_assignment_score
+        description: "Highest student average assignment score in the academic program"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: worst_avg_assignment_score
+        description: "Lowest student average assignment score in the academic program"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
