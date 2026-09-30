@@ -540,3 +540,62 @@ models:
         description: "Timestamp of most recent data update"
       - name: hours_since_last_update
         description: "Hours elapsed since most recent update"
+
+  - name: vw_hed_immediate_dropout_risk_students
+    description: "At-risk students flagged with an 'Immediate Concern - Student Dropout Risk' engagement classification, ordered by urgency (lowest engagement score and GPA first) to prioritize outreach."
+    columns:
+      - name: student_id
+        description: "Unique student identifier"
+        data_tests:
+          - not_null
+          - unique
+      - name: major_code
+        description: "Student's academic major"
+      - name: academic_standing
+        description: "Current academic status"
+      - name: at_risk_flag
+        description: "Retention risk indicator"
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['TRUE']
+      - name: engagement_concern_level
+        description: "Urgency classification for engagement-related concerns"
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Immediate Concern - Student Dropout Risk']
+      - name: engagement_level
+        description: "Qualitative engagement level classification"
+      - name: engagement_performance_quadrant
+        description: "Classification combining engagement and academic performance"
+      - name: recommended_engagement_action
+        description: "Specific recommended actions to improve or maintain engagement"
+      - name: engagement_score
+        description: "Composite engagement metric (0-100)"
+      - name: engagement_balance_score
+        description: "Normalized score measuring diversity of engagement across dimensions"
+      - name: current_gpa
+        description: "Current GPA"
+      - name: course_completion_rate
+        description: "Course completion percentage"
+      - name: avg_assignment_score
+        description: "Average assignment score"
+      - name: assignment_submissions
+        description: "Number of assignments submitted"
+      - name: discussion_posts
+        description: "Number of discussion forum posts"
+      - name: total_course_views
+        description: "Total course material views"
+      - name: days_since_last_login
+        description: "Days elapsed since last login"
+      - name: login_recency_category
+        description: "Categorical description of login recency"
+      - name: days_active_since_enrollment
+        description: "Days between enrollment and last login"
+      - name: intervention_count
+        description: "Number of interventions received"
+      - name: enrollment_date
+        description: "Date student enrolled"
+      - name: last_login_date
+        description: "Most recent LMS login timestamp"
