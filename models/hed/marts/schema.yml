@@ -540,3 +540,62 @@ models:
         description: "Timestamp of most recent data update"
       - name: hours_since_last_update
         description: "Hours elapsed since most recent update"
+
+  - name: vw_hed_dropout_risk_priority_list
+    description: "Ranked outreach list of at-risk students in the 'Immediate Concern - Student Dropout Risk' engagement category. priority_score is an analyst-defined blend (engagement 30%, completion 25%, assignment score 20%, GPA 15%, interventions 10%) and is not a validated predictive model."
+    columns:
+      - name: priority_rank
+        description: "Outreach priority rank, 1 = most urgent (ranked by priority_score descending)"
+        data_tests:
+          - not_null
+      - name: student_id
+        description: "Unique student identifier"
+        data_tests:
+          - not_null
+          - unique
+      - name: major_code
+        description: "Student's academic major"
+      - name: academic_standing
+        description: "Current academic status"
+      - name: engagement_score
+        description: "Composite engagement metric (0-100)"
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: current_gpa
+        description: "Current GPA"
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 4
+      - name: avg_assignment_score
+        description: "Average assignment score"
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: course_completion_rate
+        description: "Course completion percentage (0-1 scale)"
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+      - name: days_since_last_login
+        description: "Days elapsed since last LMS login. Not scored in priority_score; informational only. Check login-data freshness if this is uniformly high across the population."
+      - name: intervention_count
+        description: "Number of academic interventions received"
+      - name: priority_score
+        description: "Analyst-defined urgency score (0-100, higher = more urgent). Not a validated predictive model."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: recommended_engagement_action
+        description: "Specific recommended actions to improve or maintain engagement"
