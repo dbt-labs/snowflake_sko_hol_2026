@@ -540,3 +540,39 @@ models:
         description: "Timestamp of most recent data update"
       - name: hours_since_last_update
         description: "Hours elapsed since most recent update"
+
+
+  - name: vw_hed_student_risk_ranking
+    description: "The 20 students with the highest relative risk scores across GPA, course completion, engagement, assignment performance, and login inactivity. The score is cohort-relative and ranges from 0 to 1, where higher values indicate greater risk."
+    columns:
+      - name: student_id
+        description: "Unique student identifier"
+        data_tests:
+          - not_null
+          - unique
+      - name: major_code
+        description: "Student's academic major"
+      - name: academic_standing
+        description: "Current academic status"
+      - name: risk_score
+        description: "Average percentile rank across five academic and engagement risk indicators, rounded to three decimal places"
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+      - name: gpa
+        description: "Current GPA used in the relative risk calculation"
+      - name: completion
+        description: "Course completion rate used in the relative risk calculation"
+      - name: engagement
+        description: "Engagement score used in the relative risk calculation"
+      - name: asg_score
+        description: "Average assignment score used in the relative risk calculation"
+      - name: days_idle_at_snapshot
+        description: "Days between the student's last login and the latest last-login date in the cohort"
+      - name: at_risk_flag
+        description: "Existing retention risk indicator"
+      - name: engagement_concern_level
+        description: "Existing urgency classification for engagement-related concerns"
