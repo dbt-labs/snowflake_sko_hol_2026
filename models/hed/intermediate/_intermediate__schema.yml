@@ -109,3 +109,166 @@ models:
         description: "Specific recommended actions based on engagement profile"
         data_tests:
           - not_null
+
+
+unit_tests:
+  - name: test_risk_level_threshold_boundaries
+    description: "Risk classifications remain stable at GPA and login-recency boundaries."
+    model: int_hed__risk_levels
+    given:
+      - input: ref('stg_hed__students')
+        rows:
+          - student_id: gpa_critical
+            record_id: rec_1
+            current_gpa: 1.99
+            course_completion_rate: 0.90
+            engagement_score: 80
+            days_since_last_login: 0
+            financial_aid_amount: 0
+            intervention_count: 0
+          - student_id: gpa_high_boundary
+            record_id: rec_2
+            current_gpa: 2.00
+            course_completion_rate: 0.90
+            engagement_score: 80
+            days_since_last_login: 0
+            financial_aid_amount: 0
+            intervention_count: 0
+          - student_id: gpa_moderate_boundary
+            record_id: rec_3
+            current_gpa: 2.50
+            course_completion_rate: 0.90
+            engagement_score: 80
+            days_since_last_login: 0
+            financial_aid_amount: 0
+            intervention_count: 0
+          - student_id: login_high_boundary
+            record_id: rec_4
+            current_gpa: 3.00
+            course_completion_rate: 0.90
+            engagement_score: 80
+            days_since_last_login: 14
+            financial_aid_amount: 0
+            intervention_count: 0
+          - student_id: login_critical
+            record_id: rec_5
+            current_gpa: 3.00
+            course_completion_rate: 0.90
+            engagement_score: 80
+            days_since_last_login: 15
+            financial_aid_amount: 0
+            intervention_count: 0
+    expect:
+      rows:
+        - student_id: gpa_critical
+          gpa_risk_level: Critical
+          login_recency_risk_level: Low
+          overall_risk_assessment: Critical - Immediate Intervention
+        - student_id: gpa_high_boundary
+          gpa_risk_level: High
+          login_recency_risk_level: Low
+          overall_risk_assessment: High - Priority Attention
+        - student_id: gpa_moderate_boundary
+          gpa_risk_level: Moderate
+          login_recency_risk_level: Low
+          overall_risk_assessment: Moderate - Monitor Closely
+        - student_id: login_high_boundary
+          gpa_risk_level: Low
+          login_recency_risk_level: High
+          overall_risk_assessment: High - Priority Attention
+        - student_id: login_critical
+          gpa_risk_level: Low
+          login_recency_risk_level: Critical
+          overall_risk_assessment: Critical - Immediate Intervention
+
+  - name: test_low_risk_recommendation
+    description: "A student with low risk in every dimension receives the standard-support classification."
+    model: int_hed__risk_levels
+    given:
+      - input: ref('stg_hed__students')
+        rows:
+          - student_id: low_risk
+            record_id: rec_low
+            current_gpa: 3.50
+            course_completion_rate: 0.95
+            engagement_score: 85
+            days_since_last_login: 1
+            financial_aid_amount: 12000
+            intervention_count: 0
+    expect:
+      rows:
+        - student_id: low_risk
+          gpa_risk_level: Low
+          completion_risk_level: Low
+          engagement_risk_level: Low
+          login_recency_risk_level: Low
+          overall_risk_assessment: Low - Standard Support
+          recommended_action: "Continue standard support; Celebrate successes; Maintain engagement"
+
+
+  - name: test_completion_and_engagement_threshold_boundaries
+    description: "Completion and engagement classifications remain stable on both sides of each cutoff."
+    model: int_hed__risk_levels
+    given:
+      - input: ref('stg_hed__students')
+        rows:
+          - {student_id: completion_critical, record_id: rec_c1, current_gpa: 3.5, course_completion_rate: 0.49, engagement_score: 80, days_since_last_login: 0, financial_aid_amount: 0, intervention_count: 0}
+          - {student_id: completion_high, record_id: rec_c2, current_gpa: 3.5, course_completion_rate: 0.50, engagement_score: 80, days_since_last_login: 0, financial_aid_amount: 0, intervention_count: 0}
+          - {student_id: completion_moderate, record_id: rec_c3, current_gpa: 3.5, course_completion_rate: 0.70, engagement_score: 80, days_since_last_login: 0, financial_aid_amount: 0, intervention_count: 0}
+          - {student_id: completion_low, record_id: rec_c4, current_gpa: 3.5, course_completion_rate: 0.85, engagement_score: 80, days_since_last_login: 0, financial_aid_amount: 0, intervention_count: 0}
+          - {student_id: engagement_critical, record_id: rec_e1, current_gpa: 3.5, course_completion_rate: 0.90, engagement_score: 29, days_since_last_login: 0, financial_aid_amount: 0, intervention_count: 0}
+          - {student_id: engagement_high, record_id: rec_e2, current_gpa: 3.5, course_completion_rate: 0.90, engagement_score: 30, days_since_last_login: 0, financial_aid_amount: 0, intervention_count: 0}
+          - {student_id: engagement_moderate, record_id: rec_e3, current_gpa: 3.5, course_completion_rate: 0.90, engagement_score: 50, days_since_last_login: 0, financial_aid_amount: 0, intervention_count: 0}
+          - {student_id: engagement_low, record_id: rec_e4, current_gpa: 3.5, course_completion_rate: 0.90, engagement_score: 70, days_since_last_login: 0, financial_aid_amount: 0, intervention_count: 0}
+    expect:
+      rows:
+        - {student_id: completion_critical, completion_risk_level: Critical, engagement_risk_level: Low}
+        - {student_id: completion_high, completion_risk_level: High, engagement_risk_level: Low}
+        - {student_id: completion_moderate, completion_risk_level: Moderate, engagement_risk_level: Low}
+        - {student_id: completion_low, completion_risk_level: Low, engagement_risk_level: Low}
+        - {student_id: engagement_critical, completion_risk_level: Low, engagement_risk_level: Critical}
+        - {student_id: engagement_high, completion_risk_level: Low, engagement_risk_level: High}
+        - {student_id: engagement_moderate, completion_risk_level: Low, engagement_risk_level: Moderate}
+        - {student_id: engagement_low, completion_risk_level: Low, engagement_risk_level: Low}
+
+
+  - name: test_critical_risk_takes_precedence
+    description: "Any critical dimension overrides otherwise moderate or low risk dimensions."
+    model: int_hed__risk_levels
+    given:
+      - input: ref('stg_hed__students')
+        rows:
+          - student_id: mixed_risk
+            record_id: rec_mixed
+            current_gpa: 2.75
+            course_completion_rate: 0.90
+            engagement_score: 29
+            days_since_last_login: 0
+            financial_aid_amount: 5000
+            intervention_count: 1
+    expect:
+      rows:
+        - student_id: mixed_risk
+          gpa_risk_level: Moderate
+          completion_risk_level: Low
+          engagement_risk_level: Critical
+          login_recency_risk_level: Low
+          overall_risk_assessment: Critical - Immediate Intervention
+          recommended_action: "Schedule mandatory advisor meeting; Review academic plan; Connect with tutoring/counseling; Verify financial aid status"
+
+  - name: test_support_category_boundaries
+    description: "Financial-aid and intervention category labels remain stable at their boundaries."
+    model: int_hed__risk_levels
+    given:
+      - input: ref('stg_hed__students')
+        rows:
+          - {student_id: no_aid, record_id: rec_s1, current_gpa: 3.5, course_completion_rate: 0.90, engagement_score: 80, days_since_last_login: 0, financial_aid_amount: 0, intervention_count: 0}
+          - {student_id: partial_aid, record_id: rec_s2, current_gpa: 3.5, course_completion_rate: 0.90, engagement_score: 80, days_since_last_login: 0, financial_aid_amount: 9999, intervention_count: 1}
+          - {student_id: full_support, record_id: rec_s3, current_gpa: 3.5, course_completion_rate: 0.90, engagement_score: 80, days_since_last_login: 0, financial_aid_amount: 10000, intervention_count: 2}
+          - {student_id: high_intervention, record_id: rec_s4, current_gpa: 3.5, course_completion_rate: 0.90, engagement_score: 80, days_since_last_login: 0, financial_aid_amount: 10000, intervention_count: 5}
+    expect:
+      rows:
+        - {student_id: no_aid, financial_aid_category: No Aid, intervention_category: No Intervention}
+        - {student_id: partial_aid, financial_aid_category: Partial Aid, intervention_category: Low Intervention}
+        - {student_id: full_support, financial_aid_category: Full Support, intervention_category: Moderate Intervention}
+        - {student_id: high_intervention, financial_aid_category: Full Support, intervention_category: High Intervention}
