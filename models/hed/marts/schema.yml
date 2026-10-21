@@ -107,7 +107,7 @@ models:
         description: "Timestamp when this view was queried"
 
   - name: vw_hed_retention_risk_analysis
-    description: "Detailed student-level retention risk analysis identifying at-risk students with risk factors, risk levels, and recommended interventions. Filters to show only at-risk students, ordered by severity."
+    description: "Student-level retention risk analysis, one row per at-risk student (filtered to at_risk_flag = true). Exposes academic, engagement, financial, intervention, and integrity risk factors with their risk levels, an overall risk assessment, and recommended interventions. Ordered by severity (Critical first), then lowest GPA and engagement. Source table for the sv_hed_at_risk_students Snowflake semantic view."
     columns:
       - name: student_id
         description: "Unique student identifier"
@@ -115,42 +115,42 @@ models:
           - not_null
           - unique
       - name: major_code
-        description: "Student's academic major"
+        description: "Student's academic major code (e.g., ENGR, BUSN, NURS)"
         data_tests:
           - not_null
       - name: advisor_id
         description: "Assigned academic advisor"
       - name: academic_standing
-        description: "Current academic status"
+        description: "Current academic status (e.g., Good Standing, Academic Probation)"
         data_tests:
           - not_null
       - name: at_risk_flag
-        description: "Boolean indicating retention risk (always TRUE in this view)"
+        description: "Boolean retention risk flag (always TRUE in this view)"
         data_tests:
           - not_null
       - name: current_gpa
-        description: "Current cumulative GPA"
+        description: "Current cumulative GPA on a 0-4 scale"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 4
       - name: gpa_risk_level
-        description: "Risk categorization based on GPA (Critical/High/Moderate/Low)"
+        description: "GPA risk bucket: Critical (< 2.0), High (< 2.5), Moderate (< 3.0), Low (>= 3.0)"
         data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['Critical', 'High', 'Moderate', 'Low']
       - name: course_completion_rate
-        description: "Percentage of courses completed"
+        description: "Share of courses completed, on a 0-1 scale"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 1
       - name: completion_risk_level
-        description: "Risk categorization based on completion rate"
+        description: "Course completion risk bucket: Critical (< 0.50), High (< 0.70), Moderate (< 0.85), Low (>= 0.85)"
         data_tests:
           - not_null
           - accepted_values:
@@ -164,16 +164,22 @@ models:
                 min_value: 0
                 max_value: 100
       - name: engagement_risk_level
-        description: "Risk categorization based on engagement"
+        description: "Engagement risk bucket: Critical (score < 30), High (< 50), Moderate (< 70), Low (>= 70)"
         data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['Critical', 'High', 'Moderate', 'Low']
+      - name: total_course_views
+        description: "Total number of course material views"
+      - name: assignment_submissions
+        description: "Number of assignments submitted"
+      - name: discussion_posts
+        description: "Number of discussion forum posts"
       - name: days_since_last_login
-        description: "Days elapsed since last LMS login"
+        description: "Days between last LMS login and the current date (recalculated at query time)"
       - name: login_recency_risk_level
-        description: "Risk categorization based on login recency"
+        description: "Login recency risk bucket: Critical (> 14 days since last login), High (> 7), Moderate (> 3), Low (<= 3)"
         data_tests:
           - not_null
           - accepted_values:
@@ -182,135 +188,143 @@ models:
       - name: financial_aid_amount
         description: "Total financial aid received"
       - name: financial_aid_category
-        description: "Financial aid classification (No Aid/Partial Aid/Full Support)"
+        description: "Financial aid classification: No Aid (amount = 0), Partial Aid (< 10,000), Full Support (>= 10,000)"
         data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['No Aid', 'Partial Aid', 'Full Support']
       - name: intervention_count
-        description: "Number of academic interventions received"
+        description: "Number of academic interventions/support sessions received"
       - name: intervention_category
-        description: "Intervention frequency classification"
+        description: "Intervention frequency: High Intervention (5+), Moderate Intervention (2-4), Low Intervention (1), No Intervention (0)"
         data_tests:
           - not_null
       - name: plagiarism_incidents
         description: "Number of academic integrity violations"
       - name: writing_quality_score
-        description: "Writing assessment score"
+        description: "Writing assessment score (0-100)"
       - name: overall_risk_assessment
-        description: "Composite risk level with severity classification"
+        description: "Most severe of the GPA, completion, engagement, and login recency risk levels: Critical - Immediate Intervention, High - Priority Attention, Moderate - Monitor Closely, or Low - Standard Support"
         data_tests:
           - not_null
       - name: recommended_action
-        description: "Specific recommended interventions based on risk profile"
+        description: "Semicolon-separated list of recommended interventions, mapped one-to-one from overall_risk_assessment"
         data_tests:
           - not_null
+      - name: enrollment_date
+        description: "Date the student enrolled"
+      - name: last_login_date
+        description: "Most recent LMS login timestamp"
+      - name: last_updated
+        description: "Timestamp of last source record update"
+
 
   - name: vw_hed_program_performance
-    description: "Academic program performance analysis aggregated by major, comparing enrollment, academic outcomes, retention rates, engagement, and overall program health. Includes rankings and quartile classifications."
+    description: "Academic program performance by major, one row per major_code. Compares enrollment, academic outcomes, retention risk, engagement, integrity, financial aid, and interventions, and rolls them into a weighted program health score with a rank, quartile, and performance category. Ordered by program_health_score descending."
     columns:
       - name: major_code
-        description: "Academic major code"
+        description: "Academic major code (grain of this view)"
         data_tests:
           - not_null
           - unique
       - name: total_students
-        description: "Number of students enrolled in this major"
+        description: "Number of distinct students in this major"
         data_tests:
           - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 1
       - name: advisors_assigned
-        description: "Number of advisors supporting this major"
+        description: "Number of distinct advisors assigned to students in this major"
       - name: avg_students_per_advisor
-        description: "Average student-to-advisor ratio"
+        description: "Distinct students divided by distinct advisors, rounded to one decimal"
       - name: avg_gpa
-        description: "Average GPA for students in this major"
+        description: "Average current GPA for students in this major (0-4)"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 4
       - name: avg_completion_rate_pct
-        description: "Average course completion rate"
+        description: "Average course completion rate expressed as a percentage (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 100
       - name: avg_assignment_score
-        description: "Average assignment performance"
+        description: "Average of students' average assignment scores (0-100)"
       - name: credit_success_rate
-        description: "Percentage of attempted credits successfully earned"
+        description: "Total credit hours earned divided by total credit hours attempted, as a percentage (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 100
       - name: at_risk_students
-        description: "Number of at-risk students in this major"
+        description: "Number of students in this major with at_risk_flag = true"
       - name: at_risk_percentage
-        description: "Percentage of students at retention risk"
+        description: "Percentage of students in this major with at_risk_flag = true (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 100
       - name: high_achievers
-        description: "Number of students on Dean's List, Honor Roll, or similar"
+        description: "Number of students with academic standing of Dean's List, Honor Roll, Excellent Standing, or Distinguished Standing"
       - name: students_on_probation
-        description: "Number of students on academic probation or warning"
+        description: "Number of students with academic standing of Academic Probation, Academic Warning, Probationary Status, or Academic Suspension"
       - name: probation_rate
-        description: "Percentage of students on probation"
+        description: "students_on_probation as a percentage of students in this major (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 100
       - name: avg_engagement_score
-        description: "Average engagement score for the major"
+        description: "Average engagement score for the major (0-100)"
       - name: avg_course_views
-        description: "Average course material views"
+        description: "Average course material views per student, rounded to a whole number"
       - name: total_plagiarism_incidents
-        description: "Total academic integrity violations"
+        description: "Total academic integrity violations across students in this major"
       - name: avg_writing_quality_score
-        description: "Average writing quality score"
+        description: "Average writing quality score (0-100)"
       - name: total_interventions
-        description: "Total academic interventions"
+        description: "Total academic interventions/support sessions across students in this major"
       - name: avg_interventions_per_student
         description: "Average interventions per student"
       - name: total_financial_aid
-        description: "Total financial aid for this major"
+        description: "Total financial aid received by students in this major"
       - name: avg_financial_aid_per_student
-        description: "Average financial aid per student"
+        description: "Average financial aid amount per student, including students with no aid"
       - name: financial_aid_coverage_pct
-        description: "Percentage of students receiving aid"
+        description: "Percentage of students in this major with financial_aid_amount > 0 (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 100
       - name: program_health_score
-        description: "Composite score (0-100) combining GPA, completion, engagement, and retention"
+        description: "Weighted composite score (0-100): 25% average GPA (out of 4.0), 25% average completion rate, 25% average engagement score (out of 100), and 25% retention (1 minus at-risk share)"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 100
       - name: overall_health_rank
-        description: "Rank of this major's overall health score"
+        description: "Rank of program_health_score across majors (1 = healthiest; ties share a rank)"
       - name: performance_quartile
-        description: "Performance quartile (1=top, 4=bottom)"
+        description: "Quartile of program_health_score across majors via ntile(4): 1 = top quartile, 4 = bottom quartile"
         data_tests:
           - accepted_values:
               arguments:
                 values: [1, 2, 3, 4]
       - name: performance_category
-        description: "Qualitative performance classification"
+        description: "Label for performance_quartile: Top Performing (1), Above Average (2), Below Average (3), Needs Improvement (4)"
         data_tests:
           - not_null
+
 
   - name: vw_hed_engagement_analytics
     description: "Student-level engagement analysis examining LMS login patterns, course interactions, assignment behavior, and discussion participation. Identifies engagement concerns and recommends actions, ordered by urgency."
@@ -394,9 +408,10 @@ models:
       - name: engagement_balance_score
         description: "Normalized score measuring diversity of engagement across dimensions"
       - name: current_gpa
-        description: "Current GPA"
+        description: "Current cumulative GPA on a 0-4 scale"
       - name: course_completion_rate
-        description: "Course completion percentage"
+        description: "Share of courses completed, on a 0-1 scale"
+
       - name: intervention_count
         description: "Number of interventions received"
       - name: engagement_performance_quadrant
@@ -418,13 +433,16 @@ models:
         dimension:
           type: categorical
       - name: enrollment_date
+        description: "Date the student enrolled"
         dimension:
           type: time
         granularity: day
       - name: last_updated
+        description: "Timestamp of last source record update"
         dimension:
           type: time
         granularity: day
+
     semantic_model:
       enabled: true
     agg_time_dimension: last_login_date
@@ -480,63 +498,63 @@ models:
         expr: STUDENT_ID
 
   - name: vw_hed_data_quality
-    description: "Data quality monitoring dashboard providing completeness, validity, uniqueness, freshness, and anomaly detection metrics. Single-row summary with composite quality score and status."
+    description: "Single-row data quality summary combining the four dq_hed__* component models (completeness, validity, duplicates, freshness) into dimension scores, a composite quality score, and a qualitative status. Recomputed every time the view is queried."
     columns:
       - name: quality_check_timestamp
-        description: "Timestamp when quality checks were executed"
+        description: "Timestamp when the view was queried (current_timestamp at query time)"
         data_tests:
           - not_null
       - name: report_section
-        description: "Report section identifier"
+        description: "Constant label identifying the row ('Overall Data Quality Summary')"
       - name: completeness_score
-        description: "Overall data completeness score (0-100)"
+        description: "Required-field completeness score (0-100), from dq_hed__completeness.overall_completeness_score"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 100
       - name: validity_score
-        description: "Overall data validity score (0-100)"
+        description: "Range and logic validity score (0-100), from dq_hed__validity.overall_validity_score"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 100
       - name: uniqueness_score
-        description: "Student record uniqueness score (0-100)"
+        description: "Percentage of records with a distinct student_id (0-100), from dq_hed__duplicates.student_uniqueness_pct. Falls below 100 when a student has more than one record."
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 100
       - name: freshness_score
-        description: "Data freshness score based on update recency (0-100)"
+        description: "Percentage of records updated within the last 7 days (0-100), from dq_hed__freshness.records_current_pct"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 100
       - name: composite_quality_score
-        description: "Composite quality score averaging all dimensions (0-100)"
+        description: "Simple average of completeness, validity, uniqueness, and freshness scores, rounded to one decimal (0-100)"
         data_tests:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
                 max_value: 100
       - name: overall_quality_status
-        description: "Qualitative quality assessment (Excellent/Good/Acceptable/Needs Improvement)"
+        description: "Status derived from composite_quality_score: Excellent (>= 95), Good (>= 85), Acceptable (>= 70), Needs Improvement (< 70)"
         data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['Excellent', 'Good', 'Acceptable', 'Needs Improvement']
       - name: total_records
-        description: "Total number of records in source table"
+        description: "Total number of records in stg_hed__students"
         data_tests:
           - not_null
       - name: unique_students
-        description: "Number of unique students"
+        description: "Number of distinct student IDs in stg_hed__students"
       - name: most_recent_data_update
-        description: "Timestamp of most recent data update"
+        description: "Most recent last_updated timestamp across all student records"
       - name: hours_since_last_update
-        description: "Hours elapsed since most recent update"
+        description: "Hours elapsed between most_recent_data_update and query time"

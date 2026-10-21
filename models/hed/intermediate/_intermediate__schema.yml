@@ -2,110 +2,184 @@ version: 2
 
 models:
   - name: int_hed__risk_levels
-    description: "Intermediate model providing centralized risk categorization logic. Calculates GPA risk, completion risk, engagement risk, login recency risk, and overall risk assessment used by downstream retention analysis models."
+    description: "Intermediate model providing centralized risk categorization logic, one row per student record. Buckets GPA, course completion, engagement, and login recency into Critical/High/Moderate/Low risk levels, classifies financial aid and intervention history, and rolls the four risk levels up into an overall assessment and recommended action. Feeds vw_hed_retention_risk_analysis."
     columns:
       - name: student_id
         description: "Unique student identifier"
         data_tests:
           - not_null
           - unique
+      - name: record_id
+        description: "Source record primary key, passed through from stg_hed__students"
+      - name: advisor_id
+        description: "Academic advisor assigned to the student"
+      - name: major_code
+        description: "Student's declared major code (e.g., ENGR, BUSN, NURS)"
+      - name: academic_standing
+        description: "Current academic status (e.g., Good Standing, Academic Probation)"
+      - name: at_risk_flag
+        description: "Source-provided boolean flag indicating retention risk"
+      - name: current_gpa
+        description: "Current cumulative GPA on a 0-4 scale"
+      - name: course_completion_rate
+        description: "Share of courses completed, on a 0-1 scale"
+      - name: engagement_score
+        description: "Composite engagement metric (0-100)"
+      - name: days_since_last_login
+        description: "Days between last LMS login and the current date (recalculated at query time)"
+      - name: total_course_views
+        description: "Total number of course material views"
+      - name: assignment_submissions
+        description: "Number of assignments submitted"
+      - name: discussion_posts
+        description: "Number of discussion forum posts"
+      - name: financial_aid_amount
+        description: "Total financial aid received"
+      - name: intervention_count
+        description: "Number of academic interventions/support sessions received"
+      - name: plagiarism_incidents
+        description: "Number of academic integrity violations"
+      - name: writing_quality_score
+        description: "Writing assessment score (0-100)"
+      - name: enrollment_date
+        description: "Date the student enrolled"
+      - name: last_login_date
+        description: "Most recent LMS login timestamp"
+      - name: last_updated
+        description: "Timestamp of last source record update"
       - name: gpa_risk_level
-        description: "Risk categorization based on GPA (Critical/High/Moderate/Low)"
+        description: "GPA risk bucket: Critical (< 2.0), High (< 2.5), Moderate (< 3.0), Low (>= 3.0)"
         data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['Critical', 'High', 'Moderate', 'Low']
       - name: completion_risk_level
-        description: "Risk categorization based on course completion rate"
+        description: "Course completion risk bucket: Critical (< 0.50), High (< 0.70), Moderate (< 0.85), Low (>= 0.85)"
         data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['Critical', 'High', 'Moderate', 'Low']
       - name: engagement_risk_level
-        description: "Risk categorization based on engagement score"
+        description: "Engagement risk bucket: Critical (score < 30), High (< 50), Moderate (< 70), Low (>= 70)"
         data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['Critical', 'High', 'Moderate', 'Low']
       - name: login_recency_risk_level
-        description: "Risk categorization based on days since last login"
+        description: "Login recency risk bucket: Critical (> 14 days since last login), High (> 7), Moderate (> 3), Low (<= 3)"
         data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['Critical', 'High', 'Moderate', 'Low']
       - name: financial_aid_category
-        description: "Financial aid classification (No Aid/Partial Aid/Full Support)"
+        description: "Financial aid classification: No Aid (amount = 0), Partial Aid (< 10,000), Full Support (>= 10,000)"
         data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['No Aid', 'Partial Aid', 'Full Support']
       - name: intervention_category
-        description: "Intervention frequency classification"
+        description: "Intervention frequency: High Intervention (5+), Moderate Intervention (2-4), Low Intervention (1), No Intervention (0)"
         data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['No Intervention', 'Low Intervention', 'Moderate Intervention', 'High Intervention']
       - name: overall_risk_assessment
-        description: "Composite risk level combining all dimensions"
+        description: "Composite of the four risk levels (GPA, completion, engagement, login recency), taking the most severe: Critical - Immediate Intervention if any is Critical, else High - Priority Attention if any is High, else Moderate - Monitor Closely if any is Moderate, else Low - Standard Support. Financial aid and intervention categories are not factored in."
         data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['Critical - Immediate Intervention', 'High - Priority Attention', 'Moderate - Monitor Closely', 'Low - Standard Support']
       - name: recommended_action
-        description: "Recommended interventions based on risk profile"
+        description: "Semicolon-separated list of recommended interventions, mapped one-to-one from overall_risk_assessment (e.g., Critical maps to a mandatory advisor meeting, academic plan review, tutoring/counseling referral, and financial aid check)"
         data_tests:
           - not_null
 
   - name: int_hed__engagement_categories
-    description: "Intermediate model providing centralized engagement categorization logic. Calculates login recency, course views, assignment activity, discussion participation, and engagement levels used by downstream engagement analytics models."
+    description: "Intermediate model providing centralized engagement categorization logic, one row per student record. Buckets login recency, course views, assignment activity and performance, and discussion participation, then derives an overall engagement level, a balance score, an engagement-vs-performance quadrant, a concern level, and a recommended action. Feeds vw_hed_engagement_analytics."
     columns:
       - name: student_id
         description: "Unique student identifier"
         data_tests:
           - not_null
           - unique
+      - name: record_id
+        description: "Source record primary key, passed through from stg_hed__students"
+      - name: advisor_id
+        description: "Academic advisor assigned to the student"
+      - name: major_code
+        description: "Student's declared major code (e.g., ENGR, BUSN, NURS)"
+      - name: academic_standing
+        description: "Current academic status (e.g., Good Standing, Academic Probation)"
+      - name: at_risk_flag
+        description: "Source-provided boolean flag indicating retention risk"
+      - name: current_gpa
+        description: "Current cumulative GPA on a 0-4 scale"
+      - name: course_completion_rate
+        description: "Share of courses completed, on a 0-1 scale"
+      - name: engagement_score
+        description: "Composite engagement metric (0-100)"
+      - name: total_course_views
+        description: "Total number of course material views"
+      - name: assignment_submissions
+        description: "Number of assignments submitted"
+      - name: avg_assignment_score
+        description: "Average score across all assignments (0-100)"
+      - name: discussion_posts
+        description: "Number of discussion forum posts"
+      - name: intervention_count
+        description: "Number of academic interventions/support sessions received"
+      - name: enrollment_date
+        description: "Date the student enrolled"
+      - name: last_login_date
+        description: "Most recent LMS login timestamp"
+      - name: last_updated
+        description: "Timestamp of last source record update"
+      - name: days_since_last_login
+        description: "Days between last LMS login and the current date (recalculated at query time)"
+      - name: days_active_since_enrollment
+        description: "Days between enrollment date and last LMS login"
       - name: login_recency_category
-        description: "Categorical description of login recency (Today, Within 24 Hours, etc.)"
+        description: "Login recency bucket based on days_since_last_login: Today (0), Within 24 Hours (1), Within 3 Days (<= 3), Within 1 Week (<= 7), Within 2 Weeks (<= 14), Over 2 Weeks Ago"
         data_tests:
           - not_null
       - name: course_views_category
-        description: "Course viewing behavior category (Very High/High/Moderate/Low/Very Low)"
+        description: "Course viewing bucket based on total_course_views: Very High (300+), High (200+), Moderate (100+), Low (50+), Very Low (< 50)"
         data_tests:
           - not_null
       - name: assignment_activity_category
-        description: "Assignment submission activity level"
+        description: "Assignment submission bucket: Very Active (18+), Active (14+), Moderate (10+), Low (6+), Very Low (< 6)"
         data_tests:
           - not_null
       - name: assignment_performance_category
-        description: "Assignment score performance category"
+        description: "Assignment score bucket based on avg_assignment_score: Excellent (85+), Good (75+), Satisfactory (65+), Needs Improvement (50+), Critical (< 50)"
         data_tests:
           - not_null
       - name: discussion_participation_category
-        description: "Discussion forum participation level"
+        description: "Discussion forum bucket based on discussion_posts: Very Active (25+), Active (15+), Moderate (8+), Low (3+), Minimal (< 3)"
         data_tests:
           - not_null
       - name: engagement_level
-        description: "Overall engagement classification (Highly Engaged to Critically Disengaged)"
+        description: "Overall engagement bucket based on engagement_score: Highly Engaged (80+), Engaged (60+), Moderately Engaged (40+), Disengaged (20+), Critically Disengaged (< 20)"
         data_tests:
           - not_null
       - name: engagement_balance_score
-        description: "Normalized score measuring diversity of engagement across dimensions"
+        description: "Average of three normalized activity measures (course views / 400, submissions / 25, discussion posts / 35, each scaled to 100). Not capped, so very active students can exceed 100."
       - name: engagement_performance_quadrant
-        description: "Classification combining engagement and academic performance"
+        description: "Engagement vs. academic performance quadrant, splitting at engagement_score 60 and current_gpa 3.0 (e.g., High Engagement / Low Performance)"
         data_tests:
           - not_null
       - name: engagement_concern_level
-        description: "Urgency classification for engagement-related concerns"
+        description: "Engagement concern, first matching rule wins: Immediate Concern - Student Dropout Risk (> 14 days since login and score < 40), Elevated Concern - Declining Engagement (> 7 days and score < 50), High Concern - Critically Disengaged (score < 30), Moderate Concern - Minimal Participation (< 5 submissions and < 3 posts), otherwise No Immediate Concern"
         data_tests:
           - not_null
       - name: recommended_engagement_action
-        description: "Specific recommended actions based on engagement profile"
+        description: "Recommended engagement action, first matching rule wins: outreach if > 14 days since login, advisor meeting if score < 30, instructor/tutoring if < 5 submissions, peer collaboration if < 3 posts, peer mentor role if score >= 80, otherwise ongoing monitoring"
         data_tests:
           - not_null

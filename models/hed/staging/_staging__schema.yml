@@ -122,11 +122,11 @@ models:
       - name: last_updated
         description: "Timestamp of last record update"
       - name: days_since_last_login
-        description: "Calculated: Days since last LMS login"
+        description: "Calculated: days between last_login_date and the current date. Recalculated at query time, so values change daily."
       - name: days_active_since_enrollment
-        description: "Calculated: Days between enrollment and last login"
+        description: "Calculated: days between enrollment_date and last_login_date"
       - name: credit_success_rate_pct
-        description: "Calculated: Percentage of attempted credits earned"
+        description: "Calculated: credit_hours_earned / credit_hours_attempted as a percentage (0-100), rounded to one decimal. Returns 0 when no credit hours were attempted."
         data_tests:
           - dbt_utils.accepted_range:
               arguments:

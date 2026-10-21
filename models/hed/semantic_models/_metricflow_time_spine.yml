@@ -2,10 +2,15 @@ version: 2
 
 models:
   - name: metricflow_time_spine
-    description: "Time spine table for MetricFlow. Contains one row per day."
+    description: "Daily time spine required by MetricFlow for time-based Semantic Layer queries. One row per calendar day from 2020-01-01 through 2030-12-31, generated with dbt_utils.date_spine. Extend the end date before it is reached or metric queries past 2030 will return no rows."
+
     time_spine:
       standard_granularity_column: date_day
     columns:
       - name: date_day
         description: "The date dimension at daily grain"
         granularity: day
+        data_tests:
+          - unique
+          - not_null
+

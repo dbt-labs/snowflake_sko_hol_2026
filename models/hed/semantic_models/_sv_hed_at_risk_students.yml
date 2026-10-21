@@ -1,0 +1,5 @@
+version: 2
+
+models:
+  - name: sv_hed_at_risk_students
+    description: "Snowflake semantic view over vw_hed_retention_risk_analysis (logical table AT_RISK_STUDENTS, unique on STUDENT_ID). Exposes numeric facts (GPA, completion rate, engagement, login recency, financial aid, interventions, integrity metrics) and categorical dimensions (major, advisor, academic standing, risk levels, overall risk assessment, recommended action) for governed at-risk-student analysis in Snowflake Cortex Analyst and other semantic-view consumers. Column-level comments are defined inline in the semantic view SQL."

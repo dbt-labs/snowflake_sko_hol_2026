@@ -64,8 +64,9 @@ dbt_industries_views/
         │   ├── vw_hed_engagement_analytics.sql
         │   └── vw_hed_data_quality.sql
         └── semantic_models/
+            ├── _metricflow_time_spine.yml
+            ├── _sv_hed_at_risk_students.yml
             ├── metricflow_time_spine.sql
-            ├── sem_vw_hed_engagement_analytics.yml
             └── sv_hed_at_risk_students.sql
 ```
 
@@ -132,9 +133,10 @@ Single-row data-quality dashboard summarizing completeness, validity, uniqueness
 
 Date spine table used by MetricFlow for time-based semantic-layer queries.
 
-#### `sem_vw_hed_engagement_analytics.yml`
+#### `vw_hed_engagement_analytics` semantic model
 
-MetricFlow semantic model and metrics for `vw_hed_engagement_analytics`.
+The MetricFlow semantic model and metrics for `vw_hed_engagement_analytics` are defined inline in `models/hed/marts/schema.yml`.
+
 
 #### `sv_hed_at_risk_students`
 
