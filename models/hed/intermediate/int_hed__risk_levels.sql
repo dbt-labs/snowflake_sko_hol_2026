@@ -153,7 +153,8 @@ final as (
             then 'Monitor engagement metrics; Send supportive communication; Track attendance patterns'
             
             else 'Continue standard support; Celebrate successes; Maintain engagement'
-        end as recommended_action
+        end as recommended_action,
+        "hello world im stating" as new_column2
         
     from risk_calculations
 )
