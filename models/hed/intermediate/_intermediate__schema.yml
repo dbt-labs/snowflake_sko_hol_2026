@@ -62,6 +62,22 @@ models:
         description: "Recommended interventions based on risk profile"
         data_tests:
           - not_null
+      - name: high_risk_dimension_count
+        description: "Number of GPA, completion, engagement, and login recency dimensions classified as High or Critical (0-4), using the existing risk thresholds. Helps prioritize students with multiple concurrent risk factors."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1, 2, 3, 4]
+                quote: false
+      - name: unaddressed_high_risk_flag
+        description: "True when at least one risk dimension is High or Critical and intervention_count is exactly zero. False when no dimension is High/Critical or a nonzero intervention count is recorded. Null for High/Critical students with a missing intervention count; missing history is not assumed to mean no interventions. This flag does not measure intervention recency or effectiveness."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [true, false]
+                quote: false
+
 
   - name: int_hed__engagement_categories
     description: "Intermediate model providing centralized engagement categorization logic. Calculates login recency, course views, assignment activity, discussion participation, and engagement levels used by downstream engagement analytics models."

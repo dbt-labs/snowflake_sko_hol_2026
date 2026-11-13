@@ -105,6 +105,14 @@ risk_calculations as (
 final as (
     select
         *,
+        -- Number of dimensions needing priority attention (0-4)
+        case when gpa_risk_level in ('High', 'Critical') then 1 else 0 end
+            + case when completion_risk_level in ('High', 'Critical') then 1 else 0 end
+            + case when engagement_risk_level in ('High', 'Critical') then 1 else 0 end
+            + case when login_recency_risk_level in ('High', 'Critical') then 1 else 0 end
+            as high_risk_dimension_count,
+
+
         -- Overall Risk Assessment (composite of all risk dimensions)
         case
             -- Critical: ANY dimension is Critical
@@ -158,4 +166,11 @@ final as (
     from risk_calculations
 )
 
-select * from final
+select
+    *,
+    -- Missing intervention history remains unknown for High/Critical students
+    case
+        when high_risk_dimension_count > 0 then intervention_count = 0
+        else false
+    end as unaddressed_high_risk_flag
+from final
